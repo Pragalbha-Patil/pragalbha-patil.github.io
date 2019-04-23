@@ -1,0 +1,400 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>PSP says Go code!</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <!-- Sketch Class -->
+    <script src="https://rawgithub.com/soulwire/sketch.js/v1.0/js/sketch.min.js"></script>
+    <!--<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0" />-->
+</head>
+
+<body>
+    <!--                     .+~                :xx++::
+                   :`. -          .!!X!~"?!`~!~!. :-:.
+                  <             .!!!H":.~ ::+!~~!!!~ `%X.
+                  '             ~~!M!!>!!X?!!!!!!!!!!...!~.
+                              <!:!MM!~:XM!!!!!!.:!..~ !.  `<
+                  <: `   :~ .:<~!!M!XXHM!!!X!XXHtMMHHHX!  ~ ~
+                ~~~~<' ~!!!:!!!!!XM!!M!!!XHMMMRMSXXX!!!!!!:  <`
+                  `<  <::!!!!!X!X?M!!M!!XMMMMXXMMMM??!!!!!?!:~<
+               : '~~~<!!!XMMH!!XMXMXHHXXXXM!!!!MMMMSXXXX!!!!!!!~
+            :    ::`~!!!MMMMXXXtMMMMMMMMMMMHX!!!!!!HMMMMMX!!!!!: ~
+               '~:~!!!!!MMMMMMMMMMMMMMMMMMMMMMXXX!!!M??MMMM!!X!!i:
+               <~<!!!!!XMMMMMMMMMMMM8M8MMMMM8MMMMMXX!!!!!!!!X!?t?!:
+               ~:~~!!!!?MMMMMM@M@RMRRR$@@MMRMRMMMMMMXSX!!!XMMMX<?X!
+             :XX <!!XHMMMM88MM88BR$M$$$$8@8RN88MMMMMMMMHXX?MMMMMX!!!
+           .:X! <XMSM8M@@$$$$$$$$$$$$$$$$$$$B8R$8MMMMMMMMMMMMMMMMX!X
+          :!?! !?XMMMMM8$$$$8$$$$$$$$$$$$$$BBR$$MMM@MMMMMMMMMMMMMM!!X
+        ~<!!~ <!!XMMMB$$$$$$$$$$$$$$$$$$$$$$$$MMR$8MR$MMMMMMMMMMMMM!?!:
+        :~~~ !:X!XMM8$$$$$$$$$$$$$$$$$$$$$$$RR$$MMMMR8NMMMMMMMMMMMMM<!`-
+    ~:<!:~`~':!:HMM8N$$$$$$$$$$$$$$$$$$$$$$$$$8MRMM8R$MRMMMMMMMMRMMMX!
+  !X!``~~   :~XM?SMM$B$$$$$$$$$$$$$$$$$$$$$$BR$$MMM$@R$M$MMMMMM$MMMMX?L
+ X~.      : `!!!MM#$RR$$$$$$$$$$$$$$$$$R$$$$$R$M$MMRRRM8MMMMMMM$$MMMM!?:
+ ! ~ <~  !! !!~`` :!!MR$$$$$$$$$$RMM!?!??RR?#R8$M$MMMRM$RMMMM8MM$MMM!M!:>
+: ' >!~ '!!  !   .!XMM8$$$$$@$$$R888HMM!!XXHWX$8$RM$MR5$8MMMMR$$@MMM!!!< ~
+!  ' !  ~!! :!:XXHXMMMR$$$$$$$$$$$$$$$$8$$$$8$$$MMR$M$$$MMMMMM$$$MMM!!!!
+ ~<!!!  !!! !!HMMMMMMMM$$$$$$$$$$$$$$$$$$$$$$$$$$MMM$M$$MM8MMMR$$MMXX!!!!/:`
+  ~!!!  !!! !XMMMMMMMMMMR$$$$$$$$$$$$R$RRR$$$$$$$MMMM$RM$MM8MM$$$M8MMMX!!!!:
+  !~ ~  !!~ XMMM%!!!XMMX?M$$$$$$$$B$MMSXXXH?MR$$8MMMM$$@$8$M$B$$$$B$MMMX!!!!
+  ~!    !! 'XMM?~~!!!MMMX!M$$$$$$MRMMM?!%MMMH!R$MMMMMM$$$MM$8$$$$$$MR@M!!!!!
+  <>    !!  !Mf x@#"~!t?M~!$$$$$RMMM?Xb@!~`??MS$M@MMM@RMRMMM$$$$$$RMMMMM!!!!
+  !    '!~ <!!:!?M   !@!M<XM$$R5M$8MMM$! -XXXMMRMBMMM$RMMM@$R$BR$MMMMX??!X!!
+  !    '!  !!X!!!?::xH!HM:MM$RM8M$RHMMMX...XMMMMM$RMMRRMMMMMMM8MMMMMMMMX!!X!
+  !     ~  !!?:::!!!MXMR~!MMMRMM8MMMMMS!!M?XXMMMMM$$M$M$RMMMM8$RMMMMMMMM%X!!
+  ~     ~  !~~X!!XHMMM?~ XM$MMMMRMMMMMM@MMMMMMMMMM$8@MMMMMMMMRMMMMM?!MMM%HX!
+           !!!!XSMMXXMM .MMMMMMMM$$$BB8MMM@MMMMMMMR$RMMMMMMMMMMMMMMMXX!?H!XX
+           XHXMMMMMMMM!.XMMMMMMMMMR$$$8M$$$$$M@88MMMMMMMMMMMMMMM!XMMMXX!!!XM
+      ~   <!MMMMMMMMRM:XMMMMMMMMMM8R$$$$$$$$$$$$$$$NMMMMMMMM?!MM!M8MXX!!/t!M
+      '   ~HMMMMMMMMM~!MM8@8MMM!MM$$8$$$$$$$$$$$$$$8MMMMMMM!!XMMMM$8MR!MX!MM
+          'MMMMMMMMMM'MM$$$$$MMXMXM$$$$$$$$$$$$$$$$RMMMMMMM!!MMM$$$$MMMMM<!M
+          'MMMMMMMMM!'MM$$$$$RMMMMMM$$$$$$$$$$$$$$$MMM!MMMX!!MM$$$$$M$$M$M!M
+           !MMMMMM$M! !MR$$$RMM8$8MXM8$$$$$$$$$$$$NMMM!MMM!!!?MRR$$RXM$$MR!M
+           !M?XMM$$M.< !MMMMMMSUSRMXM$8R$$$$$$$$$$#$MM!MMM!X!t8$M$MMMHMRMMX$
+    ,-,   '!!!MM$RMSMX:.?!XMHRR$RM88$$$8M$$$$$R$$$$8MM!MMXMH!M$$RMMMMRNMMX!$
+   -'`    '!!!MMMMMMMMMM8$RMM8MBMRRMR8RMMM$$$$8$8$$$MMXMMMMM!MR$MM!M?MMMMMM$
+          'XX!MMMMMMM@RMM$MM@$$BM$$$M8MMMMR$$$$@$$$$MM!MMMMXX$MRM!XH!!??XMMM
+          `!!!M?MHMMM$RMMMR@$$$$MR@MMMM8MMMM$$$$$$$WMM!MMMM!M$RMM!!.MM!%M?~!
+           !!!!!!MMMMBMM$$RRMMMR8MMMMMRMMMMM8$$$$$$$MM?MMMM!f#RM~    `~!!!~!
+           ~!!HX!!~!?MM?MMM??MM?MMMMMMMMMRMMMM$$$$$MMM!MMMM!!
+           '!!!MX!:`~~`~~!~~!!!!XM!!!?!?MMMM8$$$$$MMMMXMMM!!
+            !!~M@MX.. <!!X!!!!XHMHX!!``!XMMMB$MM$$B$M!MMM!!
+            !!!?MRMM!:!XHMHMMMMMMMM!  X!SMMX$$MM$$$RMXMMM~
+             !M!MMMM>!XMMMMMMMMXMM!!:!MM$MMMBRM$$$$8MMMM~
+             `?H!M$R>'MMMM?MMM!MM6!X!XM$$$MM$MM$$$$MX$f
+              `MXM$8X MMMMMMM!!MM!!!!XM$$$MM$MM$$$RX@"
+               ~M?$MM !MMMMXM!!MM!!!XMMM$$$8$XM$$RM!`
+                !XMMM !MMMMXX!XM!!!HMMMM$$$$RH$$M!~
+                'M?MM `?MMXMM!XM!XMMMMM$$$$$RM$$#
+                 `>MMk ~MMHM!XM!XMMM$$$$$$BRM$M"
+                  ~`?M. !M?MXM!X$$@M$$$$$$RMM#
+                    `!M  !!MM!X8$$$RM$$$$MM#`
+                      !% `~~~X8$$$$8M$$RR#`
+                       !!x:xH$$$$$$$R$R*`
+                        ~!?MMMMRRRM@M#`       -Albert Einstein-
+                         `~???MMM?M"`
+                             ``~~
+
+------------------------------------------------
+Hey, welcome behind the scenes!
+If you love to code as much as I do, visit: https://github.com/Pragalbha-Patil/
+ -->
+    <style>
+        /* Google Fonts */
+        @import url(https://fonts.googleapis.com/css?family=Anonymous+Pro);
+        /* Global */
+        html {
+            min-height: 100%;
+            overflow: hidden;
+            width: 100%;
+            /*cursor: none;*/
+        }
+
+        body {
+            width: 100%;
+            height: calc(100vh - 8em);
+            /*padding: 4em;*/
+            /*color: rgba(255,255,255,.75);*/
+            font-family: 'Anonymous Pro', monospace;
+            /*background-color: rgb(25,25,25);  */
+            background: #2b2b2b;
+            margin: 0;
+        }
+        
+        p {
+            color: grey;
+            left: 28%;
+            position: absolute;
+            top: 45%;
+            margin: 0 auto;
+            font-size: 180%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            transform: translateY(-50%);
+        }
+
+        /* Smartphones (portrait and landscape) ----------- */
+        @media only screen and (min-device-width : 320px) and (max-device-width : 600px) {
+            
+            p{
+                left:20%;
+            }
+        }
+
+        #info {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+        }
+
+        #info {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 12px 10px;
+            margin-bottom: 1px;
+            color: #fff;
+        }
+
+        #info h1 {
+            line-height: 22px;
+            font-weight: 300;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        #info h2 {
+            line-height: 14px;
+            font-weight: 300;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0 0 6px 0;
+        }
+
+        #info a {
+            text-transform: uppercase;
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.2);
+            margin-right: 4px;
+            line-height: 20px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #info a:hover {
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 1.0);
+        }
+
+
+        #animate {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Animation */
+        .anim-typewriter {
+            color: grey;
+            animation: typewriter 4s steps(44) 1s 1 normal both,
+                blinkTextCursor 500ms steps(44) infinite normal;
+        }
+
+        @keyframes typewriter {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 24em;
+            }
+        }
+
+        @keyframes blinkTextCursor {
+            from {
+                border-right-color: rgba(255, 255, 255, .75);
+            }
+
+            to {
+                border-right-color: transparent;
+            }
+        }
+
+        @-webkit-keyframes fadeinout {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeinout {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .song {
+            position: relative;
+            display: block;
+        }
+        a{
+            color:grey;
+        }
+    </style>
+
+    <body>
+        <div class="container-fluid" id="animate" width="100px" style="padding:0; margin:0;">
+            <div class="row">
+                <p class="line-1 anim-typewriter" onclick="redirect();">
+                    Hey, Pragalbha Patil here & I love to <a href="#">code()</a>
+                </p>
+            </div>
+        </div>
+        <!-- Autoplay is allowed.
+        <div class="song">
+            <iframe src="background.mp3" allow="autoplay">
+        </div>-->
+        <script>
+        function redirect(){
+            window.open('https://github.com/Pragalbha-Patil/', '_blank');
+        }
+        // window.open('https://pspsayscode.000webhostapp.com','_blank');
+        // window.open('https://pspsayscode.000webhostapp.com','_blank');
+            function Particle(x, y, radius) {
+                this.init(x, y, radius);
+            }
+
+            Particle.prototype = {
+
+                init: function (x, y, radius) {
+
+                    this.alive = true;
+
+                    this.radius = radius || 10;
+                    this.wander = 0.15;
+                    this.theta = random(TWO_PI);
+                    this.drag = 0.92;
+                    this.color = '#fff';
+
+                    this.x = x || 0.0;
+                    this.y = y || 0.0;
+
+                    this.vx = 0.0;
+                    this.vy = 0.0;
+                },
+
+                move: function () {
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    this.vx *= this.drag;
+                    this.vy *= this.drag;
+
+                    this.theta += random(-0.5, 0.5) * this.wander;
+                    this.vx += sin(this.theta) * 0.1;
+                    this.vy += cos(this.theta) * 0.1;
+
+                    this.radius *= 0.96;
+                    this.alive = this.radius > 0.5;
+                },
+
+                draw: function (ctx) {
+
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, TWO_PI);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            };
+
+            // ----------------------------------------
+            // Example
+            // ----------------------------------------
+
+            var MAX_PARTICLES = 280;
+            var COLOURS = ['#69D2E7', '#A7DBD8', '#E0E4CC', '#F38630', '#FA6900', '#FF4E50', '#F9D423'];
+
+            var particles = [];
+            var pool = [];
+
+            var demo = Sketch.create({
+                container: document.getElementById('animate')
+            });
+
+            demo.setup = function () {
+
+                // Set off some initial particles.
+                var i, x, y;
+
+                for (i = 0; i < 20; i++) {
+                    x = (demo.width * 0.5) + random(-100, 100);
+                    y = (demo.height * 0.5) + random(-100, 100);
+                    demo.spawn(x, y);
+                }
+            };
+
+            demo.spawn = function (x, y) {
+
+                if (particles.length >= MAX_PARTICLES)
+                    pool.push(particles.shift());
+
+                particle = pool.length ? pool.pop() : new Particle();
+                particle.init(x, y, random(5, 40));
+
+                particle.wander = random(0.5, 2.0);
+                particle.color = random(COLOURS);
+                particle.drag = random(0.9, 0.99);
+
+                theta = random(TWO_PI);
+                force = random(2, 8);
+
+                particle.vx = sin(theta) * force;
+                particle.vy = cos(theta) * force;
+
+                particles.push(particle);
+            }
+
+            demo.update = function () {
+
+                var i, particle;
+
+                for (i = particles.length - 1; i >= 0; i--) {
+
+                    particle = particles[i];
+
+                    if (particle.alive) particle.move();
+                    else pool.push(particles.splice(i, 1)[0]);
+                }
+            };
+
+            demo.draw = function () {
+
+                demo.globalCompositeOperation = 'lighter';
+
+                for (var i = particles.length - 1; i >= 0; i--) {
+                    particles[i].draw(demo);
+                }
+            };
+
+            demo.mousemove = function () {
+
+                var particle, theta, force, touch, max, i, j, n;
+
+                for (i = 0, n = demo.touches.length; i < n; i++) {
+
+                    touch = demo.touches[i], max = random(1, 4);
+                    for (j = 0; j < max; j++) demo.spawn(touch.x, touch.y);
+                }
+            };
+            window.onload = () => {
+                let el = document.querySelector('[alt="www.000webhost.com"]').parentNode.parentNode;
+                el.parentNode.removeChild(el);
+            }
+        </script>
+    </body>
+
+    <body>
+        <!-- Autoplay is allowed. -->
+        <div class="song" style="display:none;">
+            <iframe src="background.mp3" allow="autoplay">
+        </div>
+    </body>
+
+</html>
