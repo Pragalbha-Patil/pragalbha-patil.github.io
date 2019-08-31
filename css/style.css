@@ -1532,3 +1532,7 @@ body.mobile-nav-active #mobile-nav-toggle i {
 #goback {
   visibility: hidden;
 }
+
+#defeat-msg {
+  visibility: hidden;
+}

@@ -243,6 +243,7 @@ jQuery(document).ready(function ($) {
             document.getElementById('coin').style.visibility = "hidden";
             document.getElementById('coin-msg').style.visibility = "hidden";
 
+            document.getElementById('defeat-msg').style.visibility = "visible";
             document.getElementById('goback').style.visibility = "visible";
           }
           else {
