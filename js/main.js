@@ -229,7 +229,7 @@ jQuery(document).ready(function ($) {
           $("#coin").addClass("tails");
           console.log("it is FALSE");
           $("h4").empty();
-          $("h4").append("Keep playing!");
+          $("h4").append("It is a FALSE, you go home with "+incMoney+"$");
           // alert(inputvalue);
           if( inputvalue > incMoney ) {
             lose = 1;
@@ -249,6 +249,8 @@ jQuery(document).ready(function ($) {
           else {
             win = 1;
             alert("You won, since you paid "+inputvalue+"$ and got "+incMoney+"$");
+            incMoney = startMoney;
+            alert("you start again with 2$");
           }
         }
       }, 100);
