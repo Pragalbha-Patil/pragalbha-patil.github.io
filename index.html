@@ -1,25 +1,78 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>PSP-FPS | A first person shooter using Unity!</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-    <script src="TemplateData/UnityProgress.js"></script>
-    <script src="Build/UnityLoader.js"></script>
-    <script>
-      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/pragalbha-patil.github.io.json", {onProgress: UnityProgress});
-    </script>
-  </head>
-  <body>
-    <div class="webgl-content">
-      <div id="unityContainer" style="width: 960px; height: 540px"></div>
-      <div class="footer">
-        <div class="webgl-logo"></div>
-        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
-        <div class="title">PSP-FPS v1.0</div>
-      </div>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <noscript>
+        <style>
+            body {
+                visibility: visible
+            }
+        </style>
+    </noscript>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <title>My Personal website!</title>
+    <style>
+        h1 {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container w-95">
+        <h1>Hello, I'm Pragalbha Patil, A 90's guy who prefers oldschool. </h1>
+        <h1>Also I am a web developer who also happens to make a lot of games, some of my games you can play here!</h1>
+        <h1>So here's a list of them..</h1>
+        <h1>
+            <ul>
+                <li>
+                    <a href="fps/index.html">My First person shooter game</a> (Very cool)
+                </li>
+                <br>
+                <li>
+                    <a href="psp-game.html">My platformer game</a> (Not so cool but ok to play)
+                </li>
+            </ul>
+        </h1>
+        <style>
+            .center-block {
+                padding-left: 30%;
+            }
+            @media screen and (min-width: 1px) and (max-width: 299px) {
+                img {
+                    display: none;
+                }
+            }
+            @media screen and (min-width: 300px) and (max-width: 768px) {
+                img {
+                    /* display: none; */
+                    height: auto;
+                    width: 300px;
+                }
+            }
+            @media screen and (min-width: 768px) and (max-width: 4000px) {
+                img {
+                    height: auto;
+                    width: 800px;
+                }
+            }
+        </style>
+        <img src="nyan.gif" alt="cat" class="center-block">
+        </div>
     </div>
-  </body>
+
+    <iframe src="silence.mp3" allow="autoplay" id="audio" style="display: none"></iframe>
+    
+    <audio id="player" autoplay loop>
+        <source src="background.mp3" type="audio/mp3">
+            Lol no song ok
+    </audio>
+
+
+    <script src="js/bootstrap.min.js"></script>
+</body>
+
 </html>
