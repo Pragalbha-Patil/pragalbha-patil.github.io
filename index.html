@@ -8,6 +8,9 @@
     <meta name="keywords" content="HTML, CSS, JavaScript, Game, Dev, Github">
     <meta name="author" content="Pragalbha Patil">
 
+    <!-- Add the stylesheet to the head -->
+    <link rel="stylesheet" type="text/css" href="css/clippy.css" media="all">
+
     <noscript>
         <style>
             body {
@@ -26,6 +29,7 @@
 
 <body>
     <div class="container">
+        <div class="clippy"></div>
         <h1>Hello, I'm Pragalbha Patil, A 90's guy who prefers oldschool. </h1>
         <h1>Also I am a web developer who also happens to make a lot of games, some of my games you can play here!</h1>
         <h1>So here's a list of them..</h1>
@@ -71,12 +75,29 @@
     <iframe src="silence.mp3" allow="autoplay" id="audio" style="display: none"></iframe>
     
     <audio id="player" autoplay loop>
-        <source src="background.mp3" type="audio/mp3">
+        <source src="background.mp3" type="audio/mpeg">
             Lol no song ok
     </audio>
 
 
+    <!-- Add these scripts to  the bottom of the page -->
+    <!-- jQuery 1.7+ -->
+    <script src="js/jquery.min.js"></script>
+
     <script src="js/bootstrap.min.js"></script>
+
+    <!-- Clippy.js -->
+    <script src="js/clippy.min.js"></script>
+    <script src="js/clippy.js"></script>
+
+    <!-- Init script -->
+    <script type="text/javascript">
+        clippy.load('Rover', function(agent) {
+            // Do anything with the loaded agent
+            agent.show();
+            agent.speak('And you might also remember me, I existed in your old computer w my other friend clippy!');
+        });
+    </script>
 </body>
 
 </html>
