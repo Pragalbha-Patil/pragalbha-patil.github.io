@@ -22,7 +22,7 @@ let w;
 let h;
 
 function setup() {
-  createCanvas(640, 480);
+  createCanvas(1920, 1080);
   // Create the video
   video = createCapture(VIDEO);
   video.size(640, 480);
