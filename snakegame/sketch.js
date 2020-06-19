@@ -22,10 +22,10 @@ let w;
 let h;
 
 function setup() {
-  createCanvas(1024, 768);
+  createCanvas(800, 600);
   // Create the video
   video = createCapture(VIDEO);
-  video.size(1024, 768);
+  video.size(640, 480);
   video.hide();
   // Mirro the video since we trained it that way!
   flipVideo = ml5.flipImage(video);
