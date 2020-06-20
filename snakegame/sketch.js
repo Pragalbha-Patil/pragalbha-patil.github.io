@@ -7,7 +7,7 @@ let label = "Please wait..";
 
 // The classifier
 let classifier;
-let modelURL = 'https://teachablemachine.withgoogle.com/models/1hOkNIJV-/';
+let modelURL = 'https://teachablemachine.withgoogle.com/models/20xNCrz8Q/';
 
 // STEP 1: Load the model!
 function preload() {
@@ -22,10 +22,10 @@ let w;
 let h;
 
 function setup() {
-  createCanvas(1024, 768);
+  createCanvas(800, 600);
   // Create the video
   video = createCapture(VIDEO);
-  video.size(320, 480);
+  video.size(800, 600);
   video.hide();
   // Mirro the video since we trained it that way!
   flipVideo = ml5.flipImage(video);

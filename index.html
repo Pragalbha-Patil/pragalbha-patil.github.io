@@ -19,10 +19,24 @@
         </style>
     </noscript>
     <link href="css/bootstrap.css" rel="stylesheet">
-    <title>My Personal website!</title>
+    <title>My website!</title>
     <style>
         h1 {
             font-size: 20px;
+        }
+
+        h3 {
+            color: #000;
+            font-size: 18px;
+            line-height: 1.1;
+        }
+
+        #demo {
+            position: absolute;
+            float: left;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
@@ -42,8 +56,41 @@
                 <li>
                     <a href="pspgame/index.html">My platformer game</a> (Not so cool but ok to play)
                 </li>
+                <br>
+                <li>
+                    <span><a href="snakegame/index.html">Snakegame using Computer vision</a> | <button type="button" data-toggle="modal" data-target="#demo">(How to play?)</button> (In testing stage, but
+                        very cool)</span>
+                </li>
             </ul>
         </h1>
+
+        <!-- Modal -->
+        <div id="demo" class="modal fade container" role="dialog">
+            <div class="modal-dialog modal-sm">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-align-center">SnakeGame Demo</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h3>1. Allow webcam permission</h3>
+                        <h3>2. Place yourself into the center of your webcam</h3>
+                        <h3> -- Now to control the snake --</h3>
+                        <h3>a. Make a pyramid above your head to go <strong>UP</strong></h3>
+                        <h3>b. Make a pyramid below your chin to go <strong>DOWN</strong></h3>
+                        <h3>c. Raise your left hand visible to the webcam to go <strong>LEFT</strong></h3>
+                        <h3>d. Raise your right hand visible to the webcam to go <strong>RIGHT</strong></h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
         <style>
             .center-block {
                 padding-left: 30%;
@@ -96,7 +143,7 @@
             // Do anything with the loaded agent
             agent.show();
             agent.speak('And you might also remember me, I existed in your old computer w my other friend clippy!');
-            agent.Play('Searching');
+            agent.play('Searching');
         });
     </script>
 </body>
