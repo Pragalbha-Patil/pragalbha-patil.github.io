@@ -1,33 +1,30 @@
----
-layout: null
----
 {
     "version": "https://jsonfeed.org/version/1",
-    "title": "{{ site.title | xml_escape }}",
-    "home_page_url": "{{ site.baseurl | absolute_url }}",
-    "feed_url": "{{ "/feed.json" | absolute_url }}",
-    "description": {{ site.description | jsonify }},
-    "icon": "{{ site.icon | absolute_url }}",
-    "favicon": "{{ "/favicon.ico" | absolute_url }}",
+    "title": "Code Overflow",
+    "home_page_url": "http://localhost:4000/blog/blog",
+    "feed_url": "http://localhost:4000/blog/feed.json",
+    "description": "A Blog about coding, hacking and stuff.",
+    "icon": "http://localhost:4000/blog/assets/images/icon-512.png",
+    "favicon": "http://localhost:4000/blog/favicon.ico",
     "expired": false,
     "items": [
-    {% for post in site.posts limit: 15 %}
-      {% unless post.draft %}
-        {% capture content_text %}{{ post.content | strip_html }}{% endcapture %}
-        {% capture content_html %}{{ post.content | markdownify }}{% endcapture %}
+    
+      
+        
+        
         {
-            "id": "{{ post.url | absolute_url | sha1 }}",
-            {% if post.title != "" %}"title": {{ post.title | jsonify }},{% endif %}
-            "content_text": {{ content_text | jsonify }},
-            "content_html": {{ content_html | jsonify }},
-            "url": "{{ post.url | absolute_url}}",
-            "date_published": "{{ post.date | date_to_xmlschema }}",
-            "date_modified": "{{ post.date | date_to_xmlschema }}",
+            "id": "http://localhost:4000/blog/tech/2020/12/08/welcome-to-my-blog.html",
+            "title": "Welcome to my Blog!",
+            "content_text": "Welcome\n\nHello world, this is my first blog post. I will be writing about Coding, Hacking and all the good Computer science stuff that gives me the adrenaline rush to make a project, hack something together or just gather knowledge. Hope we’ll have fun together.\n\nbreak;\n",
+            "content_html": "<h1 id=\"welcome\">Welcome</h1>\n\n<p><strong>Hello world</strong>, this is my first blog post. I will be writing about Coding, Hacking and all the good Computer science stuff that gives me the adrenaline rush to make a project, hack something together or just gather knowledge. Hope we’ll have fun together.</p>\n\n<p>break;</p>\n",
+            "url": "http://localhost:4000/blog/tech/2020/12/08/welcome-to-my-blog.html",
+            "date_published": "2020-12-08T00:00:00+05:30",
+            "date_modified": "2020-12-08T00:00:00+05:30",
             "author": {
-                "name": "{{ post.author }}"
+                "name": "Pragalbha Patil"
             }
-        }{% if forloop.last == false %},{% endif %}
-        {% endunless %}
-    {% endfor %}
+        }
+        
+    
     ]
 }

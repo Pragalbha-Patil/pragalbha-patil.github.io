@@ -1,38 +1,37 @@
----
-layout: null
----
-
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>{{ site.title | xml_escape }}</title>
-    <description>{{ site.description | xml_escape }}</description>
-    <link>{{ site.url }}{{ site.baseurl }}/</link>
-    <atom:link href="{{ "/feed/index.xml" | absolute_url }}" rel="self" type="application/rss+xml"/>
-    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
-    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
-    <generator>Jekyll v{{ jekyll.version }}</generator>
-    {% for post in site.posts limit: 15 %}
-      {% unless post.draft %}
+    <title>Code Overflow</title>
+    <description>A Blog about coding, hacking and stuff.</description>
+    <link>http://localhost:4000/blog/</link>
+    <atom:link href="http://localhost:4000/blog/feed/index.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 08 Dec 2020 21:59:37 +0530</pubDate>
+    <lastBuildDate>Tue, 08 Dec 2020 21:59:37 +0530</lastBuildDate>
+    <generator>Jekyll v4.1.1</generator>
+    
+      
         <item>
-          {% if post.title != "" %}
-            <title>{{ post.title | xml_escape }}</title>
-          {% endif %}
-          <author>{{ site.email }} ({{ site.title }})</author>
+          
+            <title>Welcome to my Blog!</title>
+          
+          <author>pragalbha77@gmail.com (Code Overflow)</author>
           <description>
-            {{ post.content | xml_escape }}
+            &lt;h1 id=&quot;welcome&quot;&gt;Welcome&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;Hello world&lt;/strong&gt;, this is my first blog post. I will be writing about Coding, Hacking and all the good Computer science stuff that gives me the adrenaline rush to make a project, hack something together or just gather knowledge. Hope we’ll have fun together.&lt;/p&gt;
+
+&lt;p&gt;break;&lt;/p&gt;
+
           </description>
-          <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
-          <link>{{ post.url | absolute_url }}</link>
-          <guid isPermaLink="true">{{ post.url | absolute_url }}</guid>
-          {% for tag in post.tags %}
-          <category>{{ tag | xml_escape }}</category>
-          {% endfor %}
-          {% for cat in post.categories %}
-          <category>{{ cat | xml_escape }}</category>
-          {% endfor %}
+          <pubDate>Tue, 08 Dec 2020 00:00:00 +0530</pubDate>
+          <link>http://localhost:4000/blog/tech/2020/12/08/welcome-to-my-blog.html</link>
+          <guid isPermaLink="true">http://localhost:4000/blog/tech/2020/12/08/welcome-to-my-blog.html</guid>
+          
+          
+          <category>Tech</category>
+          
         </item>
-      {% endunless %}
-    {% endfor %}
+      
+    
   </channel>
 </rss>
