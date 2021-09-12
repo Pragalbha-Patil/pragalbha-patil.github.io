@@ -1,9 +1,9 @@
 ---
 layout: post
-title: Test Blog
+title: Another Blog
 ---
 
-This is a test Blog
+This is a another test Blog
 
 ## Introduction
 
