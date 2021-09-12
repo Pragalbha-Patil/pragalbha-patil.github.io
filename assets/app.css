@@ -177,17 +177,7 @@ h3 {
   margin-top: 3em;
 }
 
-/****************/
-/*** speaking ***/
-/****************/
-
-iframe {
-  background-color: black;
-  display: inline-block;
-}
-
-iframe + ul {
-  display: inline-block;
-  margin: 0;
-  vertical-align: top;
+.title {
+  font-size: 14px;
+  text-decoration: underline;
 }
