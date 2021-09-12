@@ -57,10 +57,10 @@ h1, h2, h3, h4 {
 
 /*** nav ***/
 
-nav {
+/* nav {
   border-top: var(--primary) solid 6px;
   border-bottom: var(--border-color) solid 1px;
-}
+} */
 
 nav h1 {
   display: inline-block;
@@ -143,9 +143,7 @@ footer li + li {
   width: 1.5em;
 }
 
-/*************/
 /*** posts ***/
-/*************/
 
 .posts h2 {
   margin-bottom: 0.4em;
@@ -178,7 +176,7 @@ h3 {
 }
 
 .name {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: #000;
 }
