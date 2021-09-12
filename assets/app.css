@@ -1,0 +1,191 @@
+/**************/
+/*** global ***/
+/**************/
+
+:root {
+  --border-color: #ccc;
+  --font-color: rgba(0, 0, 0, 0.84);
+  --primary: #19688f;
+  --link: #347797;
+  --link-active: #5691ae;
+}
+
+html {
+  background-size: 100% auto;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  height: 100%;
+}
+
+body {
+  color: var(--font-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  line-height: 1.5em;
+  margin: 0;
+  padding: 0;
+}
+
+a,
+a:visited {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-active);
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4 {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.content {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+@media (max-width: 1400px) { .content { width: 50%; } }
+@media (max-width: 1200px) { .content { width: 60%; } }
+@media (max-width: 1000px) { .content { width: 70%; } }
+@media (max-width: 800px) { .content { width: 80%; } }
+@media (max-width: 600px) { .content { width: 90%; } }
+
+/***********/
+/*** nav ***/
+/***********/
+
+nav {
+  border-top: var(--primary) solid 6px;
+  border-bottom: var(--border-color) solid 1px;
+}
+
+nav h1 {
+  display: inline-block;
+  font-weight: 700;
+  margin: 0;
+  padding: 0.75em 0;
+}
+
+nav h1 a:hover {
+  text-decoration: none;
+}
+
+nav ul {
+  float: right;
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+}
+
+nav li a {
+  display: inline-block;
+  padding: 1em;
+}
+
+nav li:last-child a {
+  padding-right: 0;
+}
+
+/***************/
+/*** article ***/
+/***************/
+
+article {
+  flex: 1 0 auto;
+  padding: 1em 0 3em;
+}
+
+article h1 {
+  margin-bottom: 0.4em;
+}
+
+article img {
+  max-width: 100%;
+}
+
+/**************/
+/*** footer ***/
+/**************/
+
+footer {
+  border-top: var(--border-color) solid 1px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 1em 0;
+}
+
+footer ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+footer li + li {
+  margin-top: 0.5em;
+}
+
+.icon,
+.icon:hover {
+  text-decoration: none;
+}
+
+.icon path { background-color: white; }
+.icon-tw path { fill: #1c7cf6; }
+.icon-li path { fill: #194aa5; }
+
+.icon svg {
+  background-color: white;
+  border-radius: 1.5em;
+  height: 1.5em;
+  margin-right: 0.6em;
+  vertical-align: text-bottom;
+  width: 1.5em;
+}
+
+/*************/
+/*** posts ***/
+/*************/
+
+.posts h2 {
+  margin-bottom: 0.4em;
+}
+
+time {
+  color: #666;
+  display: block;
+  margin-bottom: 1.5em;
+}
+
+h2:not(:first-child) {
+  margin-top: 2em;
+}
+
+h3 {
+  margin-top: 1.5em;
+}
+
+.back {
+  display: block;
+  margin-top: 3em;
+}
+
+/****************/
+/*** speaking ***/
+/****************/
+
+iframe {
+  background-color: black;
+  display: inline-block;
+}
+
+iframe + ul {
+  display: inline-block;
+  margin: 0;
+  vertical-align: top;
+}

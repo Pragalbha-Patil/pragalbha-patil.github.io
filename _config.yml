@@ -1,0 +1,16 @@
+# Name of website
+title: Pragalbha Patil
+
+# Your name to show in the footer
+author: Pragalbha Patil
+
+
+exclude:
+  - .github
+  - .gitignore
+  - CNAME
+  - CODE_OF_CONDUCT.md
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
