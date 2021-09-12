@@ -5,9 +5,9 @@
 :root {
   --border-color: #ccc;
   --font-color: rgba(0, 0, 0, 0.84);
-  --primary: #19688f;
-  --link: #347797;
-  --link-active: #5691ae;
+  --primary: #55a1f8;
+  --link: #0000EE;
+  --link-active: #14acf8;
 }
 
 html {
@@ -113,7 +113,7 @@ footer {
   box-sizing: border-box;
   flex-shrink: 0;
   padding: 1em 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 footer ul {
