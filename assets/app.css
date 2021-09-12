@@ -7,7 +7,7 @@
   --font-color: rgba(0, 0, 0, 0.84);
   --primary: #55a1f8;
   --link: #0000EE;
-  --link-active: #14acf8;
+  --link-active: #0000EE;
 }
 
 html {
@@ -175,4 +175,10 @@ h3 {
   font-size: 20px;
   text-decoration: underline;
   font-weight: 700;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
 }
