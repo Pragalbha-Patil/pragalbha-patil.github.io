@@ -55,9 +55,7 @@ h1, h2, h3, h4 {
 @media (max-width: 800px) { .content { width: 80%; } }
 @media (max-width: 600px) { .content { width: 90%; } }
 
-/***********/
 /*** nav ***/
-/***********/
 
 nav {
   border-top: var(--primary) solid 6px;
@@ -93,9 +91,7 @@ nav li:last-child a {
   padding-right: 0;
 }
 
-/***************/
 /*** article ***/
-/***************/
 
 article {
   flex: 1 0 auto;
@@ -110,9 +106,7 @@ article img {
   max-width: 100%;
 }
 
-/**************/
 /*** footer ***/
-/**************/
 
 footer {
   border-top: var(--border-color) solid 1px;
@@ -160,7 +154,7 @@ footer li + li {
 time {
   color: #666;
   display: block;
-  font-size: 12px;
+  font-size: 10px;
   margin-bottom: 1.5em;
 }
 
@@ -178,6 +172,6 @@ h3 {
 }
 
 .title {
-  font-size: 14px;
+  font-size: 18px;
   text-decoration: underline;
 }
