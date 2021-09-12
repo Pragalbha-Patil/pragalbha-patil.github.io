@@ -119,6 +119,7 @@ footer {
   box-sizing: border-box;
   flex-shrink: 0;
   padding: 1em 0;
+  font-size: 12px;
 }
 
 footer ul {
@@ -159,6 +160,7 @@ footer li + li {
 time {
   color: #666;
   display: block;
+  font-size: 12px;
   margin-bottom: 1.5em;
 }
 
