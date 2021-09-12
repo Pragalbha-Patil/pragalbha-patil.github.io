@@ -39,7 +39,7 @@ a:hover {
 }
 
 h1, h2, h3, h4 {
-  color: var(--primary);
+  /* color: var(--primary); */
   font-weight: 500;
 }
 
@@ -174,5 +174,5 @@ h3 {
 .title {
   font-size: 20px;
   text-decoration: underline;
-  font-weight: 800;
+  font-weight: 700;
 }
