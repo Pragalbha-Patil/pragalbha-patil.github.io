@@ -46,7 +46,7 @@ h1, h2, h3, h4 {
 .content {
   margin-left: auto;
   margin-right: auto;
-  width: 60%;
+  width: 40%;
 }
 
 @media (max-width: 1400px) { .content { width: 50%; } }
