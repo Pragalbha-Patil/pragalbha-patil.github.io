@@ -7,6 +7,5 @@ title: Home
 {% for post in site.posts %}
 <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
 <time>{{ post.date | date: "%b %d, %Y" }}</time>
-{{ post.excerpt }}
 {% endfor %}
 </div>
