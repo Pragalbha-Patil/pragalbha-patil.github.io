@@ -15,7 +15,7 @@
     <div class="container w-95 p-5 border border-primary mt-5">
         <h1 class="text-center">Select a directory to view JEST coverage</h1>
         <hr />
-        <p class="text-center font-italic">Last updated: August 23rd, 2022</p>
+        <p class="text-center font-italic" id="days-back"></p>
         <ul class="fs-2">
             <li>
                 <a href="./ega/">EGA</a>
@@ -31,5 +31,13 @@
             </li>
         </ul>
     </div>
+    <script>
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const calculatedDate = new Date(2022, 7, 23);
+        const todaysDate = new Date();
+        const diffDays = Math.round(Math.abs((todaysDate - calculatedDate) / oneDay));
+        document.getElementById('days-back').innerHTML = `Last updated: ${calculatedDate.toLocaleString().split(',')[0]} (${diffDays} day(s) back)`;
+        console.log("%c ", "font-size: 1px; padding: 166.5px 250px; background-size: 500px 333px; background: no-repeat url(https://www.meme-arsenal.com/memes/2241202525c665212ab99e81626dc13d.jpg);");
+    </script>
 </body>
 </html>
