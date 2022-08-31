@@ -1,49 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1661259707168" clover="3.2.0">
-  <project timestamp="1661259707169" name="All files">
-    <metrics statements="102" coveredstatements="0" conditionals="62" coveredconditionals="0" methods="31" coveredmethods="0" elements="195" coveredelements="0" complexity="0" loc="102" ncloc="102" packages="3" files="8" classes="8"/>
+<coverage generated="1661951044379" clover="3.2.0">
+  <project timestamp="1661951044379" name="All files">
+    <metrics statements="97" coveredstatements="63" conditionals="60" coveredconditionals="20" methods="29" coveredmethods="14" elements="186" coveredelements="97" complexity="0" loc="97" ncloc="97" packages="6" files="11" classes="11"/>
     <package name="profile">
-      <metrics statements="21" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="6" coveredmethods="0"/>
+      <metrics statements="9" coveredstatements="9" conditionals="4" coveredconditionals="1" methods="3" coveredmethods="3"/>
       <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/index.jsx">
-        <metrics statements="20" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="6" coveredmethods="0"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="10" count="0" type="stmt"/>
-        <line num="12" count="0" type="stmt"/>
-        <line num="13" count="0" type="cond" truecount="0" falsecount="3"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="25" count="0" type="stmt"/>
-        <line num="37" count="0" type="cond" truecount="0" falsecount="1"/>
-        <line num="38" count="0" type="stmt"/>
-        <line num="40" count="0" type="stmt"/>
-        <line num="50" count="0" type="stmt"/>
-        <line num="55" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="56" count="0" type="stmt"/>
-        <line num="58" count="0" type="stmt"/>
-        <line num="64" count="0" type="stmt"/>
-        <line num="87" count="0" type="stmt"/>
-        <line num="97" count="0" type="cond" truecount="0" falsecount="1"/>
-        <line num="98" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="99" count="0" type="stmt"/>
+        <metrics statements="8" coveredstatements="8" conditionals="4" coveredconditionals="1" methods="3" coveredmethods="3"/>
+        <line num="9" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="12" count="6" type="stmt"/>
+        <line num="18" count="18" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="44" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="45" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="6" type="stmt"/>
       </file>
       <file name="styles.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/styles.jsx">
-        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <line num="4" count="0" type="stmt"/>
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="1" type="stmt"/>
       </file>
     </package>
     <package name="profile.Sidebar">
-      <metrics statements="68" coveredstatements="0" conditionals="41" coveredconditionals="0" methods="20" coveredmethods="0"/>
-      <file name="Notifications.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/Notifications.jsx">
-        <metrics statements="23" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="8" coveredmethods="0"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
+      <metrics statements="8" coveredstatements="7" conditionals="9" coveredconditionals="7" methods="3" coveredmethods="1"/>
+      <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/index.jsx">
+        <metrics statements="6" coveredstatements="5" conditionals="9" coveredconditionals="7" methods="3" coveredmethods="1"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="8" count="22" type="cond" truecount="1" falsecount="0"/>
+        <line num="9" count="22" type="stmt"/>
+        <line num="11" count="22" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+      </file>
+      <file name="styles.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/styles.jsx">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="profile.helper">
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="profileData.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/helper/profileData.jsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="profile.profile-item">
+      <metrics statements="29" coveredstatements="19" conditionals="11" coveredconditionals="4" methods="9" coveredmethods="5"/>
+      <file name="Notifications.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/profile-item/Notifications.jsx">
+        <metrics statements="23" coveredstatements="13" conditionals="8" coveredconditionals="1" methods="8" coveredmethods="4"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="7" type="stmt"/>
+        <line num="15" count="7" type="stmt"/>
+        <line num="16" count="7" type="stmt"/>
+        <line num="18" count="7" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="7" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
         <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="24" count="0" type="stmt"/>
@@ -52,34 +64,68 @@
         <line num="28" count="0" type="stmt"/>
         <line num="30" count="0" type="stmt"/>
         <line num="42" count="0" type="stmt"/>
-        <line num="45" count="0" type="stmt"/>
-        <line num="46" count="0" type="stmt"/>
-        <line num="47" count="0" type="stmt"/>
-        <line num="51" count="0" type="stmt"/>
+        <line num="45" count="7" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="51" count="7" type="stmt"/>
         <line num="56" count="0" type="stmt"/>
         <line num="61" count="0" type="stmt"/>
-        <line num="75" count="0" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
       </file>
-      <file name="ProfilePassword.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/ProfilePassword.jsx">
-        <metrics statements="36" coveredstatements="0" conditionals="24" coveredconditionals="0" methods="9" coveredmethods="0"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
+      <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/profile-item/index.jsx">
+        <metrics statements="6" coveredstatements="6" conditionals="3" coveredconditionals="3" methods="1" coveredmethods="1"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="15" type="cond" truecount="3" falsecount="0"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="13" count="9" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="profile.profile-item.EditProfile">
+      <metrics statements="13" coveredstatements="8" conditionals="12" coveredconditionals="3" methods="5" coveredmethods="2"/>
+      <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/profile-item/EditProfile/index.jsx">
+        <metrics statements="12" coveredstatements="7" conditionals="12" coveredconditionals="3" methods="5" coveredmethods="2"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="18" count="9" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="22" count="0" type="stmt"/>
-        <line num="24" count="0" type="cond" truecount="0" falsecount="1"/>
-        <line num="25" count="0" type="stmt"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="40" count="9" type="stmt"/>
+        <line num="48" count="1827" type="stmt"/>
+        <line num="55" count="9" type="stmt"/>
+        <line num="101" count="2" type="stmt"/>
+      </file>
+      <file name="styles.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/profile-item/EditProfile/styles.jsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="3" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="profile.profile-item.ProfilePassword">
+      <metrics statements="37" coveredstatements="19" conditionals="24" coveredconditionals="5" methods="9" coveredmethods="3"/>
+      <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/profile-item/ProfilePassword/index.jsx">
+        <metrics statements="36" coveredstatements="18" conditionals="24" coveredconditionals="5" methods="9" coveredmethods="3"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="21" count="3" type="stmt"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="24" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="28" count="3" type="stmt"/>
         <line num="29" count="0" type="stmt"/>
         <line num="30" count="0" type="stmt"/>
         <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="32" count="0" type="stmt"/>
         <line num="39" count="0" type="stmt"/>
-        <line num="44" count="0" type="stmt"/>
-        <line num="45" count="0" type="stmt"/>
-        <line num="46" count="0" type="stmt"/>
-        <line num="47" count="0" type="stmt"/>
+        <line num="44" count="3" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
         <line num="50" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="51" count="0" type="stmt"/>
         <line num="52" count="0" type="stmt"/>
@@ -89,52 +135,19 @@
         <line num="59" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="60" count="0" type="stmt"/>
         <line num="63" count="0" type="stmt"/>
-        <line num="66" count="0" type="stmt"/>
-        <line num="73" count="0" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="73" count="3" type="stmt"/>
         <line num="74" count="0" type="stmt"/>
         <line num="75" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="76" count="0" type="stmt"/>
         <line num="80" count="0" type="stmt"/>
-        <line num="84" count="0" type="stmt"/>
-        <line num="158" count="0" type="stmt"/>
-        <line num="167" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="84" count="3" type="stmt"/>
+        <line num="158" count="2" type="stmt"/>
+        <line num="167" count="3" type="cond" truecount="0" falsecount="1"/>
       </file>
-      <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/index.jsx">
-        <metrics statements="6" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="3" coveredmethods="0"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="8" count="0" type="cond" truecount="0" falsecount="1"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
-      </file>
-      <file name="styles.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/styles.jsx">
-        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="33" count="0" type="stmt"/>
-        <line num="59" count="0" type="stmt"/>
-      </file>
-    </package>
-    <package name="profile.Sidebar.EditProfile">
-      <metrics statements="13" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="5" coveredmethods="0"/>
-      <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/EditProfile/index.jsx">
-        <metrics statements="12" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="5" coveredmethods="0"/>
-        <line num="12" count="0" type="stmt"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="36" count="0" type="stmt"/>
-        <line num="40" count="0" type="stmt"/>
-        <line num="48" count="0" type="stmt"/>
-        <line num="55" count="0" type="stmt"/>
-        <line num="101" count="0" type="stmt"/>
-      </file>
-      <file name="styles.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/Sidebar/EditProfile/styles.jsx">
-        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <line num="3" count="0" type="stmt"/>
+      <file name="styles.jsx" path="/home/psp/gocomet/engagement-app/components/client/profile/profile-item/ProfilePassword/styles.jsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="2" type="stmt"/>
       </file>
     </package>
   </project>

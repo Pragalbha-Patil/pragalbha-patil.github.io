@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1661259391122" clover="3.2.0">
-  <project timestamp="1661259391123" name="All files">
+<coverage generated="1661950189355" clover="3.2.0">
+  <project timestamp="1661950189355" name="All files">
     <metrics statements="475" coveredstatements="171" conditionals="392" coveredconditionals="59" methods="153" coveredmethods="23" elements="1020" coveredelements="253" complexity="0" loc="475" ncloc="475" packages="9" files="24" classes="24"/>
     <package name="sailing-schedule">
       <metrics statements="131" coveredstatements="16" conditionals="84" coveredconditionals="0" methods="32" coveredmethods="0"/>
