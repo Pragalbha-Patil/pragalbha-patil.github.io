@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1661260118448" clover="3.2.0">
-  <project timestamp="1661260118448" name="All files">
-    <metrics statements="1674" coveredstatements="144" conditionals="1811" coveredconditionals="76" methods="402" coveredmethods="16" elements="3887" coveredelements="236" complexity="0" loc="1674" ncloc="1674" packages="19" files="54" classes="54"/>
+<coverage generated="1661951150281" clover="3.2.0">
+  <project timestamp="1661951150281" name="All files">
+    <metrics statements="1674" coveredstatements="144" conditionals="1811" coveredconditionals="77" methods="402" coveredmethods="16" elements="3887" coveredelements="237" complexity="0" loc="1674" ncloc="1674" packages="19" files="54" classes="54"/>
     <package name="details">
       <metrics statements="175" coveredstatements="0" conditionals="173" coveredconditionals="0" methods="45" coveredmethods="0"/>
       <file name="Icons.jsx" path="/home/psp/gocomet/engagement-app/components/client/tracking/details/Icons.jsx">
@@ -460,28 +460,28 @@
       </file>
     </package>
     <package name="details.MobileVerification">
-      <metrics statements="60" coveredstatements="35" conditionals="38" coveredconditionals="14" methods="10" coveredmethods="5"/>
+      <metrics statements="60" coveredstatements="35" conditionals="38" coveredconditionals="15" methods="10" coveredmethods="5"/>
       <file name="index.jsx" path="/home/psp/gocomet/engagement-app/components/client/tracking/details/MobileVerification/index.jsx">
-        <metrics statements="59" coveredstatements="34" conditionals="38" coveredconditionals="14" methods="10" coveredmethods="5"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="14" count="1" type="stmt"/>
-        <line num="15" count="1" type="stmt"/>
-        <line num="17" count="1" type="stmt"/>
-        <line num="19" count="1" type="stmt"/>
-        <line num="20" count="5" type="cond" truecount="1" falsecount="1"/>
-        <line num="21" count="5" type="stmt"/>
-        <line num="22" count="5" type="stmt"/>
-        <line num="23" count="5" type="stmt"/>
-        <line num="24" count="5" type="stmt"/>
-        <line num="25" count="5" type="stmt"/>
-        <line num="27" count="5" type="stmt"/>
+        <metrics statements="59" coveredstatements="34" conditionals="38" coveredconditionals="15" methods="10" coveredmethods="5"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="20" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="12" type="stmt"/>
+        <line num="22" count="12" type="stmt"/>
+        <line num="23" count="12" type="stmt"/>
+        <line num="24" count="12" type="stmt"/>
+        <line num="25" count="12" type="stmt"/>
+        <line num="27" count="12" type="stmt"/>
         <line num="28" count="0" type="stmt"/>
-        <line num="31" count="5" type="stmt"/>
+        <line num="31" count="12" type="stmt"/>
         <line num="32" count="1" type="cond" truecount="2" falsecount="2"/>
         <line num="33" count="1" type="stmt"/>
         <line num="34" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="35" count="1" type="stmt"/>
-        <line num="38" count="5" type="stmt"/>
+        <line num="38" count="12" type="stmt"/>
         <line num="39" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="40" count="0" type="stmt"/>
         <line num="41" count="0" type="stmt"/>
@@ -495,10 +495,10 @@
         <line num="64" count="0" type="stmt"/>
         <line num="66" count="0" type="stmt"/>
         <line num="71" count="0" type="stmt"/>
-        <line num="74" count="5" type="stmt"/>
+        <line num="74" count="12" type="stmt"/>
         <line num="75" count="0" type="stmt"/>
         <line num="76" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="79" count="5" type="stmt"/>
+        <line num="79" count="12" type="stmt"/>
         <line num="80" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="81" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="83" count="0" type="stmt"/>
@@ -512,20 +512,20 @@
         <line num="103" count="0" type="stmt"/>
         <line num="104" count="0" type="stmt"/>
         <line num="109" count="0" type="stmt"/>
-        <line num="113" count="5" type="cond" truecount="1" falsecount="1"/>
-        <line num="124" count="5" type="stmt"/>
-        <line num="135" count="1015" type="stmt"/>
-        <line num="153" count="5" type="stmt"/>
+        <line num="113" count="12" type="cond" truecount="1" falsecount="1"/>
+        <line num="124" count="12" type="stmt"/>
+        <line num="135" count="2436" type="stmt"/>
+        <line num="153" count="12" type="stmt"/>
         <line num="164" count="0" type="stmt"/>
-        <line num="170" count="5" type="stmt"/>
-        <line num="192" count="1" type="stmt"/>
-        <line num="204" count="1" type="stmt"/>
-        <line num="205" count="3" type="stmt"/>
-        <line num="206" count="3" type="stmt"/>
+        <line num="170" count="12" type="stmt"/>
+        <line num="192" count="3" type="stmt"/>
+        <line num="204" count="3" type="stmt"/>
+        <line num="205" count="6" type="stmt"/>
+        <line num="206" count="6" type="stmt"/>
       </file>
       <file name="styles.jsx" path="/home/psp/gocomet/engagement-app/components/client/tracking/details/MobileVerification/styles.jsx">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <line num="5" count="1" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
       </file>
     </package>
     <package name="details.Summary">

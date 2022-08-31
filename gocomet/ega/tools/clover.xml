@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1661260025869" clover="3.2.0">
-  <project timestamp="1661260025869" name="All files">
-    <metrics statements="225" coveredstatements="109" conditionals="142" coveredconditionals="45" methods="94" coveredmethods="23" elements="461" coveredelements="177" complexity="0" loc="225" ncloc="225" packages="8" files="21" classes="21"/>
+<coverage generated="1661951307299" clover="3.2.0">
+  <project timestamp="1661951307299" name="All files">
+    <metrics statements="226" coveredstatements="110" conditionals="142" coveredconditionals="45" methods="94" coveredmethods="23" elements="462" coveredelements="178" complexity="0" loc="226" ncloc="226" packages="8" files="21" classes="21"/>
     <package name="tools">
       <metrics statements="33" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="11" coveredmethods="0"/>
       <file name="Content.jsx" path="/home/psp/gocomet/engagement-app/components/client/tools/Content.jsx">
@@ -264,17 +264,18 @@
       </file>
     </package>
     <package name="tools.payments.helpers">
-      <metrics statements="18" coveredstatements="15" conditionals="11" coveredconditionals="4" methods="4" coveredmethods="2"/>
+      <metrics statements="19" coveredstatements="16" conditionals="11" coveredconditionals="4" methods="4" coveredmethods="2"/>
       <file name="FeatureData.jsx" path="/home/psp/gocomet/engagement-app/components/client/tools/payments/helpers/FeatureData.jsx">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="4" count="2" type="stmt"/>
       </file>
       <file name="PaymentStatusModal.jsx" path="/home/psp/gocomet/engagement-app/components/client/tools/payments/helpers/PaymentStatusModal.jsx">
-        <metrics statements="4" coveredstatements="4" conditionals="6" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <metrics statements="5" coveredstatements="5" conditionals="6" coveredconditionals="4" methods="1" coveredmethods="1"/>
         <line num="5" count="1" type="stmt"/>
         <line num="6" count="7" type="cond" truecount="2" falsecount="0"/>
         <line num="7" count="7" type="stmt"/>
-        <line num="44" count="1" type="stmt"/>
+        <line num="8" count="7" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
       </file>
       <file name="QuantitySlider.jsx" path="/home/psp/gocomet/engagement-app/components/client/tools/payments/helpers/QuantitySlider.jsx">
         <metrics statements="7" coveredstatements="5" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="1"/>
