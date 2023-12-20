@@ -5,13 +5,15 @@
 body, html{
   height: 100%;
   background-color: white;
-  font-family: "Lucida Console", Monaco, monospace;
+  font-family: "Roboto", monospace;
 }
 header {
   height: 10%;
   color: #333;
 }
 header h1 {
+  padding-top: 1%;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-style: italic;
   text-align: center;
   
