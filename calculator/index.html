@@ -58,12 +58,17 @@
 
         <div class="loading-spinner"></div>
 
-        <input type="text" id="firstNumber" placeholder="Enter first number">
-        <span> + </span>
-        <input type="text" id="secondNumber" placeholder="Enter second number">
+        <input type="number" id="firstNumber" placeholder="Enter first number">
+        <span> <select id="opSelect" name="opSelect">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="x">x</option>
+                <option value="/">/</option>
+            </select> </span>
+        <input type="number" id="secondNumber" placeholder="Enter second number">
         <button onclick="calculate()">Calculate</button>
 
-        <div class="container-fluid mt-4">
+        <div class="container-fluid mt-2">
             <canvas class="slow-image img-fluid" width="auto" height="auto"></canvas>
         </div>
     </div>
@@ -72,19 +77,29 @@
         function calculate() {
             var firstNumber = document.getElementById("firstNumber").value;
             var secondNumber = document.getElementById("secondNumber").value;
+            var operation = document.getElementById("opSelect").value;
+
             var animationDuration = 2000;
             document.querySelector('.loading-spinner').style.display = 'inline-block';
 
             setTimeout(function () {
                 document.querySelector('.loading-spinner').style.display = 'none';
                 document.querySelector('.slow-image').style.display = 'block';
-                loadSlowImage();
+                loadSlowImage(operation, firstNumber, secondNumber);
             }, animationDuration);
         }
 
-        function loadSlowImage() {
+        function loadSlowImage(operation, firstNumber, secondNumber) {
             var img = new Image();
-            img.src = "https://www.meme-arsenal.com/memes/8b955bf4c55ba0ae6f324087fd02777b.jpg";
+            var imgs = {
+                multipleDivide: 'https://www.meme-arsenal.com/memes/3a0ffcd696be00c54ee802e535c60b99.jpg',
+                default: 'https://www.meme-arsenal.com/memes/8b955bf4c55ba0ae6f324087fd02777b.jpg'
+            }
+            
+            console.log(operation, firstNumber, secondNumber);
+            if ((operation == "x" || operation == "/") && (firstNumber == 0 || secondNumber == 0)) img.src = imgs.multipleDivide
+            else img.src = imgs.default
+            
             img.onload = function () {
                 var canvas = document.querySelector('.slow-image');
                 var ctx = canvas.getContext('2d');
