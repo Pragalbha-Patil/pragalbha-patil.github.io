@@ -21,9 +21,15 @@ async function subscribeToUpdates() {
     console.log('establising websocket connection');
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
         console.log('websocket response:');
-        console.log(response.payload);
+        console.log(response);
+        const eventsArr = response.events[0].split('.');
+        const actionPerformed = eventsArr[eventsArr.length - 1];
         response = Object(response);
-        checkboxStates[response.payload.id] = response.payload.state;
+        if (actionPerformed === 'delete') {
+            checkboxStates[response.payload.id] = false;    
+        } else {
+            checkboxStates[response.payload.id] = response.payload.state;
+        }
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
         updateUI();
