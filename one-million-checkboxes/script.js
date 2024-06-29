@@ -23,6 +23,8 @@ async function subscribeToUpdates() {
         console.log('websocket response:');
         response = Object(response);
         checkboxStates[response.payload.id] = response.payload.state;
+        checkedCount = Object.values(checkboxStates).filter((value) => value).length;
+        updateCountDisplay();
         updateUI();
     });
 }
