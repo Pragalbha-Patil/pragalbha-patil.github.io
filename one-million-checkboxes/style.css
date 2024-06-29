@@ -44,13 +44,3 @@ input[type=checkbox]
     font-style: normal;
     border-bottom: 1px solid gray;
 }
-.fixed-top {
-    width: 100%;
-    background-color: #ebeaea;
-    /* height: 10px; */
-}
-.scrollable-content {
-    margin-top: 11%; /* Adjust this value based on the height of the fixed-top div */
-    height: calc(100% - 60px); /* Adjust this value based on the height of the fixed-top div */
-    overflow-y: scroll;
-}
