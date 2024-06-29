@@ -21,6 +21,7 @@ async function subscribeToUpdates() {
     console.log('establising websocket connection');
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
         console.log('websocket response:');
+        console.log(response.payload);
         response = Object(response);
         checkboxStates[response.payload.id] = response.payload.state;
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
@@ -28,6 +29,7 @@ async function subscribeToUpdates() {
         updateUI();
     });
 }
+
 // Function to fetch initial state from Appwrite
 async function fetchStateFromAppwrite() {
     let response = null;
