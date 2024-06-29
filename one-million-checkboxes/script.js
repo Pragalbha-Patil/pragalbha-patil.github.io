@@ -14,17 +14,18 @@ let renderedCount = 0;
 let ticking = false;
 let checkboxStates = {}; // Object to store checkbox states
 let checkedCount = 0; // Variable to store the count of checked checkboxes
+let lastId = 0; // Variable to store the last used ID
 const databaseId = '667d0f99001b691d76cc';
 const collectionId = '667d0fa8000f64e4decc';
 
 async function subscribeToUpdates() {
-    console.log('establising websocket connection');
+    console.log('establishing websocket connection');
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
         const eventsArr = response.events[0].split('.');
         const actionPerformed = eventsArr[eventsArr.length - 1];
         response = Object(response);
         if (actionPerformed === 'delete') {
-            checkboxStates[response.payload.id] = false;    
+            delete checkboxStates[response.payload.id];
         } else {
             checkboxStates[response.payload.id] = response.payload.state;
         }
@@ -43,7 +44,7 @@ async function fetchStateFromAppwrite() {
             const id = Number(doc.id);
             checkboxStates[id] = doc.state;
         });
-        checkedCount = response.documents.length;
+        checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
 
         // After fetching, update UI
@@ -92,7 +93,7 @@ async function updateStateInAppwrite(id, state) {
                     Query.equal('$id', documentId)
                 ],
             );
-            const payload = {id: id, state: state};
+            const payload = { id: id, state: state };
             if (existingDoc.total > 0) {
                 result = await databases.updateDocument(databaseId, collectionId, documentId, payload);
             } else {
@@ -113,30 +114,29 @@ function updateCountDisplay() {
 
 // Function to render checkboxes
 function renderCheckboxes(start, end) {
-    // console.log(`Rendering checkboxes from ${start} to ${end}`);
     const fragment = document.createDocumentFragment();
+    console.log(`start: ${start}, end: ${end}`);
     for (let i = start; i <= end && i <= numCheckboxes; i++) {
-        if (!checkboxStates[i]) checkboxStates[i] = false; // Initialize state if not fetched
-        fragment.appendChild(createCheckbox(i));
+        lastId++; // Increment the last used ID
+        fragment.appendChild(createCheckbox(lastId));
     }
     container.appendChild(fragment);
 }
 
 // Function to load more checkboxes as user scrolls
-function loadMoreCheckboxes(start, endN) {
+function loadMoreCheckboxes() {
     if (!ticking) {
         ticking = true;
         setTimeout(() => {
             const scrollPosition = window.scrollY + window.innerHeight;
             const containerHeight = container.clientHeight;
-            console.log(`Scroll position: ${scrollPosition}, Container height: ${containerHeight}`);
 
             if (scrollPosition >= containerHeight - 500) { // Adjusted the threshold
                 console.log('Rendering additional checkboxes');
                 const start = renderedCount + 1;
-                const end = Number(endN) > 0 ? endN : renderedCount + batchSize;
+                const end = renderedCount + batchSize;
                 renderCheckboxes(start, end);
-                renderedCount += Number(endN) > 0 ? endN : batchSize;
+                renderedCount += batchSize;
             }
 
             // Only remove checkboxes when scrolling up
@@ -147,10 +147,13 @@ function loadMoreCheckboxes(start, endN) {
                 if (checkboxesToRemove > 0) {
                     console.log(`Removing ${checkboxesToRemove} checkboxes`);
                     for (let i = checkboxes.length - 1; i >= checkboxes.length - checkboxesToRemove; i--) {
+                        const id = Number(checkboxes[i].dataset.id);
+                        delete checkboxStates[id]; // Remove from state
                         container.removeChild(checkboxes[i]);
                     }
                     // Update renderedCount to reflect removed checkboxes
                     renderedCount -= checkboxesToRemove;
+                    lastId = container.querySelectorAll('.checkbox-item').length;
                 }
             }
 
@@ -185,6 +188,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Function to update UI after state changes
 function updateUI() {
-    container.innerHTML = null;
     renderCheckboxes(1, 2000);
 }
