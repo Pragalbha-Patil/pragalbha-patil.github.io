@@ -1,3 +1,6 @@
+html, body {
+    background-color: #ebeaea;
+}
 /* Custom CSS for wrapping checkboxes */
 #checkbox-container {
     display: flex;
@@ -39,4 +42,14 @@ input[type=checkbox]
     font-family: "Roboto", sans-serif;
     font-weight: 100;
     font-style: normal;
+    border-bottom: 1px solid gray;
+}
+.fixed-top {
+    width: 100%;
+    background-color: #ebeaea;
+}
+.scrollable-content {
+    margin-top: 10em; /* Adjust this value based on the height of the fixed-top div */
+    height: calc(100% - 60px); /* Adjust this value based on the height of the fixed-top div */
+    overflow-y: scroll;
 }
