@@ -1,0 +1,42 @@
+/* Custom CSS for wrapping checkboxes */
+#checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+/* CSS for smooth scrolling animation */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.checkbox-item {
+    flex: 0 0 auto;
+    margin: 12px !important;
+    /* animation: fadeIn 0.5s ease-out; */
+}
+/* Smooth scrolling for the entire page */
+html {
+    scroll-behavior: smooth;
+}
+.form-check-input {
+    font: optional;
+}
+input[type=checkbox]
+{
+    /* Double-sized Checkboxes */
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
+    -o-transform: scale(2); /* Opera */
+    padding: 5px;
+    /* margin: 1px; */
+}
+#banner {
+    font-family: "Roboto", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+}
+#checkbox-count {
+    font-family: "Roboto", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+}
