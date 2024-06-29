@@ -20,8 +20,6 @@ const collectionId = '667d0fa8000f64e4decc';
 async function subscribeToUpdates() {
     console.log('establising websocket connection');
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
-        console.log('websocket response:');
-        console.log(response);
         const eventsArr = response.events[0].split('.');
         const actionPerformed = eventsArr[eventsArr.length - 1];
         response = Object(response);
@@ -72,7 +70,6 @@ function createCheckbox(id) {
     checkbox.addEventListener('change', async () => {
         checkboxStates[id] = checkbox.checked;
         await updateStateInAppwrite(id, checkbox.checked); // Update Appwrite
-        // console.log(checkboxStates);
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
     });
