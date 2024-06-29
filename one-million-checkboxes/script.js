@@ -22,7 +22,6 @@ async function subscribeToUpdates() {
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
         console.log('websocket response:');
         response = Object(response);
-        debugger;
         checkboxStates[response.payload.id] = response.payload.state;
         updateUI();
     });
@@ -76,7 +75,6 @@ function createCheckbox(id) {
 // Function to update state in Appwrite
 async function updateStateInAppwrite(id, state) {
     const documentId = `id-${id}`;
-    // console.log(`id: ${id} - state: ${state}`);
     try {
         let result = null;
         if (state) {
@@ -90,12 +88,8 @@ async function updateStateInAppwrite(id, state) {
             const payload = {id: id, state: state};
             if (existingDoc.total > 0) {
                 result = await databases.updateDocument(databaseId, collectionId, documentId, payload);
-                console.log(`${documentId} state updated:`);
-                // console.log(result);
             } else {
                 result = await databases.createDocument(databaseId, collectionId, documentId, payload);
-                console.log(`${documentId} state created:`);
-                // console.log(result);
             }   
         } else {
             result = await databases.deleteDocument(databaseId, collectionId, documentId);
@@ -180,17 +174,10 @@ document.addEventListener('DOMContentLoaded', function () {
     fetchStateFromAppwrite(); // Fetch initial state from Appwrite
     updateCountDisplay(); // Update count display on page load
     subscribeToUpdates(); // subscribe to websocket
-
-    // Polling logic to update state periodically
-    // setInterval(async () => {
-    //     await fetchStateFromAppwrite(); // Fetch updated state from Appwrite
-    //     updateUI(); // Update UI after polling
-    // }, 5000); // Poll every 5 seconds (adjust as needed)
 });
 
 // Function to update UI after state changes
 function updateUI() {
     container.innerHTML = null;
-    // Render checkboxes with updated state
     renderCheckboxes(1, 2000);
 }
