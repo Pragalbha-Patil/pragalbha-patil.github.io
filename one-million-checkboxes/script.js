@@ -1,7 +1,7 @@
 // Initialize Appwrite client and databases
 const { Client, Databases, Query } = Appwrite;
 const client = new Client();
-client.setEndpoint('https://cloud.appwrite.io/v1').setProject(process.env.APPWRITE_API_KEY);
+client.setEndpoint('https://cloud.appwrite.io/v1').setProject('667d0f2d001c4fce8b90');
 const databases = new Databases(client);
 
 // Number of checkboxes to create
@@ -14,8 +14,8 @@ let renderedCount = 0;
 let ticking = false;
 let checkboxStates = {}; // Object to store checkbox states
 let checkedCount = 0; // Variable to store the count of checked checkboxes
-const databaseId = process.env.APPWRITE_DB_ID;
-const collectionId = process.env.APPWRITE_COLLECTION_ID;
+const databaseId = '667d0f99001b691d76cc';
+const collectionId = '667d0fa8000f64e4decc';
 
 async function subscribeToUpdates() {
     console.log('establising websocket connection');
