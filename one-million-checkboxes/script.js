@@ -29,6 +29,7 @@ async function subscribeToUpdates() {
             checkboxStates[response.payload.id] = false;
         } else {
             checkboxStates[response.payload.id] = response.payload.state;
+            console.log(`state: ${checkboxStates[response.payload.id]}`);
         }
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
