@@ -25,6 +25,7 @@ async function subscribeToUpdates() {
         const actionPerformed = eventsArr[eventsArr.length - 1];
         console.log(`[Websocket] State updated: ${actionPerformed}`);
         response = Object(response);
+        const state = actionPerformed === 'delete' ? false : response.payload.state;
         if (actionPerformed === 'delete') {
             checkboxStates[response.payload.id] = false;
         } else {
@@ -33,7 +34,7 @@ async function subscribeToUpdates() {
         }
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
-        updateUI();
+        updateUI(response.payload.id, state);
     });
 }
 
@@ -113,14 +114,22 @@ function updateCountDisplay() {
 }
 
 // Function to render checkboxes
-function renderCheckboxes(start, end) {
+function renderCheckboxes(start, end, updateRender, id, state) {
+    id = id || 0;
+    state = state || false;
+    updateRender = updateRender || false;
     const fragment = document.createDocumentFragment();
-    // console.log(`start: ${start}, end: ${end}`);
-    for (let i = start; i <= end && i <= numCheckboxes; i++) {
-        lastId++; // Increment the last used ID
-        fragment.appendChild(createCheckbox(lastId));
+    if(updateRender) {
+        const element = document.getElementById(`checkbox-${id}`);
+        if(element) element.checked = state;
+    } else {
+        // console.log(`start: ${start}, end: ${end}`);
+        for (let i = start; i <= end && i <= numCheckboxes; i++) {
+            lastId++; // Increment the last used ID
+            fragment.appendChild(createCheckbox(lastId));
+        }
+        container.appendChild(fragment);
     }
-    container.appendChild(fragment);
 }
 
 // Function to load more checkboxes as user scrolls
@@ -135,7 +144,7 @@ function loadMoreCheckboxes() {
                 console.log('Rendering additional checkboxes');
                 const start = renderedCount + 1;
                 const end = renderedCount + batchSize;
-                renderCheckboxes(start, end);
+                renderCheckboxes(start, end, false);
                 renderedCount += batchSize;
             }
 
@@ -185,6 +194,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Function to update UI after state changes
-function updateUI() {
-    renderCheckboxes(1, 2000);
+function updateUI(id, state) {
+    renderCheckboxes(1, 2000, true, id, state);
 }
