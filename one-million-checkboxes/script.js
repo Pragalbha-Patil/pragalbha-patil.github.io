@@ -244,5 +244,3 @@ function toggleRandomCheckbox() {
 }
 
 setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(1, 3), getRandomInt(3, 5)) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(3, 5), getRandomInt(5, 10)) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(20, 40) * 1000));
