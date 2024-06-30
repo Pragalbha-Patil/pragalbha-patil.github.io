@@ -25,7 +25,6 @@ async function subscribeToUpdates() {
         const actionPerformed = eventsArr[eventsArr.length - 1];
         console.log(`[Websocket] State updated: ${actionPerformed}`);
         response = Object(response);
-        const state = actionPerformed === 'delete' ? false : response.payload.state;
         if (actionPerformed === 'delete') {
             checkboxStates[response.payload.id] = false;
         } else {
@@ -34,7 +33,7 @@ async function subscribeToUpdates() {
         }
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
-        updateUI(true, response.payload.id, state);
+        updateUI(true, response.payload.id, checkboxStates[response.payload.id]);
     });
 }
 
