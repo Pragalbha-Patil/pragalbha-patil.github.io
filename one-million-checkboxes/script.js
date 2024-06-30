@@ -197,3 +197,23 @@ function updateUI(updateRender, id, state) {
     updateRender = updateRender || false;
     renderCheckboxes(1, 2000, updateRender, id, state);
 }
+
+// little bot activity to get essence of the site
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function toggleRandomCheckbox() {
+    // Generate a random checkbox ID between 1 and 100
+    const randomId = `checkbox-${getRandomInt(1, 60)}`;
+
+    // Get the checkbox element by ID
+    const checkbox = document.getElementById(randomId);
+
+    // If the checkbox is found, toggle its checked state
+    if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+    }
+}
+
+setInterval(toggleRandomCheckbox, 2000);
