@@ -70,6 +70,7 @@ async function fetchStateFromAppwrite() {
 
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
+        document.getElementById('loading').setAttribute("hidden", true);
         updateUI();
         console.log(`Documents processed: ${docsProcessed}`);
     } catch (error) {
