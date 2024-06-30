@@ -203,9 +203,9 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function toggleRandomCheckbox() {
+function toggleRandomCheckbox(low, high) {
     // Generate a random checkbox ID between 1 and 100
-    const randomId = `checkbox-${getRandomInt(getRandomInt(getRandomInt(1, 10), getRandomInt(10, 20)), getRandomInt(getRandomInt(50, 60), getRandomInt(90, 100)))}`;
+    const randomId = `checkbox-${getRandomInt(low, high)}`;
 
     // Get the checkbox element by ID
     const checkbox = document.getElementById(randomId);
@@ -216,8 +216,16 @@ function toggleRandomCheckbox() {
     }
 }
 
-setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(1, 3), getRandomInt(3, 5)) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(3, 5), getRandomInt(5, 10)) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(10, 15), getRandomInt(15, 20)) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(1, 10), getRandomInt(10, 20)) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(20, 40) * 1000));
+setInterval(toggleRandomCheckbox(1, 20), (getRandomInt(getRandomInt(1, 3), getRandomInt(3, 5)) * 1000));
+setInterval(toggleRandomCheckbox(1, 20), (getRandomInt(getRandomInt(1, 3), getRandomInt(3, 5)) * 1000));
+setInterval(toggleRandomCheckbox(15, 40), (getRandomInt(getRandomInt(3, 5), getRandomInt(5, 10)) * 1000));
+setInterval(toggleRandomCheckbox(15, 40), (getRandomInt(getRandomInt(3, 5), getRandomInt(5, 10)) * 1000));
+setInterval(toggleRandomCheckbox(30, 50), (getRandomInt(getRandomInt(10, 15), getRandomInt(15, 20)) * 1000));
+setInterval(toggleRandomCheckbox(30, 50), (getRandomInt(getRandomInt(10, 15), getRandomInt(15, 20)) * 1000));
+setInterval(toggleRandomCheckbox(40, 60), (getRandomInt(getRandomInt(1, 10), getRandomInt(10, 20)) * 1000));
+setInterval(toggleRandomCheckbox(40, 60), (getRandomInt(getRandomInt(1, 10), getRandomInt(10, 20)) * 1000));
+setInterval(toggleRandomCheckbox(50, 100), (getRandomInt(30, 50) * 1000));
+setInterval(toggleRandomCheckbox(50, 100), (getRandomInt(30, 50) * 1000));
+setInterval(toggleRandomCheckbox(100, 200), (getRandomInt(30, 50) * 1000));
+setInterval(toggleRandomCheckbox(100, 200), (getRandomInt(30, 50) * 1000));
+setInterval(toggleRandomCheckbox(100, 200), (getRandomInt(30, 50) * 1000));
