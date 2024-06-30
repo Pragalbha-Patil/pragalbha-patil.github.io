@@ -23,6 +23,7 @@ async function subscribeToUpdates() {
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
         const eventsArr = response.events[0].split('.');
         const actionPerformed = eventsArr[eventsArr.length - 1];
+        console.log(`[Websocket] State updated: ${actionPerformed}`);
         response = Object(response);
         if (actionPerformed === 'delete') {
             checkboxStates[response.payload.id] = false;
@@ -113,7 +114,7 @@ function updateCountDisplay() {
 // Function to render checkboxes
 function renderCheckboxes(start, end) {
     const fragment = document.createDocumentFragment();
-    console.log(`start: ${start}, end: ${end}`);
+    // console.log(`start: ${start}, end: ${end}`);
     for (let i = start; i <= end && i <= numCheckboxes; i++) {
         lastId++; // Increment the last used ID
         fragment.appendChild(createCheckbox(lastId));
