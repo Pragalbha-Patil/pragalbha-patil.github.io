@@ -40,15 +40,18 @@ async function subscribeToUpdates() {
 // Function to fetch initial state from Appwrite
 async function fetchStateFromAppwrite() {
     let response = null;
+    let docsProcessed = 0;
     try {
         response = await databases.listDocuments(databaseId, collectionId);
         response.documents.forEach(doc => {
             const id = Number(doc.id);
             checkboxStates[id] = doc.state;
+            docsProcessed += 1;
         });
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
         updateUI();
+        console.log(`documents processed: ${docsProcessed}`);
     } catch (error) {
         console.error('Error fetching initial checkbox states from Appwrite:', error);
     }
