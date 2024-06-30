@@ -216,8 +216,8 @@ function toggleRandomCheckbox() {
     }
 }
 
-setInterval(toggleRandomCheckbox, (getRandomInt(1, 3) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(3, 5) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(10, 15) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(1, 10) * 1000));
-setInterval(toggleRandomCheckbox, (getRandomInt(2, 4) * 1000));
+setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(1, 3), getRandomInt(3, 5)) * 1000));
+setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(3, 5), getRandomInt(5, 10)) * 1000));
+setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(10, 15), getRandomInt(15, 20)) * 1000));
+setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(1, 10), getRandomInt(10, 20)) * 1000));
+setInterval(toggleRandomCheckbox, (getRandomInt(20, 40) * 1000));
