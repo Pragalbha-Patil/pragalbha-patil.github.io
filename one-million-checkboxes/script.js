@@ -30,11 +30,11 @@ async function subscribeToUpdates() {
             checkboxStates[response.payload.id] = false;
         } else {
             checkboxStates[response.payload.id] = response.payload.state;
-            console.log(`state: ${checkboxStates[response.payload.id]}`);
+            console.log(`${response.payload.id} state: ${checkboxStates[response.payload.id]}`);
         }
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
-        updateUI(response.payload.id, state);
+        updateUI(true, response.payload.id, state);
     });
 }
 
@@ -194,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Function to update UI after state changes
-function updateUI(id, state) {
-    renderCheckboxes(1, 2000, true, id, state);
+function updateUI(updateRender, id, state) {
+    updateRender = updateRender || false;
+    renderCheckboxes(1, 2000, updateRender, id, state);
 }
