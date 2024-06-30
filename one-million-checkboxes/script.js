@@ -41,7 +41,7 @@ async function subscribeToUpdates() {
 async function fetchStateFromAppwrite() {
     let docsProcessed = 0;
     let offset = 0;
-    const limit = 25; // The number of documents to fetch per request
+    const limit = 500; // The number of documents to fetch per request
     let hasMoreDocuments = true;
 
     try {
