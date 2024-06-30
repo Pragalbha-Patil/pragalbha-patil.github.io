@@ -25,7 +25,7 @@ async function subscribeToUpdates() {
         const actionPerformed = eventsArr[eventsArr.length - 1];
         response = Object(response);
         if (actionPerformed === 'delete') {
-            delete checkboxStates[response.payload.id];
+            checkboxStates[response.payload.id] = false;
         } else {
             checkboxStates[response.payload.id] = response.payload.state;
         }
@@ -46,8 +46,6 @@ async function fetchStateFromAppwrite() {
         });
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
-
-        // After fetching, update UI
         updateUI();
     } catch (error) {
         console.error('Error fetching initial checkbox states from Appwrite:', error);
@@ -147,8 +145,6 @@ function loadMoreCheckboxes() {
                 if (checkboxesToRemove > 0) {
                     console.log(`Removing ${checkboxesToRemove} checkboxes`);
                     for (let i = checkboxes.length - 1; i >= checkboxes.length - checkboxesToRemove; i--) {
-                        const id = Number(checkboxes[i].dataset.id);
-                        delete checkboxStates[id]; // Remove from state
                         container.removeChild(checkboxes[i]);
                     }
                     // Update renderedCount to reflect removed checkboxes
