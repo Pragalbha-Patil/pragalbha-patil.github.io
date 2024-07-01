@@ -67,8 +67,8 @@ async function fetchStateFromAppwrite() {
 
             // Check if we need to fetch more documents
             hasMoreDocuments = response.documents.length === limit;
+            lastRemCount = response.documents.length;
         }
-        lastRemCount = response.documents.length;
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
         document.getElementById('loading').setAttribute("hidden", true);
