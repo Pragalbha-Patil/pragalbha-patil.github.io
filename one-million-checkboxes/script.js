@@ -22,6 +22,7 @@ let lastRemCount = 0;
 let userId = localStorage.getItem("userId");
 const genRandomHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 let userActivity = null;
+let userCheckedCount = 0;
 
 async function subscribeToUpdates() {
     console.log('establishing websocket connection');
@@ -105,18 +106,7 @@ function createCheckbox(id) {
         await updateStateInAppwrite(id, checkbox.checked); // Update Appwrite
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
-        if(!!userId && !!userActivity) {
-            console.log(userActivity);
-            userActivity = Object(userActivity);
-            let checkedBoxes = userActivity.documents[0].checked_boxes || []
-            let res = checkedBoxes.find(e => e == id);
-            if(res) {
-                console.log(`[if] checkbox: ${id} checked: ${checkbox.checked}`);
-            } else {
-                console.log(`[else] checkbox: ${id} checked: ${checkbox.checked}`);
-            }
-            // databases.updateDocument(databaseId, usersCollectionId, userId, ) TODO
-        }
+        await updateUserActivity(id, checkbox.checked);
         if (getRandomInt(1, 10) === 1) setInterval(toggleRandomCheckbox(id), (getRandomInt(3, 10) * 1000)); // 10% chance that bot will play with you.
     });
 
@@ -268,6 +258,27 @@ async function trackUserActivity() {
         const result = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
         console.log(result);
     }   
+}
+
+async function updateUserActivity(id, state) {
+    if(!!userId && !!userActivity) {
+        userActivity = Object(userActivity);
+        let checkedBoxes = userActivity.documents[0].checked_boxes || []
+        let res = checkedBoxes.find(e => e == id);
+        if(!res && !state) {
+            userCheckedCount -= 1;
+            checkedBoxes = checkedBoxes.filter(function(item) {
+                return item !== id
+            });
+            await databases.updateDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: checkedBoxes});    
+        }
+        if(!res && state) {
+            userCheckedCount += 1;
+            checkedBoxes.push(id);
+        }
+        await databases.updateDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: checkedBoxes});
+    }
+    console.log(`user checked ${userCheckedCount} checkboxes`);
 }
 
 // Function to update UI after state changes
