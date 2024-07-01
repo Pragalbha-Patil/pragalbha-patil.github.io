@@ -248,7 +248,8 @@ async function trackUserActivity() {
             ],
         );
         if(!!userActivity) {
-            console.log(userActivity);
+            userActivity = Object(userActivity);
+            userCheckedCount = (userActivity.documents[0].checked_boxes || []).length;
         } else {
             const result = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
             console.log(result);
