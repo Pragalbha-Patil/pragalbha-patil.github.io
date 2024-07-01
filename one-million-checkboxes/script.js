@@ -250,6 +250,9 @@ async function trackUserActivity() {
         );
         if(!!userActivity) {
             console.log(userActivity);
+        } else {
+            const result = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
+            console.log(result);
         }
     } else {
         userId = genRandomHex(20);
