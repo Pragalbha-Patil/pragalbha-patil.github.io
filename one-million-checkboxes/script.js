@@ -17,7 +17,11 @@ let checkedCount = 0; // Variable to store the count of checked checkboxes
 let lastId = 0; // Variable to store the last used ID
 const databaseId = '667d0f99001b691d76cc';
 const collectionId = '667d0fa8000f64e4decc';
+const usersCollectionId = '66830ef30011252083cb';
 let lastRemCount = 0;
+const userId = localStorage.getItem("userId");
+const genRandomHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+const userActivity = null;
 
 async function subscribeToUpdates() {
     console.log('establishing websocket connection');
@@ -101,7 +105,11 @@ function createCheckbox(id) {
         await updateStateInAppwrite(id, checkbox.checked); // Update Appwrite
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
-        if (getRandomInt(1, 5) === 1) setInterval(toggleRandomCheckbox(id), 3000);
+        if(!!userId && !!userActivity) {
+            console.log(userActivity);
+            // databases.updateDocument(databaseId, usersCollectionId, userId, )
+        }
+        if (getRandomInt(1, 10) === 1) setInterval(toggleRandomCheckbox(id), (getRandomInt(3, 10) * 1000)); // 10% chance that bot will play with you.
     });
 
     checkboxDiv.appendChild(checkbox);
@@ -227,8 +235,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const ready = fetchStateFromAppwrite(); // Fetch initial state from Appwrite
     updateCountDisplay(); // Update count display on page load
     subscribeToUpdates(); // subscribe to websocket
+    trackUserActivity();
     // if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
 });
+
+async function trackUserActivity() {
+    if (!!userId) {
+        userId = genRandomHex(20);
+        localStorage.setItem("userId", userId);
+        const result = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
+        console.log(result);
+    } else {
+        userActivity = await databases.listDocuments(
+            databaseId, 
+            usersCollectionId, 
+            [
+                Query.equal('user_id', userId)
+            ],
+        );
+        if(!!userActivity) {
+            console.log(userActivity);
+        }
+    }   
+}
 
 // Function to update UI after state changes
 function updateUI(updateRender, id, state) {
@@ -242,7 +271,7 @@ function getRandomInt(min, max) {
 }
 
 function toggleRandomCheckbox(id) {
-    id = id || getRandomInt(50, 100);
+    id = id || getRandomInt(getRandomInt(50, 100), getRandomInt(100, 200));
     const randomId = `checkbox-${id}`;
 
     // Get the checkbox element by ID
