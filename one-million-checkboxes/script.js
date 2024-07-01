@@ -184,7 +184,7 @@ function loadMoreCheckboxes() {
             if (window.scrollY < lastScrollY) {
                 const checkboxes = container.querySelectorAll('.checkbox-item');
                 const checkboxesInView = Array.from(checkboxes).filter(checkbox => isElementInViewport(checkbox));
-                const checkboxesToRemove = checkboxes.length - checkboxesInView.length - 5000;
+                const checkboxesToRemove = checkboxes.length - checkboxesInView.length - 2000;
                 if (checkboxesToRemove > 0) {
                     console.log(`Removing ${checkboxesToRemove} checkboxes`);
                     for (let i = checkboxes.length - 1; i >= checkboxes.length - checkboxesToRemove; i--) {
