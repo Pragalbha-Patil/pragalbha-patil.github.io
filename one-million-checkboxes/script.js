@@ -250,14 +250,12 @@ async function trackUserActivity() {
         if(!!userActivity) {
             userActivity = Object(userActivity);
             userCheckedCount = (userActivity.documents[0].checked_boxes || []).length;
-        } else {
-            await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
         }
     } else {
         userId = genRandomHex(20);
         localStorage.setItem("userId", userId);
-        await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
-    }   
+    }
+    await databases.updateDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: checkedBoxes});
 }
 
 async function updateUserActivity(id, state) {
