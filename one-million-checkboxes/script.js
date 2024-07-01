@@ -240,12 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function trackUserActivity() {
-    if (userId) {
-        userId = genRandomHex(20);
-        localStorage.setItem("userId", userId);
-        const result = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
-        console.log(result);
-    } else {
+    if (!!userId) {
         userActivity = await databases.listDocuments(
             databaseId, 
             usersCollectionId, 
@@ -256,6 +251,11 @@ async function trackUserActivity() {
         if(!!userActivity) {
             console.log(userActivity);
         }
+    } else {
+        userId = genRandomHex(20);
+        localStorage.setItem("userId", userId);
+        const result = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
+        console.log(result);
     }   
 }
 
