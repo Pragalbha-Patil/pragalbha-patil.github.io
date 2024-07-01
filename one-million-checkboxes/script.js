@@ -24,7 +24,6 @@ async function subscribeToUpdates() {
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
         const eventsArr = response.events[0].split('.');
         const actionPerformed = eventsArr[eventsArr.length - 1];
-        console.log(response);
         response = Object(response);
         if (actionPerformed === 'delete') {
             checkboxStates[response.payload.id] = false;
