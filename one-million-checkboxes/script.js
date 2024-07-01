@@ -42,7 +42,7 @@ async function fetchStateFromAppwrite() {
     let ready = false;
     let docsProcessed = 0;
     let offset = 0;
-    const limit = 500; // The number of documents to fetch per request
+    const limit = 1000; // The number of documents to fetch per request
     let hasMoreDocuments = true;
 
     try {
