@@ -205,7 +205,7 @@ function loadMoreCheckboxes() {
 // Function to check if the entire element is in the viewport
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
-    const margin = 12 + 5; // Adjust based on the margin specified in the CSS
+    const margin = 12; // Adjust based on the margin specified in the CSS
     return (
         rect.top >= 0 + margin &&
         rect.left >= 0 + margin &&
