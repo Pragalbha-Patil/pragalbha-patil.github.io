@@ -101,6 +101,7 @@ function createCheckbox(id) {
         await updateStateInAppwrite(id, checkbox.checked); // Update Appwrite
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
+        if (getRandomInt(1, 5) === 1) setInterval(toggleRandomCheckbox(id), 3000);
     });
 
     checkboxDiv.appendChild(checkbox);
@@ -226,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const ready = fetchStateFromAppwrite(); // Fetch initial state from Appwrite
     updateCountDisplay(); // Update count display on page load
     subscribeToUpdates(); // subscribe to websocket
-    if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
+    // if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
 });
 
 // Function to update UI after state changes
@@ -240,8 +241,9 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function toggleRandomCheckbox() {
-    const randomId = `checkbox-${getRandomInt(50, 100)}`;
+function toggleRandomCheckbox(id) {
+    id = id || getRandomInt(50, 100);
+    const randomId = `checkbox-${id}`;
 
     // Get the checkbox element by ID
     const checkbox = document.getElementById(randomId);
