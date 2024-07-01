@@ -202,16 +202,18 @@ function loadMoreCheckboxes() {
     }
 }
 
-// Function to check if an element is in viewport
+// Function to check if the entire element is in the viewport
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
+    const margin = 12 + 5; // Adjust based on the margin specified in the CSS
     return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        rect.top >= 0 + margin &&
+        rect.left >= 0 + margin &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) - margin &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) - margin
     );
 }
+
 
 let lastScrollY = window.scrollY; // Variable to store last scroll position
 
