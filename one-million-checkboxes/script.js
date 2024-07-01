@@ -185,7 +185,7 @@ function loadMoreCheckboxes() {
                 const checkboxes = container.querySelectorAll('.checkbox-item');
                 const checkboxesInView = Array.from(checkboxes).filter(checkbox => isElementInViewport(checkbox));
                 const checkboxesToRemove = checkboxes.length - checkboxesInView.length - 5000;
-                if (checkboxesToRemove > 0) {
+                if (checkboxesToRemove > 0 && checkboxesToRemove < 2000) {
                     console.log(`Removing ${checkboxesToRemove} checkboxes`);
                     for (let i = checkboxes.length - 1; i >= checkboxes.length - checkboxesToRemove; i--) {
                         container.removeChild(checkboxes[i]);
@@ -205,7 +205,7 @@ function loadMoreCheckboxes() {
 // Function to check if an element is in the viewport with buffer
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
-    const buffer = 1500; // Buffer in pixels
+    const buffer = 3000; // Buffer in pixels
 
     return (
         rect.top >= -buffer &&
