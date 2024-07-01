@@ -138,7 +138,7 @@ function updateCountDisplay() {
     countDisplay.textContent = checkedCount;
     const remaining = document.getElementById('remaining-checkboxes')
     remaining.textContent = numCheckboxes - checkedCount
-    lastRemCount = remaining.textContent;
+    if(getRandomInt(1, 3) == 1) lastRemCount = remaining.textContent;
     if (lastRemCount > remaining.textContent) remaining.style.color = 'red'
     else remaining.style.color = 'green'
 }
