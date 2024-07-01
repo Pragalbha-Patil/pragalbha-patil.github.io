@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function trackUserActivity() {
-    if (!!userId) {
+    if (userId) {
         userId = genRandomHex(20);
         localStorage.setItem("userId", userId);
         const result = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
