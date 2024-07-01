@@ -150,6 +150,7 @@ function updateCountDisplay() {
     remaining.textContent = remainingCount.toLocaleString();
     if (lastRemCount < remainingCount) remaining.style.color = 'red';
     else remaining.style.color = 'green';
+    document.getElementById('user-count-display').textContent = userCheckedCount;
 }
 
 // Function to render checkboxes
