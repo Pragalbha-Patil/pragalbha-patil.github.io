@@ -135,6 +135,8 @@ async function updateStateInAppwrite(id, state) {
 // Function to update count display
 function updateCountDisplay() {
     countDisplay.textContent = checkedCount;
+    const remaining = document.getElementById('remaining-checkboxes')
+    remaining.textContent = numCheckboxes - checkedCount
 }
 
 // Function to render checkboxes
