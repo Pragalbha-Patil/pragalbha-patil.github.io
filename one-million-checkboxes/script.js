@@ -19,7 +19,7 @@ const databaseId = '667d0f99001b691d76cc';
 const collectionId = '667d0fa8000f64e4decc';
 const usersCollectionId = '66830ef30011252083cb';
 let lastRemCount = 0;
-const userId = localStorage.getItem("userId");
+let userId = localStorage.getItem("userId");
 const genRandomHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 const userActivity = null;
 
