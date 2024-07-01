@@ -108,7 +108,7 @@ function createCheckbox(id) {
         if(!!userId && !!userActivity) {
             console.log(userActivity);
             userActivity = Object(userActivity);
-            let checkedBoxes = userActivity.checked_boxes
+            let checkedBoxes = userActivity.documents[0].checked_boxes || []
             let res = checkedBoxes.find(e => e == id);
             if(res) {
                 console.log(`[if] checkbox: ${id} checked: ${checkbox.checked}`);
