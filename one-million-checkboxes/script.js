@@ -181,10 +181,10 @@ function loadMoreCheckboxes() {
             }
 
             // Only remove checkboxes when scrolling up
-            if ((window.scrollY + 100) < lastScrollY) {
+            if (window.scrollY < lastScrollY) {
                 const checkboxes = container.querySelectorAll('.checkbox-item');
                 const checkboxesInView = Array.from(checkboxes).filter(checkbox => isElementInViewport(checkbox));
-                const checkboxesToRemove = checkboxes.length - checkboxesInView.length - 2000;
+                const checkboxesToRemove = checkboxes.length - checkboxesInView.length - 5000;
                 if (checkboxesToRemove > 0) {
                     console.log(`Removing ${checkboxesToRemove} checkboxes`);
                     for (let i = checkboxes.length - 1; i >= checkboxes.length - checkboxesToRemove; i--) {
@@ -206,7 +206,7 @@ function loadMoreCheckboxes() {
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
     return (
-        rect.top >= 0 &&
+        rect.top >= 50 &&
         rect.left >= 0 &&
         rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
         rect.right <= (window.innerWidth || document.documentElement.clientWidth)
