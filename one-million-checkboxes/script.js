@@ -265,12 +265,11 @@ async function updateUserActivity(id, state) {
         userActivity = Object(userActivity);
         let checkedBoxes = userActivity.documents[0].checked_boxes || []
         let res = checkedBoxes.find(e => e == id);
-        if(!res && !state) {
+        if((!res && !state) || (res && !state)) {
             userCheckedCount -= 1;
             checkedBoxes = checkedBoxes.filter(function(item) {
                 return item !== id
             });
-            await databases.updateDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: checkedBoxes});    
         }
         if(!res && state) {
             userCheckedCount += 1;
