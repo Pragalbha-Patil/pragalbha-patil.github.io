@@ -206,14 +206,17 @@ function loadMoreCheckboxes() {
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
     const margin = 12; // Adjust based on the margin specified in the CSS
+    const scaleFactor = 2; // Account for the scale factor of checkboxes
+
     return (
         rect.top >= 0 + margin &&
         rect.left >= 0 + margin &&
         rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) - margin &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) - margin
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) - margin &&
+        rect.width * scaleFactor <= (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.height * scaleFactor <= (window.innerHeight || document.documentElement.clientHeight)
     );
 }
-
 
 let lastScrollY = window.scrollY; // Variable to store last scroll position
 
