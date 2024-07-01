@@ -40,9 +40,10 @@ async function subscribeToUpdates() {
 
 // Function to fetch initial state from Appwrite
 async function fetchStateFromAppwrite() {
+    let ready = false;
     let docsProcessed = 0;
     let offset = 0;
-    const limit = 1000; // The number of documents to fetch per request
+    const limit = 2000; // The number of documents to fetch per request
     let hasMoreDocuments = true;
 
     try {
@@ -73,10 +74,12 @@ async function fetchStateFromAppwrite() {
         updateCountDisplay();
         document.getElementById('loading').setAttribute("hidden", true);
         updateUI();
+        ready = true;
         // console.log(`Documents processed: ${docsProcessed}`);
     } catch (error) {
         console.error('Error fetching initial checkbox states from Appwrite:', error);
     }
+    return ready;
 }
 
 // Function to create a checkbox element
@@ -218,9 +221,10 @@ window.addEventListener('scroll', loadMoreCheckboxes);
 
 // Initial setup to fetch initial state from Appwrite and start polling
 document.addEventListener('DOMContentLoaded', function () {
-    fetchStateFromAppwrite(); // Fetch initial state from Appwrite
+    const ready = fetchStateFromAppwrite(); // Fetch initial state from Appwrite
     updateCountDisplay(); // Update count display on page load
     subscribeToUpdates(); // subscribe to websocket
+    if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
 });
 
 // Function to update UI after state changes
@@ -249,5 +253,3 @@ function toggleRandomCheckbox() {
         checkbox.dispatchEvent(event);
     }
 }
-
-setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(1, 3), getRandomInt(3, 5)) * 1000));
