@@ -24,13 +24,13 @@ async function subscribeToUpdates() {
     await client.subscribe([`databases.${databaseId}.collections.${collectionId}.documents`], response => {
         const eventsArr = response.events[0].split('.');
         const actionPerformed = eventsArr[eventsArr.length - 1];
-        console.log(`[Websocket] State updated: ${actionPerformed}`);
+        // console.log(`[Websocket] State updated: ${actionPerformed}`);
         response = Object(response);
         if (actionPerformed === 'delete') {
             checkboxStates[response.payload.id] = false;
         } else {
             checkboxStates[response.payload.id] = response.payload.state;
-            console.log(`${response.payload.id} state: ${checkboxStates[response.payload.id]}`);
+            // console.log(`${response.payload.id} state: ${checkboxStates[response.payload.id]}`);
         }
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
@@ -42,7 +42,7 @@ async function subscribeToUpdates() {
 async function fetchStateFromAppwrite() {
     let docsProcessed = 0;
     let offset = 0;
-    const limit = 500; // The number of documents to fetch per request
+    const limit = 1000; // The number of documents to fetch per request
     let hasMoreDocuments = true;
 
     try {
@@ -67,14 +67,13 @@ async function fetchStateFromAppwrite() {
 
             // Check if we need to fetch more documents
             hasMoreDocuments = response.documents.length === limit;
-            lastRemCount = response.documents.length;
-            console.log(`last count: ${lastRemCount}`);
         }
+        lastRemCount = docsProcessed;
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
         document.getElementById('loading').setAttribute("hidden", true);
         updateUI();
-        console.log(`Documents processed: ${docsProcessed}`);
+        // console.log(`Documents processed: ${docsProcessed}`);
     } catch (error) {
         console.error('Error fetching initial checkbox states from Appwrite:', error);
     }
@@ -95,7 +94,7 @@ function createCheckbox(id) {
     checkbox.checked = checkboxStates[id] || false;
 
     checkbox.addEventListener('change', async () => {
-        console.log('listener triggered');
+        // console.log('listener triggered');
         checkboxStates[id] = checkbox.checked;
         await updateStateInAppwrite(id, checkbox.checked); // Update Appwrite
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
