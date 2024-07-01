@@ -21,7 +21,7 @@ const usersCollectionId = '66830ef30011252083cb';
 let lastRemCount = 0;
 let userId = localStorage.getItem("userId");
 const genRandomHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-const userActivity = null;
+let userActivity = null;
 
 async function subscribeToUpdates() {
     console.log('establishing websocket connection');
@@ -107,7 +107,15 @@ function createCheckbox(id) {
         updateCountDisplay();
         if(!!userId && !!userActivity) {
             console.log(userActivity);
-            // databases.updateDocument(databaseId, usersCollectionId, userId, )
+            userActivity = Object(userActivity);
+            let checkedBoxes = userActivity.checked_boxes
+            let res = checkedBoxes.find(e => e == id);
+            if(res) {
+                console.log(`[if] checkbox: ${id} checked: ${checkbox.checked}`);
+            } else {
+                console.log(`[else] checkbox: ${id} checked: ${checkbox.checked}`);
+            }
+            // databases.updateDocument(databaseId, usersCollectionId, userId, ) TODO
         }
         if (getRandomInt(1, 10) === 1) setInterval(toggleRandomCheckbox(id), (getRandomInt(3, 10) * 1000)); // 10% chance that bot will play with you.
     });
