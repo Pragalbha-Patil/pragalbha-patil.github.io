@@ -68,7 +68,7 @@ async function fetchStateFromAppwrite() {
             // Check if we need to fetch more documents
             hasMoreDocuments = response.documents.length === limit;
         }
-
+        lastRemCount = response.documents.length;
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
         document.getElementById('loading').setAttribute("hidden", true);
@@ -136,11 +136,10 @@ async function updateStateInAppwrite(id, state) {
 // Function to update count display
 function updateCountDisplay() {
     countDisplay.textContent = checkedCount;
-    const remaining = document.getElementById('remaining-checkboxes')
-    remaining.textContent = numCheckboxes - checkedCount
-    if(getRandomInt(1, 3) == 1) lastRemCount = remaining.textContent;
-    if (lastRemCount > remaining.textContent) remaining.style.color = 'red'
-    else remaining.style.color = 'green'
+    const remaining = document.getElementById('remaining-checkboxes');
+    remaining.textContent = numCheckboxes - checkedCount;
+    if (lastRemCount > remaining.textContent) remaining.style.color = 'red';
+    else remaining.style.color = 'green';
 }
 
 // Function to render checkboxes
