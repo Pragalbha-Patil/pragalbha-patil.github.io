@@ -17,6 +17,7 @@ let checkedCount = 0; // Variable to store the count of checked checkboxes
 let lastId = 0; // Variable to store the last used ID
 const databaseId = '667d0f99001b691d76cc';
 const collectionId = '667d0fa8000f64e4decc';
+let lastRemCount = 0;
 
 async function subscribeToUpdates() {
     console.log('establishing websocket connection');
@@ -137,6 +138,9 @@ function updateCountDisplay() {
     countDisplay.textContent = checkedCount;
     const remaining = document.getElementById('remaining-checkboxes')
     remaining.textContent = numCheckboxes - checkedCount
+    lastRemCount = remaining.textContent;
+    if (lastRemCount > remaining.textContent) remaining.style.color = 'red'
+    else remaining.style.color = 'green'
 }
 
 // Function to render checkboxes
