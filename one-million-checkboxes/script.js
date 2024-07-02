@@ -150,7 +150,7 @@ function updateCountDisplay() {
     remaining.textContent = remainingCount.toLocaleString();
     if (lastRemCount < remainingCount) remaining.style.color = 'red';
     else remaining.style.color = 'green';
-    document.getElementById('user-count-display').textContent = userCheckedCount;
+    // document.getElementById('user-count-display').textContent = userCheckedCount;
 }
 
 // Function to render checkboxes
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const ready = fetchStateFromAppwrite(); // Fetch initial state from Appwrite
     updateCountDisplay(); // Update count display on page load
     subscribeToUpdates(); // subscribe to websocket
-    trackUserActivity();
+    // trackUserActivity();
     // if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
 });
 
