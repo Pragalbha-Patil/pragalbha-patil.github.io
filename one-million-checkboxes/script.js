@@ -297,7 +297,7 @@ function getRandomInt(min, max) {
 }
 
 function toggleRandomCheckbox(id) {
-    id = id || getRandomInt(getRandomInt(50, 100), getRandomInt(100, 200));
+    id = id || getRandomInt(getRandomInt(200, 500), getRandomInt(500, 1000));
     const randomId = `checkbox-${id}`;
 
     // Get the checkbox element by ID
