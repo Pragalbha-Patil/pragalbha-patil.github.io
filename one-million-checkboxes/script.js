@@ -225,7 +225,7 @@ function loadMoreCheckboxes() {
 // Function to check if an element is in the viewport with buffer
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
-    const buffer = 3000; // Buffer in pixels
+    const buffer = 10000; // Buffer in pixels
 
     return (
         rect.top >= -buffer &&
