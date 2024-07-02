@@ -154,7 +154,7 @@ function updateCountDisplay() {
     if (lastRemCount < remainingCount) remaining.style.color = 'red';
     else remaining.style.color = 'green';
     tempUpdate += 1;
-    if(tempUpdate > 100 && !msgShown) {
+    if(tempUpdate > 200 && !msgShown) {
         alert('chill, lol');
         msgShown = true;
     }
