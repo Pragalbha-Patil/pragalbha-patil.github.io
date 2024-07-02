@@ -287,6 +287,7 @@ function scrollToBottom() {
     });
     scrolling = true;
     const el = document.getElementById('scrollBtn');
+    el.removeAttribute("disabled");
     el.textContent = "Stop scrolling";
 }
 
@@ -298,6 +299,7 @@ function invokeScrollInfinite() {
         el.textContent = "Scroll to bottom";
     }
     else {
+        el.setAttribute("disabled", true);
         el.textContent = "Please wait..."
         scrollInterval = setInterval(scrollToBottom, 1000);
     }
