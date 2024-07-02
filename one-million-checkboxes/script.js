@@ -278,6 +278,19 @@ async function trackUserActivity() {
     }
 }
 
+function scrollToBottom() {
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+    });
+}
+
+function invokeScrollInfinite() {
+    setInterval(scrollToBottom, 1000);
+}
+
+document.getElementById('scrollBtn').addEventListener("click", invokeScrollInfinite);
+
 async function updateUserActivity(id, state) {
     if(!!userId && !!userActivity) {
         userActivity = Object(userActivity);
