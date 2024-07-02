@@ -254,8 +254,9 @@ async function trackUserActivity() {
     } else {
         userId = genRandomHex(20);
         localStorage.setItem("userId", userId);
+        userActivity = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
+        // location.reload();
     }
-    await databases.updateDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: checkedBoxes});
 }
 
 async function updateUserActivity(id, state) {
@@ -273,7 +274,7 @@ async function updateUserActivity(id, state) {
             userCheckedCount += 1;
             checkedBoxes.push(id);
         }
-        await databases.updateDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: checkedBoxes});
+        await databases.updateDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: [...new Set(checkedBoxes)]});
     }
 }
 
