@@ -278,15 +278,29 @@ async function trackUserActivity() {
     }
 }
 
+let scrollInterval = undefined;
+let scrolling = false;
 function scrollToBottom() {
     window.scrollTo({
         top: document.body.scrollHeight,
         behavior: 'smooth'
     });
+    scrolling = true;
+    const el = document.getElementById('scrollBtn');
+    el.textContent = "Stop scrolling";
 }
 
 function invokeScrollInfinite() {
-    setInterval(scrollToBottom, 500);
+    const el = document.getElementById('scrollBtn');
+    if (scrolling) {
+        clearInterval(scrollInterval);
+        scrolling = false;
+        el.textContent = "Scroll to bottom";
+    }
+    else {
+        el.textContent = "Please wait..."
+        scrollInterval = setInterval(scrollToBottom, 1000);
+    }
 }
 
 document.getElementById('scrollBtn').addEventListener("click", invokeScrollInfinite);
