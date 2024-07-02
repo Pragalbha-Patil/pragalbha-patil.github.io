@@ -145,6 +145,7 @@ async function updateStateInAppwrite(id, state) {
 // Function to update count display
 let tempUpdate = 0;
 let msgShown = false;
+let msgShown2 = false;
 function updateCountDisplay() {
     countDisplay.textContent = checkedCount.toLocaleString();
     const remaining = document.getElementById('remaining-checkboxes');
@@ -156,6 +157,10 @@ function updateCountDisplay() {
     if(tempUpdate > 100 && !msgShown) {
         alert('chill, lol');
         msgShown = true;
+    }
+    if (msgShown && !msgShown2 && tempUpdate > 1000) {
+        alert('umm... don\'t you have anything better to do?');
+        msgShown2 = true;
     }
     // document.getElementById('user-count-display').textContent = userCheckedCount;
 }
