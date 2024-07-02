@@ -286,7 +286,7 @@ function scrollToBottom() {
 }
 
 function invokeScrollInfinite() {
-    setInterval(scrollToBottom, 1000);
+    setInterval(scrollToBottom, 500);
 }
 
 document.getElementById('scrollBtn').addEventListener("click", invokeScrollInfinite);
