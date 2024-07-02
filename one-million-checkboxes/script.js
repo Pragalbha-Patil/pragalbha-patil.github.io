@@ -106,8 +106,8 @@ function createCheckbox(id) {
         await updateStateInAppwrite(id, checkbox.checked); // Update Appwrite
         checkedCount = Object.values(checkboxStates).filter((value) => value).length;
         updateCountDisplay();
-        await updateUserActivity(id, checkbox.checked);
-        if (getRandomInt(1, 10) === 1) setInterval(toggleRandomCheckbox(id), (getRandomInt(3, 10) * 1000)); // 10% chance that bot will play with you.
+        // await updateUserActivity(id, checkbox.checked);
+        // if (getRandomInt(1, 10) === 1) setInterval(toggleRandomCheckbox(id), (getRandomInt(3, 10) * 1000)); // 10% chance that bot will play with you.
     });
 
     checkboxDiv.appendChild(checkbox);
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCountDisplay(); // Update count display on page load
     subscribeToUpdates(); // subscribe to websocket
     // trackUserActivity();
-    // if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
+    if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
 });
 
 async function trackUserActivity() {
