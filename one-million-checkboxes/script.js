@@ -254,7 +254,14 @@ async function trackUserActivity() {
     } else {
         userId = genRandomHex(20);
         localStorage.setItem("userId", userId);
-        userActivity = await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
+        await databases.createDocument(databaseId, usersCollectionId, userId, {user_id: userId, checked_boxes: []});
+        userActivity = await databases.listDocuments(
+            databaseId, 
+            usersCollectionId, 
+            [
+                Query.equal('user_id', userId)
+            ],
+        );
         // location.reload();
     }
 }
