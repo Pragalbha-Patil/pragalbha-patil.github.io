@@ -247,7 +247,9 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCountDisplay(); // Update count display on page load
     subscribeToUpdates(); // subscribe to websocket
     // trackUserActivity();
-    if(ready) setInterval(toggleRandomCheckbox, (getRandomInt(getRandomInt(2, 5), getRandomInt(5, 10)) * 1000));
+    if (ready) {
+        document.getElementById('scrollBtn').removeAttribute("hidden");
+    }
 });
 
 async function trackUserActivity() {
