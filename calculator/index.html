@@ -77,6 +77,7 @@
             var firstNumber = document.getElementById("firstNumber").value;
             var secondNumber = document.getElementById("secondNumber").value;
             var operation = document.getElementById("opSelect").value;
+            actuallyCalculate(firstNumber, secondNumber, operation);
 
             var animationDuration = 2000;
             document.querySelector('.loading-spinner').style.display = 'inline-block';
@@ -88,17 +89,52 @@
             }, animationDuration);
         }
 
+        function actuallyCalculate(firstNumber, secondNumber, operation) {
+            // Variable to store the result
+            var result;
+            firstNumber = Number(firstNumber);
+            secondNumber = Number(secondNumber);
+
+            // Perform the calculation based on the selected operation
+            switch (operation) {
+                case '+':
+                    result = firstNumber + secondNumber;
+                    break;
+                case '-':
+                    result = firstNumber - secondNumber;
+                    break;
+                case 'x':
+                    result = firstNumber * secondNumber;
+                    break;
+                case '/':
+                    // Check if the second number is zero to prevent division by zero
+                    if (secondNumber === 0) {
+                        console.error('Error: Division by zero');
+                        result = 'Error: Division by zero';
+                    } else {
+                        result = firstNumber / secondNumber;
+                    }
+                    break;
+                default:
+                    console.error('Error: Invalid operation');
+                    result = 'Error: Invalid operation';
+                    break;
+            }
+
+            // Log the result to the console
+            console.log('Result:', result);
+        }
+
         function loadSlowImage(operation, firstNumber, secondNumber) {
             var img = new Image();
             var imgs = {
                 multipleDivide: 'hank_rustupid.png',
                 default: 'ryan_idk.png'
             }
-            
-            console.log(operation, firstNumber, secondNumber);
+
             if ((operation == "x" || operation == "/") && (firstNumber == 0 || secondNumber == 0)) img.src = imgs.multipleDivide
             else img.src = imgs.default
-            
+
             img.onload = function () {
                 var canvas = document.querySelector('.slow-image');
                 var ctx = canvas.getContext('2d');
