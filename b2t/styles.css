@@ -1,16 +1,17 @@
 /* styles.css */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #181D27;
     margin: 0;
     padding: 0;
+    color: #fff;
 }
 
 .container {
     max-width: 100%; /* Ensure container uses full width on smaller screens */
     margin: 20px; /* Adjusted margin for smaller screens */
     padding: 20px;
-    background: #fff;
+    background: #181D27;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
@@ -41,7 +42,7 @@ textarea {
     margin-top: 10px;
     padding: 10px;
     border-radius: 4px;
-    border: 1px solid #ddd;
+    border: 1px solid #ff0000;
     resize: both; /* Allows resizing both horizontally and vertically */
     box-sizing: border-box; /* Ensures padding and border are included in the width and height */
 }
