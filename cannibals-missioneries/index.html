@@ -58,22 +58,33 @@
                 status: 'info',
                 title: 'Fullscreen mode',
                 text: 'Right click and select "Enter Fullscreen"',
-                speed: 2000,
+                speed: 2500,
             })
         }
         document.onreadystatechange = () => {
             if (document.readyState === 'complete') {
-                pushNotify();
+                document.addEventListener('contextmenu', event => event.preventDefault());
+                setTimeout(() => {
+                    pushNotify();
+                }, 5000);
+
+                const element = document.getElementById('ruffle');
+                const event = new MouseEvent('contextmenu', {
+                    // bubbles: true,
+                    // cancelable: true, // choose what you need
+                    // view: window,
+                });
+                element.dispatchEvent(event);
             }
         };
     </script>
     <style>
         html, body, #game {
-            background-color: black;
+            background-color: #000;
         }
     </style>
-    <div class="container w-95 h-100 d-flex align-items-center justify-content-center mt-2" id="game">
-        <object width="1000" height="1000">    
+    <div class="container d-flex align-items-center justify-content-center mt-2" id="game">
+        <object width="1000" height="600" id="ruffle">    
             <param name="movie" value="./assets/payload.swf" />
             <param name="allowFullScreen" value="true" />
             <embed src="./assets/payload.swf" allowFullScreen="true" />    
