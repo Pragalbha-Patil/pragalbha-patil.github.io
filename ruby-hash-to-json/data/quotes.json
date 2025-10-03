@@ -1,0 +1,296 @@
+[
+  {
+    "text": "It works on my machine — the programmer's national anthem.",
+    "author": "Dakshesh Panchal"
+  },
+  {
+    "text": "I don't comment my code. If it was hard to write, it should be hard to read.",
+    "author": "Harshit Shrivastava"
+  },
+  {
+    "text": "There are two ways to write error-free programs; only the third one works.",
+    "author": "Alan J. Perlis"
+  },
+  {
+    "text": "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.",
+    "author": "Eagleson's Law"
+  },
+  {
+    "text": "Programming is 10% writing code and 90% figuring out why it doesn't work.",
+    "author": "Debugging Dev"
+  },
+  {
+    "text": "I'm not a great programmer; I'm just a good programmer with great habits.",
+    "author": "Kent Beck"
+  },
+  {
+    "text": "Code never lies, comments sometimes do.",
+    "author": "Ron Jeffries"
+  },
+  {
+    "text": "In order to understand recursion, one must first understand recursion.",
+    "author": "Recursive Philosopher"
+  },
+  {
+    "text": "There are two ways to write error-free programs; only the third one works.",
+    "author": "Alan J. Perlis"
+  },
+  {
+    "text": "Programming is like writing a book... except if you miss a single comma on page 126 the whole thing makes no sense.",
+    "author": "Unknown"
+  },
+  {
+    "text": "The best thing about a boolean is even if you are wrong, you are only off by a bit.",
+    "author": "Anonymous"
+  },
+  {
+    "text": "Software and cathedrals are much the same — first we build them, then we pray.",
+    "author": "Sam Redwine"
+  },
+  {
+    "text": "Walking on water and developing software from a specification are easy if both are frozen.",
+    "author": "Edward V. Berard"
+  },
+  {
+    "text": "If debugging is the process of removing bugs, then programming must be the process of putting them in.",
+    "author": "Edsger Dijkstra"
+  },
+  {
+    "text": "A user interface is like a joke. If you have to explain it, it's not that good.",
+    "author": "Martin LeBlanc"
+  },
+  {
+    "text": "Good code is its own best documentation. As you're about to add a comment, ask yourself, 'How can I improve the code so that this comment isn't needed?'",
+    "author": "Steve McConnell"
+  },
+  {
+    "text": "First, solve the problem. Then, write the code.",
+    "author": "John Johnson"
+  },
+  {
+    "text": "Experience is the name everyone gives to their mistakes.",
+    "author": "Oscar Wilde"
+  },
+  {
+    "text": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+    "author": "Martin Fowler"
+  },
+  {
+    "text": "Simplicity is the soul of efficiency.",
+    "author": "Austin Freeman"
+  },
+  {
+    "text": "Before software can be reusable it first has to be usable.",
+    "author": "Ralph Johnson"
+  },
+  {
+    "text": "Make it work, make it right, make it fast.",
+    "author": "Kent Beck"
+  },
+  {
+    "text": "Programming isn't about what you know; it's about what you can figure out.",
+    "author": "Chris Pine"
+  },
+  {
+    "text": "The most disastrous thing that you can ever learn is your first programming language.",
+    "author": "Alan Kay"
+  },
+  { "text": "Talk is cheap. Send nudes.", "author": "Not Linus Torvalds" },
+  { "text": "Deleted code is debugged code.", "author": "Jeff Sickel" },
+  {
+    "text": "The trouble with programmers is that you can never tell what a programmer is doing until it's too late.",
+    "author": "Seymour Cray"
+  },
+  {
+    "text": "Debugging is like being the detective in a crime movie where you're also the murderer.",
+    "author": "Dexter Morgan"
+  },
+  {
+    "text": "If at first you don't succeed, destroy all the evidence that you even tried.",
+    "author": "Full Stack Philosopher"
+  },
+  {
+    "text": "Documentation is like sex — when it's good, it's great. When it's bad, it's still better than nothing.",
+    "author": "Dev Cynic"
+  },
+  {
+    "text": "Writing tests is for people who don't trust themselves — aka smart people.",
+    "author": "Humbled Developer"
+  },
+  {
+    "text": "My code runs perfectly until someone watches.",
+    "author": "Schrödinger's Programmer"
+  },
+  {
+    "text": "Git commit -m 'fixed everything' — future me will understand.",
+    "author": "Time-Traveling Dev"
+  },
+  {
+    "text": "I have trust issues because of merge conflicts.",
+    "author": "Git Therapist"
+  },
+  {
+    "text": "'Temporary fix' — last modified: 4 years ago.",
+    "author": "Legacy Maintainer"
+  },
+  {
+    "text": "The cloud is just someone else's computer with better marketing.",
+    "author": "Sysadmin Poet"
+  },
+  {
+    "text": "90% of programming is fixing what you broke while fixing something else.",
+    "author": "Recursive Realist"
+  },
+  {
+    "text": "I write code that only I can understand — and even that's temporary.",
+    "author": "Sleep-Deprived Dev"
+  },
+  {
+    "text": "When I said I wanted to make an impact, I didn't mean in production.",
+    "author": "Disaster Engineer"
+  },
+  {
+    "text": "Half my job is Googling what I Googled yesterday.",
+    "author": "Forgetful Developer"
+  },
+  {
+    "text": "Tabs vs Spaces: because we're clearly out of real problems.",
+    "author": "Dev Philosopher"
+  },
+  {
+    "text": "My favorite programming language is whichever one pays me this month.",
+    "author": "Capitalist Coder"
+  },
+  {
+    "text": "Deploying on Friday is a bold lifestyle choice.",
+    "author": "Ops Therapist"
+  },
+  {
+    "text": "You either die a junior dev or live long enough to become a legacy maintainer.",
+    "author": "Version 1.0 Philosopher"
+  },
+  {
+    "text": "The only thing more unstable than my code is my sleep schedule.",
+    "author": "Night Shift Dev"
+  },
+  {
+    "text": "Programmers don't age, they just get deprecated.",
+    "author": "Legacy Entity"
+  },
+  {
+    "text": "AI won't replace programmers — bad programmers will train the AI.",
+    "author": "Irony Compiler"
+  },
+  {
+    "text": "Every codebase is a haunted house. Some just have better ghosts.",
+    "author": "Code Archaeologist"
+  },
+  {
+    "text": "I love deadlines. They make whooshing sounds as they go by.",
+    "author": "Douglas Adams"
+  },
+  {
+    "text": "Move fast and break things. Then spend three sprints fixing them.",
+    "author": "Agile Realist"
+  },
+  {
+    "text": "The senior dev said it's 'simple' — I haven't slept in three days.",
+    "author": "Junior in Crisis"
+  },
+  {
+    "text": "Never trust a programmer who says 'just one more deploy.'",
+    "author": "Prod Survivor"
+  },
+  {
+    "text": "You miss 100% of the bugs you don't test for.",
+    "author": "QA Philosopher"
+  },
+  {
+    "text": "Behind every 'quick fix' is a long weekend waiting to happen.",
+    "author": "Bug Prophet"
+  },
+  {
+    "text": "To err is human. To blame it on a merge conflict is divine.",
+    "author": "Version Control Saint"
+  },
+  {
+    "text": "I don't write bad code. I create job security.",
+    "author": "Anonymous"
+  },
+  {
+    "text": "The only constant in software development is change — and caffeine.",
+    "author": "Dakshesh Panchal"
+  },
+  {
+    "text": "Code is like humor. When you have to explain it, it's bad.",
+    "author": "Cory House"
+  },
+  {
+    "text": "The best way to get a project done faster is to start sooner.",
+    "author": "Jim Highsmith"
+  },
+  {
+    "text": "A language that doesn't affect the way you think about programming is not worth knowing.",
+    "author": "Alan J. Perlis"
+  },
+  {
+    "text": "The most important property of a program is whether it accomplishes the intention of its user.",
+    "author": "C.A.R. Hoare"
+  },
+  {
+    "text": "Any sufficiently advanced bug is indistinguishable from a feature.",
+    "author": "Rich Kulawiec"
+  },
+  {
+    "text": "Code you deploy is like sex: one mistake and you have to support it for the rest of your life.",
+    "author": "Michael Sinz"
+  },
+  {
+    "text": "The function of good software is to make the complex appear to be simple.",
+    "author": "Grady Booch"
+  },
+  {
+    "text": "The best performance improvement is the transition from the non-working state to the working state.",
+    "author": "J. Osterhout"
+  },
+  {
+    "text": "Simplicity is the ultimate sophistication.",
+    "author": "Leonardo da Vinci"
+  },
+  {
+    "text": "Programming is the art of telling another human being what one wants the computer to do.",
+    "author": "Donald Knuth"
+  },
+  {
+    "text": "The most effective debugging tool is still careful thought, coupled with judiciously placed print statements.",
+    "author": "Brian Kernighan"
+  },
+  {
+    "text": "Good programmers use their brains, but good guidelines save us having to think out every case.",
+    "author": "Francis Glassborow"
+  },
+  {
+    "text": "I think Microsoft named .Net so it wouldn't show up in a Unix directory listing.",
+    "author": "Oktal"
+  },
+  {
+    "text": "Measuring programming progress by lines of code is like measuring aircraft building progress by weight.",
+    "author": "Bill Gates"
+  },
+  {
+    "text": "The cheapest, fastest, and most reliable components are those that aren't there.",
+    "author": "Gordon Bell"
+  },
+  {
+    "text": "Programming is not a zero-sum game. Teaching something to a fellow programmer doesn't take it away from you.",
+    "author": "John Carmack"
+  },
+  {
+    "text": "A man who has never made a mistake has never tried anything new.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Coworkers are like family. You can't choose them, but you can choose to tolerate them.",
+    "author": "Office Philosopher"
+  }
+]
