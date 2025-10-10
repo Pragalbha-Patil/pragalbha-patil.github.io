@@ -1,0 +1,231 @@
+/* --- page basics / background --- */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  /* original repeating grid background (kept) */
+  background: repeating-linear-gradient(90deg, transparent 0vh, transparent 9.8vh, rgba(0,0,0,0.2) 9.8vh, rgba(0,0,0,0.2) 10vh),
+              repeating-linear-gradient(0deg, transparent 0vh, transparent 9.8vh, black 9.8vh, rgba(0,0,0,0.2) 10vh),
+              repeating-linear-gradient(90deg, transparent 0vh, transparent 14.8vh, black 14.8vh, rgba(0,0,0,0.2) 15vh),
+              repeating-linear-gradient(0deg, transparent 0vh, transparent 14.8vh, rgba(0,0,0,0.2) 14.8vh, rgba(0,0,0,0.2) 15vh);
+  text-align: center;
+  padding: 2rem;
+  /* keep background stable across repaints */
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- main layout --- */
+.main {
+  margin-top: 5%;
+}
+
+#header {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  margin: 0 0 1rem 0;
+}
+
+/* --- quote box --- */
+#quote-box {
+  position: relative;   /* for progress overlay */
+  overflow: hidden;
+  background-color: white;
+  border: 1px solid black;
+  width: 80%;
+  margin: auto;
+  margin-top: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 10px 10px;
+  font-weight: 500;
+  font-size: 1.5rem;
+  /* stable transitions only for non-layout properties */
+  transition: box-shadow 200ms ease;
+}
+
+/* content container inside the box */
+#quote {
+  padding: 1rem 2rem;
+  margin-bottom: 0;
+  text-align: center;
+  /* prepare for fade animation */
+  position: relative;
+}
+
+/* text and author styling */
+#text {
+  margin: 0;
+  padding: 1rem 2rem;
+  text-align: center;
+  line-height: 1.4;
+  word-wrap: break-word;
+  /* enable crossfade transitions */
+  transition: opacity 220ms ease, transform 220ms ease;
+  will-change: opacity;
+}
+
+#author {
+  text-align: right;
+  padding: 0 2rem 1rem 2rem;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+  transition: opacity 220ms ease;
+}
+
+/* clickables / buttons */
+#clickables {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+
+#new-quote {
+  margin: 1rem;
+  border: 1px solid black;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  background-color: white;
+  cursor: pointer;
+  transition: opacity 0.25s ease;
+}
+
+#new-quote:hover {
+  background-color: rgba(230,230,230,0.9);
+}
+
+#new-quote[style*="hidden"] {
+  opacity: 0;
+}
+
+
+/* tweet icon (if used) */
+#tweet-quote i {
+  font-size: 2rem;
+  color: black;
+}
+
+#tweet-quote i:hover {
+  color: rgb(200,200,200);
+}
+
+/* --- Progress bar / overlay --- */
+.progress-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 6px;
+  pointer-events: none;
+  z-index: 20;
+  background: linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  transform-origin: left center;
+  transition: width 250ms linear;
+  background: linear-gradient(90deg, rgba(0,0,0,0.12), rgba(0,0,0,0.28));
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12) inset;
+}
+
+.progress-sweep {
+  position: absolute;
+  top: -30%;
+  left: -40%;
+  width: 40%;
+  height: 160%;
+  transform: rotate(20deg);
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+  z-index: 30;
+}
+
+/* loading state (no transforms that affect layout) */
+#quote-box.loading {
+  box-shadow: 14px 14px 0 rgba(0,0,0,0.06);
+}
+#quote-box.loading .progress-bar {
+  width: 100%;
+}
+#quote-box.loading .progress-sweep {
+  opacity: 1;
+}
+
+/* subtle dim while loading */
+#quote-box.loading #quote {
+  opacity: 0.99;
+}
+#quote-box.loading #text,
+#quote-box.loading #author {
+  opacity: 0.7;
+}
+
+/* --- animated "Loading quote" dots --- */
+.loading-dots::after {
+  /* empty content here; animation will set content */
+  content: "";
+  animation: dots 1s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%  { content: "..."; }
+  100% { content: ""; }
+}
+
+/* --- crossfade helpers (CSS only) ---
+   Add/remove these classes in JS around quote swaps:
+     - add "fade-out" to start fade-out (220ms), then replace text and add "fade-in"
+     - remove classes after transitions
+*/
+.quote-fade {
+  position: relative;
+  display: inline-block;
+}
+
+/* use these on #text / #author when toggling */
+.fade-out {
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+/* Initial state: ensure visible */
+#text, #author { opacity: 1; transform: translateY(0); }
+
+/* Accessibility: reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar { transition: none !important; }
+  .progress-sweep { transition: none !important; }
+  .loading-dots::after { animation: none !important; }
+  #text, #author { transition: none !important; }
+}
+
+/* small responsive tweaks */
+@media (max-width: 700px) {
+  #quote-box { width: 94%; font-size: 1.15rem; }
+  #text { padding: 0.75rem 1rem; }
+  #author { padding: 0 1rem 0.8rem 1rem; }
+}

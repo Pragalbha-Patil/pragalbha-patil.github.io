@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Quote Machine</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="main">
+      <h1 id="header">The "Quote" Machine</h1>
+      <div id="root">
+        <div id="quote-box" aria-live="polite">
+          <div id="quote">
+            <p id="text">Loading quote…</p>
+            <h4 id="author"></h4>
+          </div>
+
+          <!-- progress overlay (added) -->
+          <div class="progress-wrap" aria-hidden="true">
+            <div class="progress-bar"></div>
+            <div class="progress-sweep" aria-hidden="true"></div>
+          </div>
+
+          <div id="clickables">
+            <button id="new-quote" aria-label="Get a new quote">
+              New Quote (space)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="app.js" defer></script>
+    <noscript>
+      <style>
+        body {
+          background-color: black;
+          overflow: hidden;
+        }
+        .main {
+          display: none;
+        }
+        h1 {
+          color: red;
+          text-align: center;
+          font-size: 2rem;
+          padding: 20%;
+        }
+      </style>
+      <h1>Enable Javascript, duh.</h1>
+    </noscript>
+  </body>
+</html>
