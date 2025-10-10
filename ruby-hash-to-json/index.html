@@ -60,13 +60,18 @@
     </div>
 
     <footer class="mt-3">
-      <small class="hello">Made by PSP</small>
+      <small class="hello" onclick="segue()">Made by PSP</small>
     </footer>
   </main>
 
   <!-- Bootstrap JS and dependencies -->
   <script src="./js/bootstrap.bundle.min.js"></script>
   <script src="./js/main.js"></script>
+  <script>
+    function segue() {
+      window.open('/quotes', "_blank");
+    }
+  </script>
   <noscript>
     <style>
       body {
