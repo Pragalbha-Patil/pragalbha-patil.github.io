@@ -162,6 +162,6 @@ footer small.hello {
   user-select: none;
 }
 
-#themeToggle, #copyBtn, .hello {
+#themeToggle, #copyBtn, .hello, #title {
   cursor: pointer;
 }
