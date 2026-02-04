@@ -18,15 +18,28 @@
             }
 
             body {
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 margin: 0;
-                background: radial-gradient(1200px 800px at 10% -10%, rgba(124, 140, 255, 0.18), transparent 60%),
-                    radial-gradient(900px 600px at 90% 10%, rgba(59, 91, 255, 0.2), transparent 55%),
-                    linear-gradient(180deg, #0b0c11 0%, #0e0f13 55%, #0b0c11 100%);
+                background:
+                    radial-gradient(900px 600px at 10% -10%, rgba(34, 197, 94, 0.25), transparent 60%),
+                    radial-gradient(700px 500px at 90% 10%, rgba(16, 185, 129, 0.2), transparent 60%),
+                    linear-gradient(180deg, #050808 0%, #0a0f0b 45%, #050808 100%);
                 background-attachment: fixed;
                 color: var(--text);
                 position: relative;
                 min-height: 100vh;
+            }
+
+            @keyframes glowShift {
+                0% {
+                    filter: hue-rotate(0deg) saturate(110%);
+                }
+                50% {
+                    filter: hue-rotate(12deg) saturate(130%);
+                }
+                100% {
+                    filter: hue-rotate(0deg) saturate(110%);
+                }
             }
 
             body::before {
@@ -34,11 +47,24 @@
                 position: fixed;
                 inset: 0;
                 background-image:
-                    linear-gradient(rgba(124, 140, 255, 0.08) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(124, 140, 255, 0.08) 1px, transparent 1px);
-                background-size: 48px 48px;
-                mask-image: radial-gradient(circle at 50% 0%, rgba(0,0,0,0.8), transparent 70%);
-                opacity: 0.35;
+                    linear-gradient(rgba(34, 197, 94, 0.12) 1px, transparent 1px),
+                    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0px, rgba(0, 0, 0, 0.35) 1px, transparent 2px, transparent 4px);
+                background-size: 64px 64px, 100% 6px;
+                mask-image: radial-gradient(circle at 50% 10%, rgba(0,0,0,0.9), transparent 70%);
+                opacity: 0.5;
+                pointer-events: none;
+                z-index: 0;
+                animation: glowShift 12s ease-in-out infinite;
+            }
+
+            body::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background:
+                    radial-gradient(120% 80% at 50% 0%, rgba(34, 197, 94, 0.18), transparent 45%),
+                    radial-gradient(70% 60% at 50% 100%, rgba(0, 0, 0, 0.55), transparent 55%),
+                    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 2px, transparent 4px);
                 pointer-events: none;
                 z-index: 0;
             }
@@ -48,51 +74,109 @@
                 z-index: 1;
             }
 
+            .terminal {
+                max-width: 980px;
+                margin: 2rem auto 3rem;
+                padding: 1.5rem 1.5rem 2rem;
+                background: rgba(7, 13, 10, 0.75);
+                border: 1px solid rgba(34, 197, 94, 0.25);
+                border-radius: 16px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(16, 185, 129, 0.15) inset;
+                backdrop-filter: blur(6px);
+            }
+
+            .terminal-bar {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding-bottom: 0.75rem;
+                margin-bottom: 1.25rem;
+                border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+            }
+
+            .terminal-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 999px;
+                background: #1f4b32;
+                box-shadow: 0 0 8px rgba(34, 197, 94, 0.35);
+            }
+
+            .terminal-title {
+                margin-left: auto;
+                font-size: 0.8rem;
+                color: rgba(167, 243, 208, 0.75);
+            }
+
+            .prompt-line {
+                margin: 0 0 1.25rem;
+                color: #86efac;
+                font-size: 0.95rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .prompt-input-wrap {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                min-width: 220px;
+            }
+
+            .prompt-input {
+                background: transparent;
+                border: none;
+                color: #d1fae5;
+                font: inherit;
+                outline: none;
+                width: 220px;
+                caret-color: transparent;
+            }
+
+            .prompt-measure {
+                position: absolute;
+                visibility: hidden;
+                white-space: pre;
+                font: inherit;
+            }
+
+            .prompt-cursor {
+                width: 6px;
+                height: 1em;
+                background: #86efac;
+                box-shadow: 0 0 10px rgba(134, 239, 172, 0.7);
+                animation: blink 1s steps(2, start) infinite;
+                position: absolute;
+                left: calc(var(--cursor-x, 0px) + 2px);
+            }
+
+            @keyframes blink {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0; }
+            }
+
+            .prompt-input {
+                caret-color: #86efac;
+            }
+
             header {
-                padding: 2.5rem 1rem 1.5rem;
-                text-align: center;
+                padding: 0 0 1rem;
+                text-align: left;
             }
 
             header h1 {
                 margin: 0;
-                font-size: 2.4rem;
-                font-weight: 700;
-                letter-spacing: -0.02em;
+                font-size: 1.8rem;
+                font-weight: 600;
+                letter-spacing: 0.02em;
             }
 
             header p {
                 margin-top: 0.5rem;
-                color: var(--muted);
+                color: rgba(167, 243, 208, 0.7);
             }
 
-            .controls {
-                max-width: 900px;
-                margin: 0 auto 1.5rem;
-                padding: 0 1rem;
-                display: flex;
-                justify-content: center;
-            }
-
-            .controls input {
-                width: 100%;
-                max-width: 420px;
-                padding: 0.65rem 0.8rem;
-                font-size: 1rem;
-                border-radius: 10px;
-                border: 1px solid #2a2d40;
-                background: var(--bg-soft);
-                color: var(--text);
-                outline: none;
-            }
-
-            .controls input::placeholder {
-                color: var(--muted);
-            }
-
-            .controls input:focus {
-                border-color: var(--accent);
-                box-shadow: 0 0 0 3px var(--accent-soft);
-            }
 
             .games {
                 max-width: 900px;
@@ -121,11 +205,11 @@
             .game a {
                 display: block;
                 padding: 0.85rem 1rem;
-                background: var(--card);
+                background: rgba(9, 16, 12, 0.75);
                 border-radius: 14px;
                 text-decoration: none;
                 color: var(--text);
-                border: 1px solid #242842;
+                border: 1px solid rgba(34, 197, 94, 0.2);
                 transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
             }
 
@@ -138,8 +222,8 @@
 
             .game a:hover {
                 transform: translateY(-1px);
-                border-color: var(--accent);
-                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+                border-color: rgba(34, 197, 94, 0.55);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 14px rgba(34, 197, 94, 0.2);
             }
 
             .game .name {
@@ -167,17 +251,17 @@
             }
 
             .badge-game {
-                background: #3b5bff;
-                color: #ffffff;
-                border: 1px solid #3b5bff;
-                box-shadow: 0 4px 10px rgba(59, 91, 255, 0.35);
+                background: rgba(34, 197, 94, 0.2);
+                color: #a7f3d0;
+                border: 1px solid rgba(34, 197, 94, 0.45);
+                box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
             }
 
             .badge-experiment {
-                background: #f59e0b;
-                color: #1a1b21;
-                border: 1px solid #f59e0b;
-                box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
+                background: rgba(16, 185, 129, 0.2);
+                color: #6ee7b7;
+                border: 1px solid rgba(16, 185, 129, 0.45);
+                box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
             }
 
             footer {
@@ -195,11 +279,11 @@
             }
 
             .about-inner {
-                background: var(--bg-soft);
-                border: 1px solid #242842;
+                background: rgba(6, 12, 9, 0.7);
+                border: 1px solid rgba(34, 197, 94, 0.2);
                 border-radius: 16px;
                 padding: 1rem 1.25rem;
-                color: var(--muted);
+                color: rgba(167, 243, 208, 0.7);
             }
 
             .about-inner strong {
@@ -217,7 +301,7 @@
             .links a {
                 text-decoration: none;
                 font-size: 0.9rem;
-                color: var(--accent);
+                color: #86efac;
             }
 
             .links a:hover {
@@ -227,6 +311,22 @@
     </head>
 
     <body>
+        <main class="terminal">
+            <div class="terminal-bar">
+                <span class="terminal-dot"></span>
+                <span class="terminal-dot"></span>
+                <span class="terminal-dot"></span>
+                <span class="terminal-title">pragal.fun — interactive terminal</span>
+            </div>
+            <div class="prompt-line">
+                <span>pragalbha@web:~$</span>
+                <span>filter</span>
+                <span class="prompt-input-wrap" id="prompt-wrap">
+                    <span id="prompt-measure" class="prompt-measure"></span>
+                    <input id="filter" class="prompt-input" type="text" aria-label="Filter projects" autofocus />
+                    <span class="prompt-cursor"></span>
+                </span>
+            </div>
 
         <header>
             <h1 class="title">pragal.fun</h1>
@@ -246,10 +346,6 @@
             </div>
         </section>
 
-        <div class="controls">
-            <input id="filter" type="text" placeholder="Filter games…" />
-        </div>
-
         <div class="games" id="games"></div>
 
         <footer>
@@ -258,6 +354,7 @@
             document.querySelector('footer').innerHTML = document.querySelector('footer').innerHTML.replace('Pragalbha', new Date().getFullYear() + ' Pragalbha');
         </script>
         </footer>
+        </main>
 
         <script>
             const games = [
@@ -265,19 +362,21 @@
                 { name: "Battleship multiplayer", path: "playbattleship.online", domain: true, popular: true, down: true, game: true },
                 { name: "2D Monster squasher", path: "ikistuacha.itch.io/psp-first-godot-game", popular: true, domain: true, game: true },
                 // { name: "Chess", path: "chess/" },
-                // { name: "Snake Game", path: "snakegame/" },
+                // { name: "Snake Game Computer vision", path: "snakegame/" },
                 { name: "Shooter Game", path: "fps/", popular: false, game: true },
                 // { name: "Cannibals & Missionaries", path: "cannibals-missioneries/" },
                 // { name: "Monkey Lander", path: "monkey-lander/" },
                 // { name: "One Million Checkboxes", path: "one-million-checkboxes/" },
                 { name: "Simple Unity game", path: "pspgame/", popular: false, game: true },
-                // { name: "T2B", path: "t2b/" },
+                { name: "Text to binary converter", path: "t2b/" },
                 { name: "Quote Machine", path: "quotes/", game: false },
                 { name: "Ruby Hash to JSON", path: "ruby-hash-to-json/", domain: false, game: false },
             ];
 
             const container = document.getElementById("games");
             const filterInput = document.getElementById("filter");
+            const promptMeasure = document.getElementById("prompt-measure");
+            const promptWrap = document.getElementById("prompt-wrap");
 
             function render(list) {
                 container.innerHTML = "";
@@ -300,11 +399,19 @@
                 });
             }
 
+            function updateCursor() {
+                promptMeasure.textContent = filterInput.value || "";
+                const width = promptMeasure.offsetWidth;
+                promptWrap.style.setProperty("--cursor-x", `${width}px`);
+            }
+
             filterInput.addEventListener("input", e => {
                 const q = e.target.value.toLowerCase();
                 render(games.filter(g => g.name.toLowerCase().includes(q)));
+                updateCursor();
             });
 
+            updateCursor();
             render(games);
         </script>
 
