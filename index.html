@@ -20,8 +20,32 @@
             body {
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
                 margin: 0;
-                background: var(--bg);
+                background: radial-gradient(1200px 800px at 10% -10%, rgba(124, 140, 255, 0.18), transparent 60%),
+                    radial-gradient(900px 600px at 90% 10%, rgba(59, 91, 255, 0.2), transparent 55%),
+                    linear-gradient(180deg, #0b0c11 0%, #0e0f13 55%, #0b0c11 100%);
+                background-attachment: fixed;
                 color: var(--text);
+                position: relative;
+                min-height: 100vh;
+            }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background-image:
+                    linear-gradient(rgba(124, 140, 255, 0.08) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(124, 140, 255, 0.08) 1px, transparent 1px);
+                background-size: 48px 48px;
+                mask-image: radial-gradient(circle at 50% 0%, rgba(0,0,0,0.8), transparent 70%);
+                opacity: 0.35;
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            body > * {
+                position: relative;
+                z-index: 1;
             }
 
             header {
@@ -105,15 +129,55 @@
                 transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
             }
 
+            .game a {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
             .game a:hover {
                 transform: translateY(-1px);
                 border-color: var(--accent);
                 box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
             }
 
-            .game span {
+            .game .name {
                 font-size: 1.05rem;
                 font-weight: 500;
+            }
+
+            .game .meta {
+                width: 100%;
+                font-size: 0.75rem;
+                color: var(--muted);
+                margin-left: 0.1rem;
+            }
+
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                padding: 0.12rem 0.45rem;
+                border-radius: 999px;
+                font-size: 0.58rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+            }
+
+            .badge-game {
+                background: #3b5bff;
+                color: #ffffff;
+                border: 1px solid #3b5bff;
+                box-shadow: 0 4px 10px rgba(59, 91, 255, 0.35);
+            }
+
+            .badge-experiment {
+                background: #f59e0b;
+                color: #1a1b21;
+                border: 1px solid #f59e0b;
+                box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
             }
 
             footer {
@@ -166,7 +230,7 @@
 
         <header>
             <h1 class="title">pragal.fun</h1>
-            <p>Small browser games & experiments</p>
+            <p>Small browser games, tools & experiments</p>
         </header>
 
         <section class="about">
@@ -197,17 +261,19 @@
 
         <script>
             const games = [
-                { name: "Word game", path: "word.pragal.fun", domain: true, popular: true },
-                { name: "Battleship", path: "playbattleship.online", domain: true, popular: true, down: true },
-                { name: "Chess", path: "chess/" },
-                { name: "Snake Game", path: "snakegame/" },
-                { name: "FPS Game", path: "fps/", popular: true },
-                { name: "Cannibals & Missionaries", path: "cannibals-missioneries/" },
-                { name: "Monkey Lander", path: "monkey-lander/" },
-                { name: "One Million Checkboxes", path: "one-million-checkboxes/" },
-                { name: "PSP Game", path: "pspgame/" },
-                { name: "T2B", path: "t2b/" },
-                { name: "Quotes", path: "quotes/" }
+                { name: "Word guess", path: "word.pragal.fun", domain: true, popular: true, game: true },
+                { name: "Battleship multiplayer", path: "playbattleship.online", domain: true, popular: true, down: true, game: true },
+                { name: "2D Monster squasher", path: "ikistuacha.itch.io/psp-first-godot-game", popular: true, domain: true, game: true },
+                // { name: "Chess", path: "chess/" },
+                // { name: "Snake Game", path: "snakegame/" },
+                { name: "Shooter Game", path: "fps/", popular: false, game: true },
+                // { name: "Cannibals & Missionaries", path: "cannibals-missioneries/" },
+                // { name: "Monkey Lander", path: "monkey-lander/" },
+                // { name: "One Million Checkboxes", path: "one-million-checkboxes/" },
+                { name: "Simple Unity game", path: "pspgame/", popular: false, game: true },
+                // { name: "T2B", path: "t2b/" },
+                { name: "Quote Machine", path: "quotes/", game: false },
+                { name: "Ruby Hash to JSON", path: "ruby-hash-to-json/", domain: false, game: false },
             ];
 
             const container = document.getElementById("games");
@@ -219,7 +285,13 @@
                     const div = document.createElement("div");
                     div.className = "game";
                     const href = game.domain ? `https://${game.path}` : game.path;
-                    let innerHTML = `<a href="${href}" ${game.domain ? 'target="_blank" rel="noopener"' : ''} ${game.down ? 'style="opacity: 0.6; pointer-events: none;"' : ''}><span>${game.name}</span>`;
+                    let innerHTML = `<a href="${href}" ${game.domain ? 'target="_blank" rel="noopener"' : ''} ${game.down ? 'style="opacity: 0.6; pointer-events: none;"' : ''}>`;
+                    innerHTML += game.game
+                        ? '<span class="badge badge-game">Game</span>'
+                        : '<span class="badge badge-experiment">Tool</span>';
+                    innerHTML += ` <span class="name">${game.name}</span>`;
+                    const displayUrl = game.domain ? `https://${game.path}` : game.path;
+                    innerHTML += ` <span class="meta">${displayUrl}</span>`;
                     if (game.popular) innerHTML += ' <span style="font-size: 0.75rem; color: var(--accent); margin-left: 0.5rem;">★ Popular</span>';
                     if (game.down) innerHTML += ' <span style="font-size: 0.75rem; color: var(--muted); margin-left: 0.5rem;">⚠ Temporarily unavailable</span>';
                     innerHTML += '</a>';
