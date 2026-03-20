@@ -175,6 +175,7 @@ class NetworkService {
     }
 
     subscribeToUpdates(callback) {
+        console.log('[NETWORK] subscribeToUpdates - starting');
         this.client.subscribe(
             [`databases.${CONFIG.databaseId}.collections.${CONFIG.collectionId}.documents`],
             response => {
@@ -400,21 +401,84 @@ class CheckboxApp {
     async initialize() {
         console.log('[APP] initialize() started');
         try {
+            // Setup event listeners immediately
             this.setupEventListeners();
             console.log('[APP] Event listeners setup');
             
+            // Render initial batch immediately (blocking, but fast)
             this.renderInitialBatch();
             console.log('[APP] Initial batch rendered');
             
-            await this.loadDatabaseState();
-            console.log('[APP] Database state loaded');
+            // Hide loading indicator immediately and start background tasks
+            this.ui.setLoading(false);
+            console.log('[APP] Loading indicator hidden - UI ready');
             
-            this.subscribeToUpdates();
-            console.log('[APP] Subscribed to updates');
+            // Load database state in background without blocking
+            this.loadDatabaseStateAsync();
+            
+            // Subscribe to updates in background
+            this.subscribeToUpdatesAsync();
         } catch (error) {
             console.error('[APP] Error during initialize:', error);
+            this.ui.setLoading(false);
             throw error;
         }
+    }
+
+    loadDatabaseStateAsync() {
+        // Fire and forget - don't await
+        (async () => {
+            try {
+                console.log('[APP] loadDatabaseState - starting in background');
+                const docs = [];
+                let offset = 0;
+                const limit = 1000;
+                let hasMore = true;
+
+                while (hasMore) {
+                    console.log('[APP] fetchCheckboxStates - offset:', offset);
+                    const batch = await this.network.fetchCheckboxStates(limit, offset);
+                    if (batch.length === 0) {
+                        console.log('[APP] No more documents');
+                        break;
+                    }
+
+                    batch.forEach(doc => {
+                        this.state.data.checkboxStates[doc.id] = doc.state;
+                    });
+
+                    docs.push(...batch);
+                    hasMore = batch.length === limit;
+                    offset += limit;
+                    console.log('[APP] Loaded batch:', batch.length, 'total so far:', docs.length);
+                }
+
+                console.log('[APP] Total documents loaded:', docs.length);
+                this.state.recalculateCount();
+                this.ui.updateCountDisplay(this.state.data.checkedCount, CONFIG.numCheckboxes);
+                this.state.markRangeLoaded(0, CONFIG.numCheckboxes);
+                console.log('[APP] loadDatabaseState - complete, checked count:', this.state.data.checkedCount);
+            } catch (error) {
+                console.error('[APP] loadDatabaseState failed:', error);
+            }
+        })();
+    }
+
+    subscribeToUpdatesAsync() {
+        // Fire and forget - don't await
+        (async () => {
+            try {
+                console.log('[APP] subscribeToUpdates - starting in background');
+                this.network.subscribeToUpdates((id, checked) => {
+                    this.state.updateCheckboxState(id, checked);
+                    this.render.updateCheckbox(id, checked);
+                    this.ui.updateCountDisplay(this.state.data.checkedCount, CONFIG.numCheckboxes);
+                });
+                console.log('[APP] subscribeToUpdates - complete');
+            } catch (error) {
+                console.error('[APP] subscribeToUpdates failed:', error);
+            }
+        })();
     }
 
     setupEventListeners() {
@@ -442,54 +506,6 @@ class CheckboxApp {
             console.error('[APP] renderInitialBatch failed:', error);
             throw error;
         }
-    }
-
-    async loadDatabaseState() {
-        try {
-            console.log('[APP] loadDatabaseState - starting');
-            this.ui.setLoading(true);
-            const docs = [];
-            let offset = 0;
-            const limit = 1000;
-            let hasMore = true;
-
-            while (hasMore) {
-                console.log('[APP] fetchCheckboxStates - offset:', offset);
-                const batch = await this.network.fetchCheckboxStates(limit, offset);
-                if (batch.length === 0) {
-                    console.log('[APP] No more documents');
-                    break;
-                }
-
-                batch.forEach(doc => {
-                    this.state.data.checkboxStates[doc.id] = doc.state;
-                });
-
-                docs.push(...batch);
-                hasMore = batch.length === limit;
-                offset += limit;
-                console.log('[APP] Loaded batch:', batch.length, 'total so far:', docs.length);
-            }
-
-            console.log('[APP] Total documents loaded:', docs.length);
-            this.state.recalculateCount();
-            this.ui.updateCountDisplay(this.state.data.checkedCount, CONFIG.numCheckboxes);
-            this.state.markRangeLoaded(0, CONFIG.numCheckboxes);
-            console.log('[APP] loadDatabaseState - complete, checked count:', this.state.data.checkedCount);
-        } catch (error) {
-            console.error('[APP] loadDatabaseState failed:', error);
-        } finally {
-            this.ui.setLoading(false);
-            console.log('[APP] Loading indicator hidden');
-        }
-    }
-
-    subscribeToUpdates() {
-        this.network.subscribeToUpdates((id, checked) => {
-            this.state.updateCheckboxState(id, checked);
-            this.render.updateCheckbox(id, checked);
-            this.ui.updateCountDisplay(this.state.data.checkedCount, CONFIG.numCheckboxes);
-        });
     }
 
     onCheckboxChange(id, checked) {
