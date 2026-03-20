@@ -56,14 +56,19 @@ function initElements() {
 // Debounce function for expensive operations
 function debounce(func, wait) {
     let timeout;
-    return function executedFunction(...args) {
+    function executedFunction(...args) {
         const later = () => {
             clearTimeout(timeout);
             func(...args);
         };
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
+    }
+    executedFunction.cancel = () => {
+        clearTimeout(timeout);
+        timeout = null;
     };
+    return executedFunction;
 }
 
 // Throttle function for high-frequency events
@@ -288,10 +293,15 @@ function createCheckbox(id) {
 /**
  * Render checkboxes efficiently
  */
-function renderCheckboxes(start, end, updateRender, id, state) {
-    if (updateRender && id) {
-        const element = document.getElementById(`checkbox-${id}`);
-        if (element) element.checked = state;
+function renderCheckboxes(start, end, updateRender, checkboxId, isChecked) {
+    if (updateRender && checkboxId) {
+        const element = document.getElementById(`checkbox-${checkboxId}`);
+        if (element) element.checked = isChecked;
+        return;
+    }
+    
+    if (!elements.container) {
+        console.error('Container not initialized');
         return;
     }
     
@@ -310,6 +320,14 @@ function updateUIForCheckbox(id, isChecked) {
     const checkbox = document.getElementById(`checkbox-${id}`);
     if (checkbox && checkbox.checked !== isChecked) {
         checkbox.checked = isChecked;
+    }
+}
+
+function updateUI(updateRender, id, checkState) {
+    if (updateRender && id) {
+        updateUIForCheckbox(id, checkState);
+    } else {
+        renderCheckboxes(1, 2000, false);
     }
 }
 
@@ -349,9 +367,13 @@ let msgShown = false;
 let msgShown2 = false;
 
 const debouncedUpdateCountDisplay = debounce(() => {
+    if (!elements.countDisplay) return; // Safety check
+    
     elements.countDisplay.textContent = state.checkedCount.toLocaleString();
     
     const remaining = document.getElementById('remaining-checkboxes');
+    if (!remaining) return;
+    
     const remainingCount = CONFIG.numCheckboxes - state.checkedCount;
     remaining.textContent = remainingCount.toLocaleString();
     
@@ -552,11 +574,15 @@ async function initializeApp() {
         flushPendingUpdates();
     });
     
-    // Start async operations
-    setTimeout(async () => {
+    // Start async operations after DOM is ready
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    try {
         await subscribeToUpdates();
         await fetchStateFromAppwrite();
-    }, 500);
+    } catch (error) {
+        console.error('Failed to initialize network operations:', error);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
@@ -594,14 +620,6 @@ async function trackUserActivity() {
         } catch (error) {
             console.error('Error creating user activity:', error);
         }
-    }
-}
-
-function updateUI(updateRender, id, state) {
-    if (updateRender && id) {
-        updateUIForCheckbox(id, state);
-    } else {
-        renderCheckboxes(1, 2000, false);
     }
 }
 
