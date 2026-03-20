@@ -123,7 +123,7 @@ class AppwriteService {
         this.isReady = true;
     }
 
-    async fetchAllCheckboxes() {
+    async fetchAllCheckboxesIncremental(onBatch) {
         if (!this.isReady) throw new Error('Appwrite not initialized');
 
         // Probe for total count with minimal data transfer
@@ -144,11 +144,17 @@ class AppwriteService {
                 CONFIG.databaseId,
                 CONFIG.collectionId,
                 [this.Query.limit(1000), this.Query.offset(i * 1000)]
-            )
+            ).then(response => {
+                const docs = response?.documents || [];
+                if (docs.length > 0 && onBatch) {
+                    onBatch(docs);
+                }
+                return docs;
+            }).catch(() => [])
         );
 
-        const responses = await Promise.all(requests);
-        return responses.flatMap(r => r.documents);
+        const batches = await Promise.all(requests);
+        return batches.flat();
     }
 
     async saveCheckbox(id, checked) {
@@ -263,7 +269,7 @@ class RenderEngine {
         return this.getContainerTop() + row * this.itemPitch;
     }
 
-    renderVisibleWindow(checkboxStates) {
+    renderVisibleWindow(checkboxStates, force = false) {
         if (!this.columns) this.recalculateLayout();
 
         const containerTop = this.getContainerTop();
@@ -276,7 +282,7 @@ class RenderEngine {
         startRow = Math.max(0, startRow);
         endRow = Math.min(this.totalRows - 1, endRow);
 
-        if (startRow === this.lastWindowStartRow && endRow === this.lastWindowEndRow) {
+        if (!force && startRow === this.lastWindowStartRow && endRow === this.lastWindowEndRow) {
             return;
         }
 
@@ -427,6 +433,20 @@ class CheckboxApp {
         this.render = new RenderEngine();
         this.ui = new UIController();
         this.pendingFlushTimer = null;
+        this.pendingVisibleRefresh = false;
+    }
+
+    scheduleVisibleRefresh() {
+        if (this.pendingVisibleRefresh) {
+            return;
+        }
+
+        this.pendingVisibleRefresh = true;
+        requestAnimationFrame(() => {
+            this.pendingVisibleRefresh = false;
+            this.render.syncRenderedCheckboxes(this.state.checkboxStates);
+            this.ui.updateCount(this.state.checkedCount);
+        });
     }
 
     async start() {
@@ -438,7 +458,19 @@ class CheckboxApp {
 
             // Virtualized layout + first viewport render
             this.render.recalculateLayout();
-            this.render.renderVisibleWindow(this.state.checkboxStates);
+            this.render.renderVisibleWindow(this.state.checkboxStates, true);
+
+            // Force another render on next frame after full layout settles.
+            await new Promise(resolve => requestAnimationFrame(resolve));
+            this.render.renderVisibleWindow(this.state.checkboxStates, true);
+
+            // Safety fallback: if first paint still missed, force one delayed repaint.
+            if (this.render.getRenderedCount() === 0) {
+                setTimeout(() => {
+                    this.render.renderVisibleWindow(this.state.checkboxStates, true);
+                    this.ui.updateProgress();
+                }, 50);
+            }
             
             // Setup event listeners
             this.setupEventListeners();
@@ -462,14 +494,14 @@ class CheckboxApp {
 
     async loadDatabaseState() {
         try {
-            const docs = await this.appwrite.fetchAllCheckboxes();
-            
-            // Convert to state map
-            const updates = docs.map(doc => [doc.id, doc.state === true]);
-            this.state.setMultiple(updates);
+            await this.appwrite.fetchAllCheckboxesIncremental(batchDocs => {
+                const updates = batchDocs.map(doc => [doc.id, doc.state === true]);
+                this.state.setMultiple(updates);
+                this.scheduleVisibleRefresh();
+            });
+
+            // Ensure final paint and count are in sync.
             this.render.syncRenderedCheckboxes(this.state.checkboxStates);
-            
-            // Update UI
             this.ui.updateCount(this.state.checkedCount);
         } catch (error) {
             // Continue anyway - show empty state
@@ -555,7 +587,7 @@ class CheckboxApp {
 
     onResize() {
         this.render.recalculateLayout();
-        this.render.renderVisibleWindow(this.state.checkboxStates);
+        this.render.renderVisibleWindow(this.state.checkboxStates, true);
         this.ui.updateProgress();
     }
 
