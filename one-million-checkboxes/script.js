@@ -47,10 +47,17 @@ const elements = {
 
 // Initialize elements on DOM ready
 function initElements() {
+    console.log('[INIT] initElements() called');
     elements.container = document.getElementById('checkbox-container');
     elements.countDisplay = document.getElementById('count-display');
     elements.progressBar = document.getElementById('scroll-progress');
     elements.loadingIndicator = document.getElementById('loading');
+    console.log('[INIT] Elements initialized:', { 
+        hasContainer: !!elements.container,
+        hasCountDisplay: !!elements.countDisplay,
+        hasProgressBar: !!elements.progressBar,
+        hasLoadingIndicator: !!elements.loadingIndicator
+    });
 }
 
 // Debounce function for expensive operations
@@ -162,11 +169,13 @@ function queueCheckboxUpdate(id, isChecked) {
  * Subscribe to real-time updates with connection management
  */
 async function subscribeToUpdates() {
+    console.log('[SUBSCRIBE] subscribeToUpdates() called');
     try {
-        console.log('establishing websocket connection');
+        console.log('[SUBSCRIBE] establishing websocket connection');
         await client.subscribe(
             [`databases.${CONFIG.databaseId}.collections.${CONFIG.collectionId}.documents`],
             (response) => {
+                console.log('[SUBSCRIBE] WebSocket event received:', response);
                 if (!response?.events?.[0]) return;
                 
                 const eventsArr = response.events[0].split('.');
@@ -189,8 +198,9 @@ async function subscribeToUpdates() {
                 recalculateCheckedCount();
             }
         );
+        console.log('[SUBSCRIBE] WebSocket subscription established');
     } catch (error) {
-        console.error('Failed to subscribe to updates:', error);
+        console.error('[SUBSCRIBE] Failed to subscribe to updates:', error);
         // Retry subscription after delay
         setTimeout(subscribeToUpdates, 5000);
     }
@@ -201,14 +211,22 @@ async function subscribeToUpdates() {
  * Only fetches ranges we haven't already loaded
  */
 async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes) {
+    console.log('[FETCH] fetchStateFromAppwrite() called with:', { startId, endId });
+    
     // Check if range is already loaded or loading
-    if (state.appwriteStateLoading) return;
+    if (state.appwriteStateLoading) {
+        console.log('[FETCH] Already loading, skipping');
+        return;
+    }
     
     const rangeOverlaps = state.loadedStateRanges.some(range =>
         !(endId < range.start || startId > range.end)
     );
     
-    if (rangeOverlaps) return;
+    if (rangeOverlaps) {
+        console.log('[FETCH] Range already loaded, skipping');
+        return;
+    }
     
     state.appwriteStateLoading = true;
     let docsProcessed = 0;
@@ -216,9 +234,11 @@ async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes)
     const limit = 1000;
     
     try {
+        console.log('[FETCH] Starting to fetch documents...');
         let hasMoreDocuments = true;
         
         while (hasMoreDocuments) {
+            console.log('[FETCH] Fetching batch at offset:', offset);
             const response = await Promise.race([
                 databases.listDocuments(
                     CONFIG.databaseId,
@@ -230,8 +250,12 @@ async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes)
                 )
             ]);
             
-            if (!response?.documents) break;
+            if (!response?.documents) {
+                console.log('[FETCH] No documents in response');
+                break;
+            }
             
+            console.log('[FETCH] Received', response.documents.length, 'documents');
             response.documents.forEach(doc => {
                 const id = String(doc.id);
                 state.checkboxStates[id] = doc.state;
@@ -243,6 +267,7 @@ async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes)
         }
         
         state.loadedStateRanges.push({ start: startId, end: endId });
+        console.log('[FETCH] Processed', docsProcessed, 'documents total');
         
         if (!state.initialRenderComplete) {
             state.lastRemCount = CONFIG.numCheckboxes - docsProcessed;
@@ -253,9 +278,10 @@ async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes)
             }
 
             state.initialRenderComplete = true;
+            console.log('[FETCH] Initial render marked complete');
         }
     } catch (error) {
-        console.error('Error fetching checkbox states:', error);
+        console.error('[FETCH] Error fetching checkbox states:', error);
     } finally {
         state.appwriteStateLoading = false;
     }
@@ -294,6 +320,16 @@ function createCheckbox(id) {
  * Render checkboxes efficiently
  */
 function renderCheckboxes(start, end, updateRender, checkboxId, isChecked) {
+    console.log('[RENDER] Called with:', { start, end, updateRender, checkboxId, isChecked });
+    console.log('[RENDER] State object exists?', !!state);
+    console.log('[RENDER] State.lastId value:', state?.lastId);
+    
+    // Safety check - make sure state exists
+    if (!state || typeof state.lastId !== 'number') {
+        console.error('Fatal: State not properly initialized', state);
+        return;
+    }
+    
     if (updateRender && checkboxId) {
         const element = document.getElementById(`checkbox-${checkboxId}`);
         if (element) element.checked = isChecked;
@@ -533,12 +569,18 @@ function stopAutoScroll() {
  * Initialize the application
  */
 function initializeApp() {
+    console.log('[INIT] initializeApp() started');
+    console.log('[INIT] Global state at startup:', state);
+    
     initElements();
+    console.log('[INIT] After initElements, state is:', state);
     
     // Render initial batch immediately
     const initialBatch = CONFIG.batchSize * 2;
+    console.log('[INIT] About to call renderCheckboxes with:', { start: 1, end: initialBatch });
     renderCheckboxes(1, initialBatch, false);
     state.renderedCount = initialBatch;
+    console.log('[INIT] Rendered initial batch, state.renderedCount:', state.renderedCount);
     debouncedUpdateCountDisplay();
     
     // Setup event listeners
@@ -577,9 +619,13 @@ function initializeApp() {
     
     // Start async operations after DOM is ready (non-blocking)
     setTimeout(() => {
+        console.log('[ASYNC-INIT] Starting network operations');
         try {
+            console.log('[ASYNC-INIT] Calling subscribeToUpdates()');
             subscribeToUpdates(); // Non-blocking callback subscription
+            console.log('[ASYNC-INIT] Calling fetchStateFromAppwrite()');
             fetchStateFromAppwrite(); // Fetch initial state in background
+            console.log('[ASYNC-INIT] Network operations initiated');
         } catch (error) {
             console.error('Failed to initialize network operations:', error);
         }
