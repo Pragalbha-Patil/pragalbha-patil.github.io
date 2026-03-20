@@ -427,38 +427,61 @@ class CheckboxApp {
     }
 
     renderInitialBatch() {
-        const initialBatch = CONFIG.batchSize * 2;
-        this.render.renderBatch(1, initialBatch, this.state.data.checkboxStates, (id, checked) =>
-            this.onCheckboxChange(id, checked)
-        );
-        this.state.data.renderedCount = initialBatch;
-        this.state.data.lastId = initialBatch;
+        try {
+            console.log('[APP] renderInitialBatch - starting');
+            const initialBatch = CONFIG.batchSize * 2;
+            console.log('[APP] Container exists?', !!this.render.container);
+            
+            this.render.renderBatch(1, initialBatch, this.state.data.checkboxStates, (id, checked) =>
+                this.onCheckboxChange(id, checked)
+            );
+            this.state.data.renderedCount = initialBatch;
+            this.state.data.lastId = initialBatch;
+            console.log('[APP] renderInitialBatch - complete, rendered', initialBatch, 'checkboxes');
+        } catch (error) {
+            console.error('[APP] renderInitialBatch failed:', error);
+            throw error;
+        }
     }
 
     async loadDatabaseState() {
-        this.ui.setLoading(true);
-        const docs = [];
-        let offset = 0;
-        const limit = 1000;
-        let hasMore = true;
+        try {
+            console.log('[APP] loadDatabaseState - starting');
+            this.ui.setLoading(true);
+            const docs = [];
+            let offset = 0;
+            const limit = 1000;
+            let hasMore = true;
 
-        while (hasMore) {
-            const batch = await this.network.fetchCheckboxStates(limit, offset);
-            if (batch.length === 0) break;
+            while (hasMore) {
+                console.log('[APP] fetchCheckboxStates - offset:', offset);
+                const batch = await this.network.fetchCheckboxStates(limit, offset);
+                if (batch.length === 0) {
+                    console.log('[APP] No more documents');
+                    break;
+                }
 
-            batch.forEach(doc => {
-                this.state.data.checkboxStates[doc.id] = doc.state;
-            });
+                batch.forEach(doc => {
+                    this.state.data.checkboxStates[doc.id] = doc.state;
+                });
 
-            docs.push(...batch);
-            hasMore = batch.length === limit;
-            offset += limit;
+                docs.push(...batch);
+                hasMore = batch.length === limit;
+                offset += limit;
+                console.log('[APP] Loaded batch:', batch.length, 'total so far:', docs.length);
+            }
+
+            console.log('[APP] Total documents loaded:', docs.length);
+            this.state.recalculateCount();
+            this.ui.updateCountDisplay(this.state.data.checkedCount, CONFIG.numCheckboxes);
+            this.state.markRangeLoaded(0, CONFIG.numCheckboxes);
+            console.log('[APP] loadDatabaseState - complete, checked count:', this.state.data.checkedCount);
+        } catch (error) {
+            console.error('[APP] loadDatabaseState failed:', error);
+        } finally {
+            this.ui.setLoading(false);
+            console.log('[APP] Loading indicator hidden');
         }
-
-        this.state.recalculateCount();
-        this.ui.updateCountDisplay(this.state.data.checkedCount, CONFIG.numCheckboxes);
-        this.ui.setLoading(false);
-        this.state.markRangeLoaded(0, CONFIG.numCheckboxes);
     }
 
     subscribeToUpdates() {
@@ -587,12 +610,29 @@ class CheckboxApp {
 
 // ============ INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('===== PAGE LOAD START =====');
     try {
         const app = new CheckboxApp();
         await app.initialize();
         window.app = app; // For debugging
         console.log('✓ CheckboxApp initialized successfully');
+        console.log('===== PAGE LOAD COMPLETE =====');
     } catch (error) {
         console.error('✗ Failed to initialize CheckboxApp:', error);
+        console.error('Stack:', error.stack);
+        console.log('===== PAGE LOAD FAILED =====');
+        
+        // Show error to user in red at top of page
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #ff6b6b; color: white; padding: 15px 20px; border-radius: 5px; z-index: 9999; font-family: monospace; max-width: 80%; word-break: break-all;';
+        errorDiv.textContent = 'ERROR: ' + error.message;
+        document.body.appendChild(errorDiv);
+        
+        // Unhide loading indicator so user sees something happened
+        const loading = document.getElementById('loading');
+        if (loading) {
+            loading.textContent = 'Error: ' + error.message;
+            loading.style.color = 'red';
+        }
     }
 });
