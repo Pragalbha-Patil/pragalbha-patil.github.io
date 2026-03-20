@@ -34,13 +34,12 @@ html {
 }
 input[type=checkbox]
 {
-    /* Double-sized Checkboxes */
-    -ms-transform: scale(2); /* IE */
-    -moz-transform: scale(2); /* FF */
-    -webkit-transform: scale(2); /* Safari and Chrome */
-    -o-transform: scale(2); /* Opera */
-    transform: scale(2);
-    padding: 5px;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    appearance: auto;
     /* Don't use will-change on all items - causes memory overhead */
     transition: none;
 }
