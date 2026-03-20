@@ -251,7 +251,7 @@ async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes)
             if (elements.loadingIndicator) {
                 elements.loadingIndicator.setAttribute("hidden", true);
             }
-            updateUI();
+
             state.initialRenderComplete = true;
         }
     } catch (error) {
@@ -395,12 +395,13 @@ const debouncedUpdateCountDisplay = debounce(() => {
  */
 function loadMoreCheckboxes() {
     if (state.ticking) return;
+    if (!elements.container) return; // Safety check
     
     state.ticking = true;
     
     requestAnimationFrame(() => {
-        const scrollPosition = window.scrollY + window.innerHeight;
         const containerHeight = elements.container.clientHeight;
+        const scrollPosition = window.scrollY + window.innerHeight;
         
         // Render more if needed
         if (scrollPosition >= containerHeight - 1000 && state.renderedCount < CONFIG.numCheckboxes) {
@@ -531,7 +532,7 @@ function stopAutoScroll() {
 /**
  * Initialize the application
  */
-async function initializeApp() {
+function initializeApp() {
     initElements();
     
     // Render initial batch immediately
@@ -574,15 +575,15 @@ async function initializeApp() {
         flushPendingUpdates();
     });
     
-    // Start async operations after DOM is ready
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    try {
-        await subscribeToUpdates();
-        await fetchStateFromAppwrite();
-    } catch (error) {
-        console.error('Failed to initialize network operations:', error);
-    }
+    // Start async operations after DOM is ready (non-blocking)
+    setTimeout(() => {
+        try {
+            subscribeToUpdates(); // Non-blocking callback subscription
+            fetchStateFromAppwrite(); // Fetch initial state in background
+        } catch (error) {
+            console.error('Failed to initialize network operations:', error);
+        }
+    }, 500);
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
