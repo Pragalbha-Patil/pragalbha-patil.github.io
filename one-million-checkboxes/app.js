@@ -186,11 +186,17 @@ class AppwriteService {
                 response => {
                     const event = response.events?.[0] || '';
                     const payload = response.payload || {};
+                    const payloadId = payload.id ?? payload.$id?.replace(/^id-/, '');
+
+                    if (!payloadId && !event.includes('delete')) {
+                        console.warn('[APPWRITE] Ignoring realtime event with no checkbox id', response);
+                        return;
+                    }
                     
                     if (event.includes('create') || event.includes('update')) {
-                        callback(payload.id, payload.state === true);
+                        callback(payloadId, payload.state === true);
                     } else if (event.includes('delete')) {
-                        callback(payload.id, false);
+                        callback(payloadId, false);
                     }
                 }
             );
@@ -248,6 +254,12 @@ class RenderEngine {
         }
     }
 
+    syncRenderedCheckboxes(checkboxStates) {
+        this.renderedIds.forEach(id => {
+            this.updateCheckbox(id, checkboxStates[id] || false);
+        });
+    }
+
     getRenderedCount() {
         return this.renderedIds.size;
     }
@@ -259,10 +271,17 @@ class UIController {
         this.countDisplay = document.getElementById('count-display');
         this.remainingDisplay = document.getElementById('remaining-checkboxes');
         this.loadingIndicator = document.getElementById('loading');
+        this.statusBanner = document.getElementById('status-banner');
         this.scrollTopBtn = document.getElementById('scrollTopBtn');
         this.scrollBottomBtn = document.getElementById('scrollBottomBtn');
         this.progressBar = document.getElementById('scroll-progress');
         this.scrollInterval = null;
+    }
+
+    setStatus(message, tone = 'pending') {
+        if (!this.statusBanner) return;
+        this.statusBanner.textContent = message;
+        this.statusBanner.className = `status-banner status-banner-${tone}`;
     }
 
     updateCount(checkedCount) {
@@ -347,8 +366,11 @@ class CheckboxApp {
         console.log('[APP] Starting application...');
         
         try {
+            this.ui.setStatus('Connecting to Appwrite...', 'pending');
+
             // Initialize Appwrite
             await this.appwrite.initialize();
+            this.ui.setStatus('Rendering initial checkboxes...', 'pending');
             
             // Render initial batch immediately
             this.render.renderRange(1, CONFIG.initialRenderCount, this.state.checkboxStates);
@@ -361,6 +383,7 @@ class CheckboxApp {
             
             // Hide loading, start background tasks
             this.ui.setLoading(false);
+            this.ui.setStatus('Fetching checked states...', 'pending');
             
             // Load database state asynchronously but wait for it
             await this.loadDatabaseState();
@@ -369,11 +392,13 @@ class CheckboxApp {
             // Subscribe to real-time updates
             this.subscribeToLiveUpdates();
             console.log('[APP] Live updates subscribed');
+            this.ui.setStatus('Connected and synced.', 'success');
             
             console.log('[APP] ✓ Application ready');
         } catch (error) {
             console.error('[APP] Fatal error:', error.message);
             this.ui.setLoading(false);
+            this.ui.setStatus(`Startup failed: ${error.message}`, 'error');
             alert('Error: ' + error.message);
         }
     }
@@ -385,6 +410,7 @@ class CheckboxApp {
             // Convert to state map
             const updates = docs.map(doc => [doc.id, doc.state === true]);
             this.state.setMultiple(updates);
+            this.render.syncRenderedCheckboxes(this.state.checkboxStates);
             
             // Update UI
             this.ui.updateCount(this.state.checkedCount);
@@ -392,13 +418,18 @@ class CheckboxApp {
             console.log(`[APP] Loaded state: ${this.state.checkedCount} checked boxes`);
         } catch (error) {
             console.error('[APP] Failed to load database state:', error.message);
+            this.ui.setStatus(`Loaded shell only. Data fetch failed: ${error.message}`, 'error');
             // Continue anyway - show empty state
         }
     }
 
     subscribeToLiveUpdates() {
         this.appwrite.subscribeToChanges((id, isChecked) => {
-            id = parseInt(id);
+            id = parseInt(id, 10);
+            if (Number.isNaN(id)) {
+                console.warn('[APP] Ignoring realtime update with invalid id', id);
+                return;
+            }
             
             // Update state
             this.state.setState(id, isChecked);
@@ -415,7 +446,7 @@ class CheckboxApp {
 
     onCheckboxChange(event) {
         const checkbox = event.target;
-        const id = parseInt(checkbox.id.replace('checkbox-', ''));
+        const id = parseInt(checkbox.id.replace('checkbox-', ''), 10);
         const isChecked = checkbox.checked;
         
         // Update state

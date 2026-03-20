@@ -34,6 +34,7 @@
             <p class="text-end text-wrap" id="checkbox-count"><span id="count-display">0</span> checkbox checked (<span id="remaining-checkboxes">0</span> checkboxes remains)</p>
             <!-- <p class="text-end text-wrap" id="user-checkbox-count">You checked <span id="user-count-display">0</span> checkboxes</p> -->
         </div>
+        <div id="status-banner" class="status-banner status-banner-pending" role="status" aria-live="polite">Initializing application...</div>
         <p class="text-center text-wrap fs-5 pt-2" id="loading">Loading...</p>
         <div id="checkbox-container" class="content"></div>
         <div id="scroll-buttons" class="scroll-buttons-container">
@@ -42,11 +43,11 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/appwrite@15.0.0"></script>
-    <script id="app-script" data-src="./app.js"></script>
     <script>
-        // Apply cache bust to app script and set src (prevents premature loading)
-        const appScript = document.getElementById('app-script');
-        appScript.src = appScript.dataset.src + window.CACHE_BUST;
+        // Load app script after Appwrite is parsed.
+        const appScript = document.createElement('script');
+        appScript.src = './app.js' + window.CACHE_BUST;
+        document.body.appendChild(appScript);
     </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-N8EMX5KEXS"></script>

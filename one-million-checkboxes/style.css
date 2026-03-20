@@ -39,6 +39,7 @@ input[type=checkbox]
     -moz-transform: scale(2); /* FF */
     -webkit-transform: scale(2); /* Safari and Chrome */
     -o-transform: scale(2); /* Opera */
+    transform: scale(2);
     padding: 5px;
     /* Don't use will-change on all items - causes memory overhead */
     transition: none;
@@ -69,6 +70,32 @@ input[type=checkbox]:hover {
     border-bottom: 1px solid gray;
 }
 
+.status-banner {
+    margin: 12px 0 0;
+    padding: 10px 14px;
+    border: 1px solid #8b8b8b;
+    border-radius: 8px;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    background: #f3f3f3;
+    color: #1f1f1f;
+}
+
+.status-banner-pending {
+    background: #ececec;
+    border-color: #8b8b8b;
+}
+
+.status-banner-success {
+    background: #dce9dc;
+    border-color: #4f7b4f;
+}
+
+.status-banner-error {
+    background: #f2d8d8;
+    border-color: #9a4d4d;
+}
+
 @keyframes textShine {
     0% {
         background-position: 0% 50%;
@@ -94,7 +121,6 @@ input[type=checkbox]:hover {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-fill-color: transparent;
     background-size: 500% auto;
     animation: textShine 5s ease-in-out infinite alternate;
 }
