@@ -28,11 +28,17 @@
 <body>
     <div id="scroll-progress"></div>
     <div class="container container-fluid mt-2">
-        <div class="navbar p-3 pb-0">
-            <p class="text-center text-wrap fs-2" id="banner">One Million Checkboxes</p>
-            <p class="text-center text-wrap text-italic fs-6 fst-italic" id="banner">(checking a box checks it for everyone)</p>
-            <p class="text-end text-wrap" id="checkbox-count"><span id="count-display">0</span> checkbox checked (<span id="remaining-checkboxes">0</span> checkboxes remains)</p>
-            <!-- <p class="text-end text-wrap" id="user-checkbox-count">You checked <span id="user-count-display">0</span> checkboxes</p> -->
+        <div class="header-wrap">
+            <div class="header-top-row">
+                <p class="author-credit">a website by <a href="https://pragal.fun" target="_blank" rel="noopener">Pragalbha Patil</a></p>
+                <div class="title-block">
+                    <h1 id="banner">One Million Checkboxes</h1>
+                    <p id="subtitle">(checking a box checks it for everyone!)</p>
+                </div>
+                <p id="checkbox-count"><span id="count-display">0</span> boxes are ✅</p>
+            </div>
+            <p id="user-checkbox-count">You have checked <span id="user-count-display">0</span> boxes</p>
+            <div class="header-divider"></div>
         </div>
         <div id="status-banner" class="status-banner status-banner-pending" role="status" aria-live="polite">Initializing application...</div>
         <p class="text-center text-wrap fs-5 pt-2" id="loading">Loading...</p>
