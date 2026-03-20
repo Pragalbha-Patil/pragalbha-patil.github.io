@@ -587,6 +587,12 @@ async function bootCheckboxApp() {
         return;
     }
 
+    // Prevent browser restoring previous scroll position on refresh.
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
     window.__checkboxAppBooted = true;
     const app = new CheckboxApp();
     await app.start();
