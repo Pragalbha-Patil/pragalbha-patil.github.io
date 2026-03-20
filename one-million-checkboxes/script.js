@@ -272,7 +272,7 @@ async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes)
         if (!state.initialRenderComplete) {
             state.lastRemCount = CONFIG.numCheckboxes - docsProcessed;
             recalculateCheckedCount();
-            updateCountDisplay();
+            debouncedUpdateCountDisplay();
             if (elements.loadingIndicator) {
                 elements.loadingIndicator.setAttribute("hidden", true);
             }
