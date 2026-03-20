@@ -36,7 +36,8 @@ input[type=checkbox]
 {
     /* Double-sized Checkboxes */
     -ms-transform: scale(2); /* IE */
-    -moz-transform: scale(2); /* FF */\n    -webkit-transform: scale(2); /* Safari and Chrome */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
     -o-transform: scale(2); /* Opera */
     padding: 5px;
     /* Don't use will-change on all items - causes memory overhead */
@@ -146,14 +147,13 @@ input[type=checkbox]:hover {
 }
 
 .scroll-top-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #555;
     color: white;
 }
 
 .scroll-top-btn:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    transform: translateY(-2px);
+    background: #444;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .scroll-top-btn:active {
@@ -162,14 +162,13 @@ input[type=checkbox]:hover {
 }
 
 .scroll-bottom-btn {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #555;
     color: white;
 }
 
 .scroll-bottom-btn:hover {
-    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
-    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
-    transform: translateY(-2px);
+    background: #444;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .scroll-bottom-btn:active {
