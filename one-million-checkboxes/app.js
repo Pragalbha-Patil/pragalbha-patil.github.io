@@ -1,7 +1,7 @@
 // ============ CONFIGURATION ============
 const CONFIG = {
     numCheckboxes: 1000000,
-    initialRenderCount: 2000,
+    initialRenderCount: 500,
     batchSize: 1000,
     databaseId: '667d0f99001b691d76cc',
     collectionId: '667d0fa8000f64e4decc',
@@ -21,19 +21,14 @@ class StateManager {
     }
 
     setState(id, checked) {
+        const was = this.checkboxStates[id] || false;
         this.checkboxStates[id] = checked;
-        this.recalculateCount();
+        if (checked && !was) this.checkedCount++;
+        else if (!checked && was) this.checkedCount--;
     }
 
     setMultiple(updates) {
-        updates.forEach(([id, checked]) => {
-            this.checkboxStates[id] = checked;
-        });
-        this.recalculateCount();
-    }
-
-    recalculateCount() {
-        this.checkedCount = Object.values(this.checkboxStates).filter(Boolean).length;
+        updates.forEach(([id, checked]) => this.setState(id, checked));
     }
 
     addPendingUpdate(id, checked) {
@@ -85,35 +80,31 @@ class AppwriteService {
         console.log('[APPWRITE] Fetching all checkbox states...');
         if (!this.isReady) throw new Error('Appwrite not initialized');
 
-        const allDocs = [];
-        let offset = 0;
-        const limit = 1000;
-        let hasMore = true;
-
-        while (hasMore && allDocs.length < CONFIG.numCheckboxes) {
-            try {
-                console.log(`[APPWRITE] Fetching batch at offset ${offset}...`);
-                const response = await this.databases.listDocuments(
-                    CONFIG.databaseId,
-                    CONFIG.collectionId,
-                    [this.Query.limit(limit), this.Query.offset(offset)]
-                );
-
-                if (!response.documents || response.documents.length === 0) {
-                    console.log('[APPWRITE] No more documents');
-                    hasMore = false;
-                } else {
-                    allDocs.push(...response.documents);
-                    console.log(`[APPWRITE] Batch received: ${response.documents.length} items (total: ${allDocs.length})`);
-                    hasMore = response.documents.length === limit;
-                    offset += limit;
-                }
-            } catch (error) {
-                console.error('[APPWRITE] Fetch batch failed:', error.message);
-                hasMore = false;
-            }
+        // Probe for total count with minimal data transfer
+        const probe = await this.databases.listDocuments(
+            CONFIG.databaseId,
+            CONFIG.collectionId,
+            [this.Query.limit(1)]
+        );
+        const total = probe.total;
+        if (total === 0) {
+            console.log('[APPWRITE] No checked boxes found');
+            return [];
         }
 
+        // Fire all page requests in parallel
+        const pageCount = Math.ceil(total / 1000);
+        console.log(`[APPWRITE] Fetching ${total} docs across ${pageCount} parallel requests...`);
+        const requests = Array.from({ length: pageCount }, (_, i) =>
+            this.databases.listDocuments(
+                CONFIG.databaseId,
+                CONFIG.collectionId,
+                [this.Query.limit(1000), this.Query.offset(i * 1000)]
+            )
+        );
+
+        const responses = await Promise.all(requests);
+        const allDocs = responses.flatMap(r => r.documents);
         console.log(`[APPWRITE] Fetch complete: ${allDocs.length} checked boxes`);
         return allDocs;
     }
@@ -215,35 +206,17 @@ class RenderEngine {
         this.renderedIds = new Set();
     }
 
-    createCheckboxHTML(id, isChecked) {
-        const div = document.createElement('div');
-        div.className = 'checkbox-item';
-        div.dataset.id = id;
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'form-check-input';
-        checkbox.id = `checkbox-${id}`;
-        checkbox.checked = isChecked;
-
-        div.appendChild(checkbox);
-        return div;
-    }
-
     renderRange(startId, endId, checkboxStates) {
-        const fragment = document.createDocumentFragment();
-        
+        const parts = [];
         for (let i = startId; i <= endId && i <= CONFIG.numCheckboxes; i++) {
             if (!this.renderedIds.has(i)) {
-                fragment.appendChild(
-                    this.createCheckboxHTML(i, checkboxStates[i] || false)
-                );
+                const checked = checkboxStates[i] ? ' checked' : '';
+                parts.push(`<div class="checkbox-item" data-id="${i}"><input type="checkbox" class="form-check-input" id="checkbox-${i}"${checked}></div>`);
                 this.renderedIds.add(i);
             }
         }
-
-        if (fragment.childNodes.length > 0) {
-            this.container.appendChild(fragment);
+        if (parts.length > 0) {
+            this.container.insertAdjacentHTML('beforeend', parts.join(''));
         }
     }
 
