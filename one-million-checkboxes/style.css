@@ -49,7 +49,7 @@ input[type=checkbox]:hover {
     top: 0;
     left: 0;
     height: 3px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background: #4caf50;
     z-index: 2000;
     transition: width 0.1s ease;
 }
