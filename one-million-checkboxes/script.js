@@ -90,6 +90,39 @@ function throttle(func, limit) {
     };
 }
 
+// ============ DEBOUNCED FUNCTION DECLARATIONS (hoisted early to avoid temporal dead zone) ============
+
+/**
+ * Update count display (debounced)
+ */
+let tempUpdate = 0;
+let msgShown = false;
+let msgShown2 = false;
+
+const debouncedUpdateCountDisplay = debounce(() => {
+    if (!elements.countDisplay) return; // Safety check
+
+    elements.countDisplay.textContent = state.checkedCount.toLocaleString();
+
+    const remaining = document.getElementById('remaining-checkboxes');
+    if (!remaining) return;
+
+    const remainingCount = CONFIG.numCheckboxes - state.checkedCount;
+    remaining.textContent = remainingCount.toLocaleString();
+
+    remaining.style.color = state.lastRemCount < remainingCount ? 'red' : 'green';
+
+    tempUpdate++;
+    if (tempUpdate > 200 && !msgShown) {
+        alert('chill, lol');
+        msgShown = true;
+    }
+    if (msgShown && !msgShown2 && tempUpdate > 1000) {
+        alert('umm... don\'t you have anything better to do?');
+        msgShown2 = true;
+    }
+}, 100);
+
 // ============ NETWORK & STORAGE OPTIMIZATION ============
 
 /**
@@ -394,37 +427,6 @@ function recalculateCheckedCount() {
         debouncedUpdateCountDisplay();
     }
 }
-
-/**
- * Update count display (debounced)
- */
-let tempUpdate = 0;
-let msgShown = false;
-let msgShown2 = false;
-
-const debouncedUpdateCountDisplay = debounce(() => {
-    if (!elements.countDisplay) return; // Safety check
-
-    elements.countDisplay.textContent = state.checkedCount.toLocaleString();
-
-    const remaining = document.getElementById('remaining-checkboxes');
-    if (!remaining) return;
-
-    const remainingCount = CONFIG.numCheckboxes - state.checkedCount;
-    remaining.textContent = remainingCount.toLocaleString();
-
-    remaining.style.color = state.lastRemCount < remainingCount ? 'red' : 'green';
-
-    tempUpdate++;
-    if (tempUpdate > 200 && !msgShown) {
-        alert('chill, lol');
-        msgShown = true;
-    }
-    if (msgShown && !msgShown2 && tempUpdate > 1000) {
-        alert('umm... don\'t you have anything better to do?');
-        msgShown2 = true;
-    }
-}, 100);
 
 /**
  * Load more checkboxes as user scrolls (with proper cleanup)
