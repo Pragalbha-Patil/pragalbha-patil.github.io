@@ -332,6 +332,7 @@ class UIController {
         this.userPlusDisplay = document.getElementById('user-plus-count');
         this.userMinusDisplay = document.getElementById('user-minus-count');
         this.loadingIndicator = document.getElementById('loading');
+        this.jumpLabel = document.querySelector('.jump-label');
         this.jumpInput = document.getElementById('jumpInput');
         this.jumpBtn = document.getElementById('jumpBtn');
         this.progressBar = document.getElementById('scroll-progress');
@@ -384,11 +385,24 @@ class UIController {
     setJumpBusy(isBusy, percent = null) {
         if (this.jumpBtn) {
             this.jumpBtn.disabled = isBusy;
-            const progressText = percent === null ? '' : ` ${percent}%`;
-            this.jumpBtn.textContent = isBusy ? `Processing${progressText}` : 'Go';
+            this.jumpBtn.textContent = 'Go';
             this.jumpBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
             this.jumpBtn.classList.toggle('jump-btn-loading', isBusy);
+            if (isBusy && percent !== null) {
+                this.jumpBtn.title = `Processing ${percent}%`;
+            } else {
+                this.jumpBtn.title = 'Jump to checkbox';
+            }
         }
+
+        if (this.jumpLabel) {
+            if (isBusy && percent !== null) {
+                this.jumpLabel.textContent = `Jump to # (${percent}%)`;
+            } else {
+                this.jumpLabel.textContent = 'Jump to #';
+            }
+        }
+
         if (this.jumpInput) {
             this.jumpInput.disabled = isBusy;
         }
