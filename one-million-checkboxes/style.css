@@ -2,18 +2,14 @@ html, body {
     background-color: #ebeaea;
 }
 
-/* CSS Containment for better performance with many elements */
 #checkbox-container {
     display: flex;
     flex-wrap: wrap;
-    contain: layout style paint; /* Isolate painting and layout from other elements */
 }
 
-/* CSS Containment for individual checkbox items */
 .checkbox-item {
     flex: 0 0 auto;
     margin: 12px !important;
-    contain: strict; /* Strict containment for better performance */
 }
 
 /* Rest of the styles... */
