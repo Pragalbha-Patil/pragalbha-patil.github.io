@@ -3,6 +3,10 @@ html, body {
     color: #1c1c1f;
 }
 
+:root {
+    scroll-behavior: auto !important;
+}
+
 #checkbox-container {
     position: relative;
     width: 100%;

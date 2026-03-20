@@ -273,14 +273,21 @@ class RenderEngine {
         if (!this.columns) this.recalculateLayout();
 
         const containerTop = this.getContainerTop();
-        const viewportTop = Math.max(0, window.scrollY - containerTop);
-        const viewportBottom = viewportTop + window.innerHeight;
+        const maxViewportTop = Math.max(0, this.totalRows * this.itemPitch - window.innerHeight);
+        const viewportTop = Math.min(maxViewportTop, Math.max(0, window.scrollY - containerTop));
+        const viewportBottom = Math.min(
+            this.totalRows * this.itemPitch,
+            viewportTop + Math.max(window.innerHeight, this.itemPitch)
+        );
 
         let startRow = Math.floor(viewportTop / this.itemPitch) - CONFIG.viewportBufferRows;
         let endRow = Math.ceil(viewportBottom / this.itemPitch) + CONFIG.viewportBufferRows;
 
-        startRow = Math.max(0, startRow);
-        endRow = Math.min(this.totalRows - 1, endRow);
+        startRow = Math.max(0, Math.min(this.totalRows - 1, startRow));
+        endRow = Math.max(0, Math.min(this.totalRows - 1, endRow));
+        if (startRow > endRow) {
+            startRow = endRow;
+        }
 
         if (!force && startRow === this.lastWindowStartRow && endRow === this.lastWindowEndRow) {
             return;
@@ -436,6 +443,17 @@ class CheckboxApp {
         this.pendingVisibleRefresh = false;
     }
 
+    async ensureInitialPaint(maxFrames = 24) {
+        for (let i = 0; i < maxFrames; i++) {
+            this.render.renderVisibleWindow(this.state.checkboxStates, true);
+            if (this.render.getRenderedCount() > 0) {
+                return true;
+            }
+            await new Promise(resolve => requestAnimationFrame(resolve));
+        }
+        return false;
+    }
+
     scheduleVisibleRefresh() {
         if (this.pendingVisibleRefresh) {
             return;
@@ -444,7 +462,7 @@ class CheckboxApp {
         this.pendingVisibleRefresh = true;
         requestAnimationFrame(() => {
             this.pendingVisibleRefresh = false;
-            this.render.syncRenderedCheckboxes(this.state.checkboxStates);
+            this.render.renderVisibleWindow(this.state.checkboxStates, true);
             this.ui.updateCount(this.state.checkedCount);
         });
     }
@@ -474,12 +492,18 @@ class CheckboxApp {
             
             // Setup event listeners
             this.setupEventListeners();
-            
-            // Hide loading, start background tasks
-            this.ui.setLoading(false);
+
+            // Startup guard: keep trying until the first viewport has real checkbox nodes.
+            await this.ensureInitialPaint();
             
             // Load database state asynchronously but wait for it
             await this.loadDatabaseState();
+
+            // Hide loading after initial state sync is done.
+            this.ui.setLoading(false);
+
+            // Re-check once after loading is hidden so first paint never depends on scroll.
+            this.ensureInitialPaint(8);
             
             // Subscribe to real-time updates
             this.subscribeToLiveUpdates();
