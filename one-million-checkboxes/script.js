@@ -1,7 +1,7 @@
 // Initialize Appwrite client and databases
 const { Client, Databases, Query } = Appwrite;
 const client = new Client();
-client.setEndpoint('https://cloud.appwrite.io/v1').setProject('667d0f2d001c4fce8b90');
+client.setEndpoint('https://fra.cloud.appwrite.io/v1').setProject('667d0f2d001c4fce8b90');
 const databases = new Databases(client);
 
 // Number of checkboxes to create
