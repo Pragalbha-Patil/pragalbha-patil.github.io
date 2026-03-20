@@ -3,6 +3,9 @@ const CONFIG = {
     numCheckboxes: 1000000,
     initialRenderCount: 1500,
     batchSize: 1000,
+    itemSize: 28,
+    itemGap: 8,
+    viewportBufferRows: 8,
     databaseId: '667d0f99001b691d76cc',
     collectionId: '667d0fa8000f64e4decc',
     appwriteEndpoint: 'https://fra.cloud.appwrite.io/v1',
@@ -17,7 +20,6 @@ class StateManager {
     constructor() {
         this.checkboxStates = {}; // { id: boolean }
         this.checkedCount = 0;
-        this.renderedCount = CONFIG.initialRenderCount;
         this.lastScrollY = 0;
         this.isAutoScrolling = false;
         this.pendingUpdates = new Map(); // { id: boolean }
@@ -236,21 +238,66 @@ class RenderEngine {
     constructor() {
         this.container = document.getElementById('checkbox-container');
         if (!this.container) throw new Error('Container #checkbox-container not found');
-        this.renderedIds = new Set();
+        this.columns = 1;
+        this.itemPitch = CONFIG.itemSize + CONFIG.itemGap;
+        this.totalRows = Math.ceil(CONFIG.numCheckboxes / this.columns);
+        this.lastWindowStartRow = -1;
+        this.lastWindowEndRow = -1;
     }
 
-    renderRange(startId, endId, checkboxStates) {
+    recalculateLayout() {
+        const width = this.container.clientWidth || window.innerWidth;
+        this.columns = Math.max(1, Math.floor(width / this.itemPitch));
+        this.totalRows = Math.ceil(CONFIG.numCheckboxes / this.columns);
+        this.container.style.height = `${this.totalRows * this.itemPitch}px`;
+        this.lastWindowStartRow = -1;
+        this.lastWindowEndRow = -1;
+    }
+
+    getContainerTop() {
+        return this.container.getBoundingClientRect().top + window.scrollY;
+    }
+
+    getScrollYForId(id) {
+        const row = Math.floor((id - 1) / this.columns);
+        return this.getContainerTop() + row * this.itemPitch;
+    }
+
+    renderVisibleWindow(checkboxStates) {
+        if (!this.columns) this.recalculateLayout();
+
+        const containerTop = this.getContainerTop();
+        const viewportTop = Math.max(0, window.scrollY - containerTop);
+        const viewportBottom = viewportTop + window.innerHeight;
+
+        let startRow = Math.floor(viewportTop / this.itemPitch) - CONFIG.viewportBufferRows;
+        let endRow = Math.ceil(viewportBottom / this.itemPitch) + CONFIG.viewportBufferRows;
+
+        startRow = Math.max(0, startRow);
+        endRow = Math.min(this.totalRows - 1, endRow);
+
+        if (startRow === this.lastWindowStartRow && endRow === this.lastWindowEndRow) {
+            return;
+        }
+
+        const startId = startRow * this.columns + 1;
+        const endId = Math.min(CONFIG.numCheckboxes, (endRow + 1) * this.columns);
+
         const parts = [];
-        for (let i = startId; i <= endId && i <= CONFIG.numCheckboxes; i++) {
-            if (!this.renderedIds.has(i)) {
-                const checked = checkboxStates[i] ? ' checked' : '';
-                parts.push(`<div class="checkbox-item" data-id="${i}"><input type="checkbox" class="form-check-input" id="checkbox-${i}"${checked}></div>`);
-                this.renderedIds.add(i);
-            }
+        for (let id = startId; id <= endId; id++) {
+            const index = id - 1;
+            const row = Math.floor(index / this.columns);
+            const col = index % this.columns;
+            const checked = checkboxStates[id] ? ' checked' : '';
+            parts.push(
+                `<div class="checkbox-item" data-id="${id}" style="left:${col * this.itemPitch}px;top:${row * this.itemPitch}px;width:${this.itemPitch}px;height:${this.itemPitch}px;">` +
+                `<input type="checkbox" class="form-check-input" id="checkbox-${id}"${checked}></div>`
+            );
         }
-        if (parts.length > 0) {
-            this.container.insertAdjacentHTML('beforeend', parts.join(''));
-        }
+
+        this.container.innerHTML = parts.join('');
+        this.lastWindowStartRow = startRow;
+        this.lastWindowEndRow = endRow;
     }
 
     updateCheckbox(id, isChecked) {
@@ -261,13 +308,18 @@ class RenderEngine {
     }
 
     syncRenderedCheckboxes(checkboxStates) {
-        this.renderedIds.forEach(id => {
-            this.updateCheckbox(id, checkboxStates[id] || false);
-        });
+        this.renderVisibleWindow(checkboxStates);
     }
 
     getRenderedCount() {
-        return this.renderedIds.size;
+        return this.container.querySelectorAll('input[type="checkbox"]').length;
+    }
+
+    flashCheckbox(id) {
+        const target = document.getElementById(`checkbox-${id}`);
+        if (!target) return;
+        target.classList.add('jump-target');
+        setTimeout(() => target.classList.remove('jump-target'), 700);
     }
 }
 
@@ -280,10 +332,9 @@ class UIController {
         this.userPlusDisplay = document.getElementById('user-plus-count');
         this.userMinusDisplay = document.getElementById('user-minus-count');
         this.loadingIndicator = document.getElementById('loading');
-        this.scrollTopBtn = document.getElementById('scrollTopBtn');
-        this.scrollBottomBtn = document.getElementById('scrollBottomBtn');
+        this.jumpInput = document.getElementById('jumpInput');
+        this.jumpBtn = document.getElementById('jumpBtn');
         this.progressBar = document.getElementById('scroll-progress');
-        this.scrollInterval = null;
     }
 
     updateCount(checkedCount) {
@@ -315,21 +366,6 @@ class UIController {
         this.progressBar.style.width = Math.min(100, scrollPercent) + '%';
     }
 
-    updateScrollButtons() {
-        if (window.scrollY > 300) {
-            this.scrollTopBtn?.removeAttribute('hidden');
-        } else {
-            this.scrollTopBtn?.setAttribute('hidden', 'true');
-        }
-
-        const isNearBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 500;
-        if (!isNearBottom) {
-            this.scrollBottomBtn?.removeAttribute('hidden');
-        } else {
-            this.scrollBottomBtn?.setAttribute('hidden', 'true');
-        }
-    }
-
     setLoading(isLoading) {
         if (this.loadingIndicator) {
             isLoading
@@ -338,31 +374,34 @@ class UIController {
         }
     }
 
-    scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'auto' });
+    getJumpTarget() {
+        const raw = this.jumpInput?.value || '';
+        const parsed = parseInt(raw, 10);
+        if (!Number.isFinite(parsed)) return null;
+        return Math.max(1, Math.min(CONFIG.numCheckboxes, parsed));
     }
 
-    scrollToBottom() {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'auto' });
+    setJumpBusy(isBusy, percent = null) {
+        if (this.jumpBtn) {
+            this.jumpBtn.disabled = isBusy;
+            const progressText = percent === null ? '' : ` ${percent}%`;
+            this.jumpBtn.textContent = isBusy ? `Processing${progressText}` : 'Go';
+            this.jumpBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+            this.jumpBtn.classList.toggle('jump-btn-loading', isBusy);
+        }
+        if (this.jumpInput) {
+            this.jumpInput.disabled = isBusy;
+        }
     }
 
-    startAutoScroll() {
-        if (this.scrollBottomBtn) {
-            this.scrollBottomBtn.textContent = 'Stop (■)';
-            this.scrollBottomBtn.setAttribute('aria-pressed', 'true');
-        }
-        this.scrollInterval = setInterval(() => this.scrollToBottom(), 800);
-    }
-
-    stopAutoScroll() {
-        if (this.scrollInterval) {
-            clearInterval(this.scrollInterval);
-            this.scrollInterval = null;
-        }
-        if (this.scrollBottomBtn) {
-            this.scrollBottomBtn.textContent = 'Bottom ↓';
-            this.scrollBottomBtn.removeAttribute('aria-pressed');
-        }
+    onJumpSubmit(callback) {
+        this.jumpBtn?.addEventListener('click', callback);
+        this.jumpInput?.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                callback();
+            }
+        });
     }
 }
 
@@ -382,10 +421,10 @@ class CheckboxApp {
 
             // Initialize Appwrite
             await this.appwrite.initialize();
-            
-            // Render initial batch immediately
-            this.render.renderRange(1, CONFIG.initialRenderCount, this.state.checkboxStates);
-            this.state.renderedCount = CONFIG.initialRenderCount;
+
+            // Virtualized layout + first viewport render
+            this.render.recalculateLayout();
+            this.render.renderVisibleWindow(this.state.checkboxStates);
             
             // Setup event listeners
             this.setupEventListeners();
@@ -398,6 +437,9 @@ class CheckboxApp {
             
             // Subscribe to real-time updates
             this.subscribeToLiveUpdates();
+
+            // Ensure initial progress reflects current scroll
+            this.ui.updateProgress();
         } catch (error) {
             this.ui.setLoading(false);
             alert('Error: ' + error.message);
@@ -472,64 +514,35 @@ class CheckboxApp {
     }
 
     onScroll() {
-        // Load more checkboxes as user scrolls down
-        const scrollY = window.scrollY + window.innerHeight;
-        const thresholdY = document.body.scrollHeight - 2000;
-        
-        if (scrollY > thresholdY && this.state.renderedCount < CONFIG.numCheckboxes) {
-            const nextStart = this.state.renderedCount + 1;
-            const nextEnd = Math.min(this.state.renderedCount + CONFIG.batchSize, CONFIG.numCheckboxes);
-            
-            this.render.renderRange(nextStart, nextEnd, this.state.checkboxStates);
-            this.state.renderedCount = nextEnd;
-        }
-        
-        // Update UI
+        this.render.renderVisibleWindow(this.state.checkboxStates);
         this.ui.updateProgress();
-        this.ui.updateScrollButtons();
     }
 
-    onScrollTopClick() {
-        if (this.state.isAutoScrolling) {
-            this.stopAutoScroll();
-        } else {
-            this.ui.scrollToTop();
+    async jumpToCheckbox() {
+        const targetId = this.ui.getJumpTarget();
+        if (!targetId) return;
+
+        this.ui.setJumpBusy(true, 0);
+        try {
+            const targetY = this.render.getScrollYForId(targetId);
+            window.scrollTo({ top: Math.max(0, targetY - window.innerHeight * 0.42), behavior: 'auto' });
+
+            // Let scroll settle, then render/flash target inside window.
+            await new Promise(resolve => requestAnimationFrame(resolve));
+            this.render.renderVisibleWindow(this.state.checkboxStates);
+            this.render.flashCheckbox(targetId);
+
+            this.ui.setJumpBusy(true, 100);
+            this.ui.updateProgress();
+        } finally {
+            setTimeout(() => this.ui.setJumpBusy(false), 120);
         }
     }
 
-    onScrollBottomClick() {
-        if (this.state.isAutoScrolling) {
-            this.stopAutoScroll();
-        } else {
-            this.startAutoScroll();
-        }
-    }
-
-    startAutoScroll() {
-        this.state.isAutoScrolling = true;
-        this.ui.startAutoScroll();
-    }
-
-    stopAutoScroll() {
-        this.state.isAutoScrolling = false;
-        this.ui.stopAutoScroll();
-    }
-
-    onWheel(event) {
-        // Stop auto-scroll if user scrolls up
-        if (this.state.isAutoScrolling && event.deltaY < 0) {
-            this.stopAutoScroll();
-        }
-    }
-
-    onKeydown(event) {
-        if (event.code === 'Home') {
-            event.preventDefault();
-            this.onScrollTopClick();
-        } else if (event.code === 'End') {
-            event.preventDefault();
-            this.onScrollBottomClick();
-        }
+    onResize() {
+        this.render.recalculateLayout();
+        this.render.renderVisibleWindow(this.state.checkboxStates);
+        this.ui.updateProgress();
     }
 
     setupEventListeners() {
@@ -540,16 +553,14 @@ class CheckboxApp {
             }
         }, { capture: true });
         
-        // Scroll buttons
-        this.ui.scrollTopBtn?.addEventListener('click', () => this.onScrollTopClick());
-        this.ui.scrollBottomBtn?.addEventListener('click', () => this.onScrollBottomClick());
+        // Jump control
+        this.ui.onJumpSubmit(() => this.jumpToCheckbox());
         
-        // Scroll and wheel
+        // Scroll
         window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-        window.addEventListener('wheel', (e) => this.onWheel(e), { passive: true });
-        
-        // Keyboard
-        window.addEventListener('keydown', (e) => this.onKeydown(e));
+
+        // Resize
+        window.addEventListener('resize', () => this.onResize());
         
         // Cleanup on unload
         window.addEventListener('beforeunload', () => this.flushUpdates());

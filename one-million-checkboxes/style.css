@@ -4,13 +4,16 @@ html, body {
 }
 
 #checkbox-container {
-    display: flex;
-    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
 }
 
 .checkbox-item {
-    flex: 0 0 auto;
-    margin: 4px !important;
+    position: absolute;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Rest of the styles... */
@@ -148,69 +151,88 @@ input[type=checkbox]:hover {
     border-bottom: 3px solid #222;
 }
 
-/* Scroll buttons container */
-.scroll-buttons-container {
+/* Jump controls */
+.jump-controls-container {
     position: fixed;
     right: 20px;
     bottom: 20px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 8px;
     z-index: 999;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #949494;
+    border-radius: 10px;
+    padding: 10px 12px;
 }
 
-.scroll-btn {
-    padding: 12px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    min-width: 100px;
+.jump-label {
     font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    margin: 0;
 }
 
-.scroll-top-btn {
-    background: #555;
-    color: white;
+.jump-input {
+    width: 110px;
+    padding: 7px 8px;
+    border: 1px solid #7a7a7a;
+    border-radius: 7px;
+    font-family: "Roboto", sans-serif;
+    font-size: 13px;
 }
 
-.scroll-top-btn:hover {
-    background: #444;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+.jump-btn {
+    padding: 7px 12px;
+    min-width: 120px;
+    border: none;
+    border-radius: 7px;
+    background: #3f3f3f;
+    color: #fff;
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
 }
 
-.scroll-top-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.jump-btn:hover {
+    background: #2f2f2f;
 }
 
-.scroll-bottom-btn {
-    background: #555;
-    color: white;
-}
-
-.scroll-bottom-btn:hover {
-    background: #444;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.scroll-bottom-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.scroll-btn:disabled {
+.jump-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    transform: none;
 }
 
-.scroll-btn:disabled:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    transform: none;
+.jump-btn-loading {
+    position: relative;
+    padding-left: 30px;
+}
+
+.jump-btn-loading::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: jumpSpin 0.75s linear infinite;
+}
+
+@keyframes jumpSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.jump-target {
+    outline: 3px solid #f5b800;
+    outline-offset: 2px;
+    transition: outline-color 0.5s ease;
 }
 
 .content {
@@ -231,21 +253,15 @@ input[type=checkbox]:hover {
         text-align: center;
         justify-self: center;
     }
-}
 
-#scrollBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    .jump-controls-container {
+        right: 12px;
+        bottom: 12px;
+        gap: 6px;
+        padding: 8px 10px;
+    }
 
-#scrollBtn:hover {
-    background-color: #454545;
+    .jump-input {
+        width: 92px;
+    }
 }

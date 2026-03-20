@@ -42,9 +42,10 @@
         </div>
         <p class="text-center text-wrap fs-5 pt-2" id="loading">Loading...</p>
         <div id="checkbox-container" class="content"></div>
-        <div id="scroll-buttons" class="scroll-buttons-container">
-            <button id="scrollTopBtn" class="scroll-btn scroll-top-btn" title="Back to top" hidden>↑ Top</button>
-            <button id="scrollBottomBtn" class="scroll-btn scroll-bottom-btn" title="Scroll to bottom" hidden>Bottom ↓</button>
+        <div id="jump-controls" class="jump-controls-container">
+            <label for="jumpInput" class="jump-label">Jump to #</label>
+            <input id="jumpInput" class="jump-input" type="number" min="1" max="1000000" step="1" placeholder="69420" />
+            <button id="jumpBtn" class="jump-btn" title="Jump to checkbox">Go</button>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/appwrite@15.0.0"></script>
