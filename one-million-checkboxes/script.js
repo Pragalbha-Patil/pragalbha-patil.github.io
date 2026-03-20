@@ -52,7 +52,7 @@ function initElements() {
     elements.countDisplay = document.getElementById('count-display');
     elements.progressBar = document.getElementById('scroll-progress');
     elements.loadingIndicator = document.getElementById('loading');
-    console.log('[INIT] Elements initialized:', { 
+    console.log('[INIT] Elements initialized:', {
         hasContainer: !!elements.container,
         hasCountDisplay: !!elements.countDisplay,
         hasProgressBar: !!elements.progressBar,
@@ -81,7 +81,7 @@ function debounce(func, wait) {
 // Throttle function for high-frequency events
 function throttle(func, limit) {
     let inThrottle;
-    return function(...args) {
+    return function (...args) {
         if (!inThrottle) {
             func.apply(this, args);
             inThrottle = true;
@@ -98,17 +98,17 @@ function throttle(func, limit) {
  */
 async function flushPendingUpdates() {
     if (state.pendingUpdates.size === 0 || state.requestInFlight) return;
-    
+
     state.requestInFlight = true;
     const updates = Array.from(state.pendingUpdates.entries());
     state.pendingUpdates.clear();
-    
+
     try {
         // Group into create, update, delete operations
         const toCreate = [];
         const toUpdate = [];
         const toDelete = [];
-        
+
         for (const [id, isChecked] of updates) {
             const documentId = `id-${id}`;
             if (isChecked) {
@@ -117,18 +117,18 @@ async function flushPendingUpdates() {
                 toDelete.push({ documentId });
             }
         }
-        
+
         // Execute operations in parallel with error handling for each
         const results = await Promise.allSettled([
-            ...toCreate.map(op => 
+            ...toCreate.map(op =>
                 databases.createDocument(CONFIG.databaseId, CONFIG.collectionId, op.documentId, { id: op.id, state: true })
                     .catch(() => databases.updateDocument(CONFIG.databaseId, CONFIG.collectionId, op.documentId, { id: op.id, state: true }))
             ),
-            ...toDelete.map(op => 
+            ...toDelete.map(op =>
                 databases.deleteDocument(CONFIG.databaseId, CONFIG.collectionId, op.documentId)
             )
         ]);
-        
+
         // Log any failures
         results.forEach((result, idx) => {
             if (result.status === 'rejected') {
@@ -155,7 +155,7 @@ const debouncedFlushUpdates = debounce(flushPendingUpdates, CONFIG.updateBatchDe
  */
 function queueCheckboxUpdate(id, isChecked) {
     state.pendingUpdates.set(id, isChecked);
-    
+
     // Flush if we reach threshold
     if (state.pendingUpdates.size >= CONFIG.maxPendingUpdates) {
         debouncedFlushUpdates.cancel?.(); // Cancel any pending debounce
@@ -177,23 +177,23 @@ async function subscribeToUpdates() {
             (response) => {
                 console.log('[SUBSCRIBE] WebSocket event received:', response);
                 if (!response?.events?.[0]) return;
-                
+
                 const eventsArr = response.events[0].split('.');
                 const actionPerformed = eventsArr[eventsArr.length - 1];
-                
+
                 if (!response.payload?.id) return;
-                
+
                 const id = String(response.payload.id);
-                
+
                 if (actionPerformed === 'delete') {
                     state.checkboxStates[id] = false;
                 } else if (response.payload?.state !== undefined) {
                     state.checkboxStates[id] = response.payload.state;
                 }
-                
+
                 // Update UI for this specific checkbox if visible
                 updateUIForCheckbox(id, state.checkboxStates[id]);
-                
+
                 // Recalculate count (debounced)
                 recalculateCheckedCount();
             }
@@ -212,31 +212,31 @@ async function subscribeToUpdates() {
  */
 async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes) {
     console.log('[FETCH] fetchStateFromAppwrite() called with:', { startId, endId });
-    
+
     // Check if range is already loaded or loading
     if (state.appwriteStateLoading) {
         console.log('[FETCH] Already loading, skipping');
         return;
     }
-    
+
     const rangeOverlaps = state.loadedStateRanges.some(range =>
         !(endId < range.start || startId > range.end)
     );
-    
+
     if (rangeOverlaps) {
         console.log('[FETCH] Range already loaded, skipping');
         return;
     }
-    
+
     state.appwriteStateLoading = true;
     let docsProcessed = 0;
     let offset = 0;
     const limit = 1000;
-    
+
     try {
         console.log('[FETCH] Starting to fetch documents...');
         let hasMoreDocuments = true;
-        
+
         while (hasMoreDocuments) {
             console.log('[FETCH] Fetching batch at offset:', offset);
             const response = await Promise.race([
@@ -249,26 +249,26 @@ async function fetchStateFromAppwrite(startId = 0, endId = CONFIG.numCheckboxes)
                     setTimeout(() => reject(new Error('Request timeout')), CONFIG.requestTimeout)
                 )
             ]);
-            
+
             if (!response?.documents) {
                 console.log('[FETCH] No documents in response');
                 break;
             }
-            
+
             console.log('[FETCH] Received', response.documents.length, 'documents');
             response.documents.forEach(doc => {
                 const id = String(doc.id);
                 state.checkboxStates[id] = doc.state;
                 docsProcessed++;
             });
-            
+
             offset += limit;
             hasMoreDocuments = response.documents.length === limit;
         }
-        
+
         state.loadedStateRanges.push({ start: startId, end: endId });
         console.log('[FETCH] Processed', docsProcessed, 'documents total');
-        
+
         if (!state.initialRenderComplete) {
             state.lastRemCount = CONFIG.numCheckboxes - docsProcessed;
             recalculateCheckedCount();
@@ -296,13 +296,13 @@ function createCheckbox(id) {
     const checkboxDiv = document.createElement('div');
     checkboxDiv.className = 'checkbox-item';
     checkboxDiv.dataset.id = id;
-    
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'form-check-input';
     checkbox.id = `checkbox-${id}`;
     checkbox.checked = state.checkboxStates[id] || false;
-    
+
     // Use event delegation instead of individual listeners for memory efficiency
     checkbox.addEventListener('change', () => {
         const newState = checkbox.checked;
@@ -310,9 +310,9 @@ function createCheckbox(id) {
         queueCheckboxUpdate(id, newState);
         recalculateCheckedCount();
     });
-    
+
     checkboxDiv.appendChild(checkbox);
-    
+
     return checkboxDiv;
 }
 
@@ -323,24 +323,24 @@ function renderCheckboxes(start, end, updateRender, checkboxId, isChecked) {
     console.log('[RENDER] Called with:', { start, end, updateRender, checkboxId, isChecked });
     console.log('[RENDER] State object exists?', !!state);
     console.log('[RENDER] State.lastId value:', state?.lastId);
-    
+
     // Safety check - make sure state exists
     if (!state || typeof state.lastId !== 'number') {
         console.error('Fatal: State not properly initialized', state);
         return;
     }
-    
+
     if (updateRender && checkboxId) {
         const element = document.getElementById(`checkbox-${checkboxId}`);
         if (element) element.checked = isChecked;
         return;
     }
-    
+
     if (!elements.container) {
         console.error('Container not initialized');
         return;
     }
-    
+
     const fragment = document.createDocumentFragment();
     for (let i = start; i <= end && i <= CONFIG.numCheckboxes; i++) {
         state.lastId++;
@@ -373,7 +373,7 @@ function updateUI(updateRender, id, checkState) {
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
     const buffer = 3000;
-    
+
     return (
         rect.top >= -buffer &&
         rect.left >= -buffer &&
@@ -404,17 +404,17 @@ let msgShown2 = false;
 
 const debouncedUpdateCountDisplay = debounce(() => {
     if (!elements.countDisplay) return; // Safety check
-    
+
     elements.countDisplay.textContent = state.checkedCount.toLocaleString();
-    
+
     const remaining = document.getElementById('remaining-checkboxes');
     if (!remaining) return;
-    
+
     const remainingCount = CONFIG.numCheckboxes - state.checkedCount;
     remaining.textContent = remainingCount.toLocaleString();
-    
+
     remaining.style.color = state.lastRemCount < remainingCount ? 'red' : 'green';
-    
+
     tempUpdate++;
     if (tempUpdate > 200 && !msgShown) {
         alert('chill, lol');
@@ -432,20 +432,20 @@ const debouncedUpdateCountDisplay = debounce(() => {
 function loadMoreCheckboxes() {
     if (state.ticking) return;
     if (!elements.container) return; // Safety check
-    
+
     state.ticking = true;
-    
+
     requestAnimationFrame(() => {
         const containerHeight = elements.container.clientHeight;
         const scrollPosition = window.scrollY + window.innerHeight;
-        
+
         // Render more if needed
         if (scrollPosition >= containerHeight - 1000 && state.renderedCount < CONFIG.numCheckboxes) {
             const start = state.renderedCount + 1;
             const end = Math.min(state.renderedCount + CONFIG.batchSize, CONFIG.numCheckboxes);
             renderCheckboxes(start, end, false);
             state.renderedCount = end;
-            
+
             // Lazy-load DB state for visible area
             const approxIdAtViewport = Math.max(1, Math.floor(scrollPosition / 40));
             fetchStateFromAppwrite(
@@ -453,19 +453,19 @@ function loadMoreCheckboxes() {
                 Math.min(CONFIG.numCheckboxes, approxIdAtViewport + 5000)
             );
         }
-        
+
         // Clean up off-screen checkboxes when scrolling up
         if (window.scrollY < state.lastScrollY) {
             const checkboxes = Array.from(elements.container.querySelectorAll('.checkbox-item'));
             const inViewport = checkboxes.filter(cb => isElementInViewport(cb));
-            
+
             if (checkboxes.length > inViewport.length + 500 && checkboxes.length - inViewport.length > 1000) {
                 const toRemove = checkboxes.slice(0, checkboxes.length - inViewport.length - 500);
                 toRemove.forEach(el => el.remove());
                 state.renderedCount = Math.max(0, state.renderedCount - toRemove.length);
             }
         }
-        
+
         state.lastScrollY = window.scrollY;
         state.ticking = false;
     });
@@ -482,7 +482,7 @@ const throttledLoadMore = throttle(loadMoreCheckboxes, 100);
 function updateScrollProgress() {
     const scrollHeight = document.body.scrollHeight - window.innerHeight;
     const scrollPercent = scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
-    
+
     if (elements.progressBar) {
         elements.progressBar.style.width = Math.min(100, scrollPercent) + '%';
     }
@@ -494,20 +494,20 @@ function updateScrollProgress() {
 const debouncedUpdateScrollButtons = debounce(() => {
     const scrollTopBtn = document.getElementById('scrollTopBtn');
     const scrollBottomBtn = document.getElementById('scrollBottomBtn');
-    
+
     if (window.scrollY > 300) {
         scrollTopBtn?.removeAttribute('hidden');
     } else {
         scrollTopBtn?.setAttribute('hidden', 'true');
     }
-    
+
     const isNearBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 500;
     if (!isNearBottom) {
         scrollBottomBtn?.removeAttribute('hidden');
     } else if (!state.isAutoScrolling) {
         scrollBottomBtn?.setAttribute('hidden', 'true');
     }
-    
+
     updateScrollProgress();
 }, 50);
 
@@ -535,22 +535,22 @@ function scrollToBottom() {
 
 function autoScrollToBottom() {
     const scrollBottomBtn = document.getElementById('scrollBottomBtn');
-    
+
     if (state.isAutoScrolling) {
         stopAutoScroll();
         scrollBottomBtn.textContent = 'Bottom ↓';
         scrollBottomBtn.removeAttribute("disabled");
         return;
     }
-    
+
     state.isAutoScrolling = true;
     scrollBottomBtn.setAttribute("disabled", true);
     scrollBottomBtn.textContent = 'Stop (■)';
-    
+
     const scrollInterval = setInterval(() => {
         scrollToBottom();
     }, 800);
-    
+
     // Store interval for cleanup
     state.scrollInterval = scrollInterval;
 }
@@ -571,10 +571,10 @@ function stopAutoScroll() {
 function initializeApp() {
     console.log('[INIT] initializeApp() started');
     console.log('[INIT] Global state at startup:', state);
-    
+
     initElements();
     console.log('[INIT] After initElements, state is:', state);
-    
+
     // Render initial batch immediately
     const initialBatch = CONFIG.batchSize * 2;
     console.log('[INIT] About to call renderCheckboxes with:', { start: 1, end: initialBatch });
@@ -582,12 +582,12 @@ function initializeApp() {
     state.renderedCount = initialBatch;
     console.log('[INIT] Rendered initial batch, state.renderedCount:', state.renderedCount);
     debouncedUpdateCountDisplay();
-    
+
     // Setup event listeners
     document.getElementById('scrollTopBtn')?.addEventListener('click', scrollToTop);
     document.getElementById('scrollBottomBtn')?.addEventListener('click', autoScrollToBottom);
     window.addEventListener('scroll', handleScroll);
-    
+
     // Keyboard shortcuts
     window.addEventListener('keydown', (event) => {
         if (event.code === 'Home') {
@@ -598,7 +598,7 @@ function initializeApp() {
             autoScrollToBottom();
         }
     });
-    
+
     // Manual scroll up interrupt
     window.addEventListener('wheel', (event) => {
         if (state.isAutoScrolling && event.deltaY < 0) {
@@ -610,13 +610,13 @@ function initializeApp() {
             }
         }
     }, { passive: true });
-    
+
     // Cleanup on unload
     window.addEventListener('beforeunload', () => {
         stopAutoScroll();
         flushPendingUpdates();
     });
-    
+
     // Start async operations after DOM is ready (non-blocking)
     setTimeout(() => {
         console.log('[ASYNC-INIT] Starting network operations');
@@ -653,10 +653,10 @@ async function trackUserActivity() {
     } else {
         const genRandomHex = (size) =>
             [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-        
+
         state.userId = genRandomHex(20);
         localStorage.setItem("userId", state.userId);
-        
+
         try {
             await databases.createDocument(
                 CONFIG.databaseId,
@@ -677,7 +677,7 @@ function getRandomInt(min, max) {
 function toggleRandomCheckbox(id) {
     const checkboxId = id || getRandomInt(1, state.renderedCount);
     const checkbox = document.getElementById(`checkbox-${checkboxId}`);
-    
+
     if (checkbox) {
         checkbox.checked = !checkbox.checked;
         checkbox.dispatchEvent(new Event('change', { bubbles: true }));
