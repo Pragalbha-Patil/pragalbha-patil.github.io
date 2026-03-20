@@ -334,8 +334,8 @@ class UIController {
 
     startAutoScroll() {
         if (this.scrollBottomBtn) {
-            this.scrollBottomBtn.setAttribute('disabled', 'true');
             this.scrollBottomBtn.textContent = 'Stop (■)';
+            this.scrollBottomBtn.setAttribute('aria-pressed', 'true');
         }
         this.scrollInterval = setInterval(() => this.scrollToBottom(), 800);
     }
@@ -347,7 +347,7 @@ class UIController {
         }
         if (this.scrollBottomBtn) {
             this.scrollBottomBtn.textContent = 'Bottom ↓';
-            this.scrollBottomBtn.removeAttribute('disabled');
+            this.scrollBottomBtn.removeAttribute('aria-pressed');
         }
     }
 }
