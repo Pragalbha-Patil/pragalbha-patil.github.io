@@ -1,12 +1,15 @@
 // ============ CONFIGURATION ============
 const CONFIG = {
     numCheckboxes: 1000000,
-    initialRenderCount: 500,
+    initialRenderCount: 1500,
     batchSize: 1000,
     databaseId: '667d0f99001b691d76cc',
     collectionId: '667d0fa8000f64e4decc',
     appwriteEndpoint: 'https://fra.cloud.appwrite.io/v1',
     appwriteProjectId: '667d0f2d001c4fce8b90',
+    userCheckedStorageKey: 'one-million-checkboxes:user-checked',
+    userPlusStorageKey: 'one-million-checkboxes:user-plus',
+    userMinusStorageKey: 'one-million-checkboxes:user-minus',
 };
 
 // ============ STATE MANAGER ============
@@ -18,6 +21,52 @@ class StateManager {
         this.lastScrollY = 0;
         this.isAutoScrolling = false;
         this.pendingUpdates = new Map(); // { id: boolean }
+        this.userCheckedIds = this.loadUserCheckedIds();
+        this.userPlusCount = this.loadCounter(CONFIG.userPlusStorageKey);
+        this.userMinusCount = this.loadCounter(CONFIG.userMinusStorageKey);
+    }
+
+    loadCounter(key) {
+        const raw = localStorage.getItem(key);
+        const parsed = parseInt(raw || '0', 10);
+        return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+    }
+
+    loadUserCheckedIds() {
+        try {
+            const raw = localStorage.getItem(CONFIG.userCheckedStorageKey);
+            if (!raw) return new Set();
+            const parsed = JSON.parse(raw);
+            if (!Array.isArray(parsed)) return new Set();
+            return new Set(parsed.map(id => parseInt(id, 10)).filter(Number.isFinite));
+        } catch {
+            return new Set();
+        }
+    }
+
+    persistUserCheckedIds() {
+        localStorage.setItem(
+            CONFIG.userCheckedStorageKey,
+            JSON.stringify(Array.from(this.userCheckedIds))
+        );
+        localStorage.setItem(CONFIG.userPlusStorageKey, String(this.userPlusCount));
+        localStorage.setItem(CONFIG.userMinusStorageKey, String(this.userMinusCount));
+    }
+
+    setUserCheckedState(id, checked, wasChecked) {
+        if (!wasChecked && checked) this.userPlusCount++;
+        if (wasChecked && !checked) this.userMinusCount++;
+        if (checked) this.userCheckedIds.add(id);
+        else this.userCheckedIds.delete(id);
+        this.persistUserCheckedIds();
+    }
+
+    getUserCheckedCount() {
+        return this.userCheckedIds.size;
+    }
+
+    getUserDeltaCounts() {
+        return { plus: this.userPlusCount, minus: this.userMinusCount };
     }
 
     setState(id, checked) {
@@ -56,8 +105,6 @@ class AppwriteService {
     }
 
     async initialize() {
-        console.log('[APPWRITE] Initializing...');
-        
         // Wait for Appwrite SDK to load
         if (typeof Appwrite === 'undefined') {
             throw new Error('Appwrite SDK not loaded');
@@ -72,12 +119,9 @@ class AppwriteService {
         this.databases = new Databases(this.client);
         this.Query = Query;
         this.isReady = true;
-        
-        console.log('[APPWRITE] Initialized successfully');
     }
 
     async fetchAllCheckboxes() {
-        console.log('[APPWRITE] Fetching all checkbox states...');
         if (!this.isReady) throw new Error('Appwrite not initialized');
 
         // Probe for total count with minimal data transfer
@@ -88,13 +132,11 @@ class AppwriteService {
         );
         const total = probe.total;
         if (total === 0) {
-            console.log('[APPWRITE] No checked boxes found');
             return [];
         }
 
         // Fire all page requests in parallel
         const pageCount = Math.ceil(total / 1000);
-        console.log(`[APPWRITE] Fetching ${total} docs across ${pageCount} parallel requests...`);
         const requests = Array.from({ length: pageCount }, (_, i) =>
             this.databases.listDocuments(
                 CONFIG.databaseId,
@@ -104,9 +146,7 @@ class AppwriteService {
         );
 
         const responses = await Promise.all(requests);
-        const allDocs = responses.flatMap(r => r.documents);
-        console.log(`[APPWRITE] Fetch complete: ${allDocs.length} checked boxes`);
-        return allDocs;
+        return responses.flatMap(r => r.documents);
     }
 
     async saveCheckbox(id, checked) {
@@ -151,25 +191,20 @@ class AppwriteService {
                 }
             }
         } catch (error) {
-            console.error(`[APPWRITE] Failed to save checkbox ${id}:`, error.message);
+            // Keep UX responsive even if a network write fails.
         }
     }
 
     async saveMultiple(updates) {
-        console.log(`[APPWRITE] Saving ${updates.length} checkbox updates...`);
-        
         const promises = updates.map(([id, checked]) => 
             this.saveCheckbox(id, checked)
         );
         
         await Promise.allSettled(promises);
-        console.log('[APPWRITE] Batch save complete');
     }
 
     subscribeToChanges(callback) {
         if (!this.client) throw new Error('Appwrite not initialized');
-
-        console.log('[APPWRITE] Subscribing to real-time updates...');
         
         try {
             this.client.subscribe(
@@ -180,7 +215,6 @@ class AppwriteService {
                     const payloadId = payload.id ?? payload.$id?.replace(/^id-/, '');
 
                     if (!payloadId && !event.includes('delete')) {
-                        console.warn('[APPWRITE] Ignoring realtime event with no checkbox id', response);
                         return;
                     }
                     
@@ -191,9 +225,8 @@ class AppwriteService {
                     }
                 }
             );
-            console.log('[APPWRITE] Subscribed successfully');
         } catch (error) {
-            console.error('[APPWRITE] Subscription failed:', error.message);
+            // Realtime stream can fail silently without blocking core usage.
         }
     }
 }
@@ -243,18 +276,14 @@ class UIController {
     constructor() {
         this.countDisplay = document.getElementById('count-display');
         this.remainingDisplay = document.getElementById('remaining-checkboxes');
+        this.userCountDisplay = document.getElementById('user-count-display');
+        this.userPlusDisplay = document.getElementById('user-plus-count');
+        this.userMinusDisplay = document.getElementById('user-minus-count');
         this.loadingIndicator = document.getElementById('loading');
-        this.statusBanner = document.getElementById('status-banner');
         this.scrollTopBtn = document.getElementById('scrollTopBtn');
         this.scrollBottomBtn = document.getElementById('scrollBottomBtn');
         this.progressBar = document.getElementById('scroll-progress');
         this.scrollInterval = null;
-    }
-
-    setStatus(message, tone = 'pending') {
-        if (!this.statusBanner) return;
-        this.statusBanner.textContent = message;
-        this.statusBanner.className = `status-banner status-banner-${tone}`;
     }
 
     updateCount(checkedCount) {
@@ -264,6 +293,18 @@ class UIController {
         if (this.remainingDisplay) {
             const remaining = CONFIG.numCheckboxes - checkedCount;
             this.remainingDisplay.textContent = remaining.toLocaleString();
+        }
+    }
+
+    updateUserCount(userCheckedCount, userDelta = { plus: 0, minus: 0 }) {
+        if (this.userCountDisplay) {
+            this.userCountDisplay.textContent = userCheckedCount.toLocaleString();
+        }
+        if (this.userPlusDisplay) {
+            this.userPlusDisplay.textContent = `+${userDelta.plus.toLocaleString()}`;
+        }
+        if (this.userMinusDisplay) {
+            this.userMinusDisplay.textContent = `-${userDelta.minus.toLocaleString()}`;
         }
     }
 
@@ -336,42 +377,29 @@ class CheckboxApp {
     }
 
     async start() {
-        console.log('[APP] Starting application...');
-        
         try {
-            this.ui.setStatus('Connecting to Appwrite...', 'pending');
+            this.ui.updateUserCount(this.state.getUserCheckedCount(), this.state.getUserDeltaCounts());
 
             // Initialize Appwrite
             await this.appwrite.initialize();
-            this.ui.setStatus('Rendering initial checkboxes...', 'pending');
             
             // Render initial batch immediately
             this.render.renderRange(1, CONFIG.initialRenderCount, this.state.checkboxStates);
             this.state.renderedCount = CONFIG.initialRenderCount;
-            console.log('[APP] Initial batch rendered');
             
             // Setup event listeners
             this.setupEventListeners();
-            console.log('[APP] Event listeners setup');
             
             // Hide loading, start background tasks
             this.ui.setLoading(false);
-            this.ui.setStatus('Fetching checked states...', 'pending');
             
             // Load database state asynchronously but wait for it
             await this.loadDatabaseState();
-            console.log('[APP] Database state loaded');
             
             // Subscribe to real-time updates
             this.subscribeToLiveUpdates();
-            console.log('[APP] Live updates subscribed');
-            this.ui.setStatus('Connected and synced.', 'success');
-            
-            console.log('[APP] ✓ Application ready');
         } catch (error) {
-            console.error('[APP] Fatal error:', error.message);
             this.ui.setLoading(false);
-            this.ui.setStatus(`Startup failed: ${error.message}`, 'error');
             alert('Error: ' + error.message);
         }
     }
@@ -387,11 +415,7 @@ class CheckboxApp {
             
             // Update UI
             this.ui.updateCount(this.state.checkedCount);
-            
-            console.log(`[APP] Loaded state: ${this.state.checkedCount} checked boxes`);
         } catch (error) {
-            console.error('[APP] Failed to load database state:', error.message);
-            this.ui.setStatus(`Loaded shell only. Data fetch failed: ${error.message}`, 'error');
             // Continue anyway - show empty state
         }
     }
@@ -400,7 +424,6 @@ class CheckboxApp {
         this.appwrite.subscribeToChanges((id, isChecked) => {
             id = parseInt(id, 10);
             if (Number.isNaN(id)) {
-                console.warn('[APP] Ignoring realtime update with invalid id', id);
                 return;
             }
             
@@ -412,8 +435,6 @@ class CheckboxApp {
             
             // Update count
             this.ui.updateCount(this.state.checkedCount);
-            
-            console.log(`[APP] Live update: checkbox ${id} = ${isChecked}`);
         });
     }
 
@@ -421,13 +442,16 @@ class CheckboxApp {
         const checkbox = event.target;
         const id = parseInt(checkbox.id.replace('checkbox-', ''), 10);
         const isChecked = checkbox.checked;
+        const wasChecked = this.state.checkboxStates[id] || false;
         
         // Update state
         this.state.setState(id, isChecked);
+        this.state.setUserCheckedState(id, isChecked, wasChecked);
         this.state.addPendingUpdate(id, isChecked);
         
         // Update UI
         this.ui.updateCount(this.state.checkedCount);
+        this.ui.updateUserCount(this.state.getUserCheckedCount(), this.state.getUserDeltaCounts());
         
         // Debounce save to database
         this.debouncedFlush();
@@ -458,8 +482,6 @@ class CheckboxApp {
             
             this.render.renderRange(nextStart, nextEnd, this.state.checkboxStates);
             this.state.renderedCount = nextEnd;
-            
-            console.log(`[APP] Rendered up to ${nextEnd}`);
         }
         
         // Update UI
@@ -541,7 +563,6 @@ async function bootCheckboxApp() {
     }
 
     window.__checkboxAppBooted = true;
-    console.log('[APP] DOM ready, starting...');
     const app = new CheckboxApp();
     await app.start();
     window.app = app; // For debugging

@@ -30,17 +30,16 @@
     <div class="container container-fluid mt-2">
         <div class="header-wrap">
             <div class="header-top-row">
-                <p class="author-credit">a website by <a href="https://pragal.fun" target="_blank" rel="noopener">Pragalbha Patil</a></p>
+                <div class="header-spacer" aria-hidden="true"></div>
                 <div class="title-block">
                     <h1 id="banner">One Million Checkboxes</h1>
                     <p id="subtitle">(checking a box checks it for everyone!)</p>
                 </div>
                 <p id="checkbox-count"><span id="count-display">0</span> boxes are ✅</p>
             </div>
-            <p id="user-checkbox-count">You have checked <span id="user-count-display">0</span> boxes</p>
+            <p id="user-checkbox-count">You have checked <span id="user-count-display">0</span> (<span id="user-plus-count" class="user-plus">+0</span> <span id="user-minus-count" class="user-minus">-0</span>) boxes</p>
             <div class="header-divider"></div>
         </div>
-        <div id="status-banner" class="status-banner status-banner-pending" role="status" aria-live="polite">Initializing application...</div>
         <p class="text-center text-wrap fs-5 pt-2" id="loading">Loading...</p>
         <div id="checkbox-container" class="content"></div>
         <div id="scroll-buttons" class="scroll-buttons-container">
