@@ -562,9 +562,20 @@ class CheckboxApp {
 }
 
 // ============ INITIALIZATION ============
-document.addEventListener('DOMContentLoaded', async () => {
+async function bootCheckboxApp() {
+    if (window.__checkboxAppBooted) {
+        return;
+    }
+
+    window.__checkboxAppBooted = true;
     console.log('[APP] DOM ready, starting...');
     const app = new CheckboxApp();
     await app.start();
     window.app = app; // For debugging
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootCheckboxApp, { once: true });
+} else {
+    bootCheckboxApp();
+}
