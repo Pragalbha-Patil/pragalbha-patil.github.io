@@ -116,6 +116,7 @@ class NetworkService {
 
     async fetchCheckboxStates(limit = 1000, offset = 0) {
         try {
+            console.log('[NETWORK] fetchCheckboxStates - calling Appwrite (limit:', limit, 'offset:', offset, ')');
             const response = await Promise.race([
                 this.databases.listDocuments(
                     CONFIG.databaseId,
@@ -126,9 +127,11 @@ class NetworkService {
                     setTimeout(() => reject(new Error('Timeout')), CONFIG.requestTimeout)
                 ),
             ]);
+            console.log('[NETWORK] fetchCheckboxStates - got response, items:', response?.documents?.length || 0);
             return response?.documents || [];
         } catch (error) {
-            console.error('Fetch error:', error);
+            console.error('[NETWORK] Fetch error:', error.message);
+            console.error('[NETWORK] Full error:', error);
             return [];
         }
     }
@@ -409,15 +412,19 @@ class CheckboxApp {
             this.renderInitialBatch();
             console.log('[APP] Initial batch rendered');
             
-            // Hide loading indicator immediately and start background tasks
+            // Hide loading indicator immediately
             this.ui.setLoading(false);
             console.log('[APP] Loading indicator hidden - UI ready');
             
-            // Load database state in background without blocking
-            this.loadDatabaseStateAsync();
+            // Load database state in background but log if it fails
+            Promise.resolve().then(() => this.loadDatabaseStateAsync()).catch(error => {
+                console.error('[APP] loadDatabaseStateAsync error:', error);
+            });
             
             // Subscribe to updates in background
-            this.subscribeToUpdatesAsync();
+            Promise.resolve().then(() => this.subscribeToUpdatesAsync()).catch(error => {
+                console.error('[APP] subscribeToUpdatesAsync error:', error);
+            });
         } catch (error) {
             console.error('[APP] Error during initialize:', error);
             this.ui.setLoading(false);
@@ -426,20 +433,28 @@ class CheckboxApp {
     }
 
     loadDatabaseStateAsync() {
-        // Fire and forget - don't await
+        console.log('[APP] loadDatabaseStateAsync - called');
+        
         (async () => {
             try {
                 console.log('[APP] loadDatabaseState - starting in background');
+                console.log('[APP] network available?', !!this.network);
+                console.log('[APP] network.fetchCheckboxStates available?', typeof this.network.fetchCheckboxStates);
+                
                 const docs = [];
                 let offset = 0;
                 const limit = 1000;
                 let hasMore = true;
+                let batchCount = 0;
 
                 while (hasMore) {
-                    console.log('[APP] fetchCheckboxStates - offset:', offset);
+                    batchCount++;
+                    console.log('[APP] fetchCheckboxStates - batch', batchCount, 'offset:', offset);
                     const batch = await this.network.fetchCheckboxStates(limit, offset);
+                    console.log('[APP] Batch', batchCount, 'result:', batch.length, 'items');
+                    
                     if (batch.length === 0) {
-                        console.log('[APP] No more documents');
+                        console.log('[APP] No more documents at offset', offset);
                         break;
                     }
 
@@ -450,16 +465,18 @@ class CheckboxApp {
                     docs.push(...batch);
                     hasMore = batch.length === limit;
                     offset += limit;
-                    console.log('[APP] Loaded batch:', batch.length, 'total so far:', docs.length);
+                    console.log('[APP] Total loaded so far:', docs.length, 'checkboxes');
                 }
 
-                console.log('[APP] Total documents loaded:', docs.length);
+                console.log('[APP] All batches complete. Total documents loaded:', docs.length);
                 this.state.recalculateCount();
                 this.ui.updateCountDisplay(this.state.data.checkedCount, CONFIG.numCheckboxes);
                 this.state.markRangeLoaded(0, CONFIG.numCheckboxes);
-                console.log('[APP] loadDatabaseState - complete, checked count:', this.state.data.checkedCount);
+                console.log('[APP] loadDatabaseState complete - checked count:', this.state.data.checkedCount);
             } catch (error) {
-                console.error('[APP] loadDatabaseState failed:', error);
+                console.error('[APP] loadDatabaseState FAILED:', error);
+                console.error('[APP] Error message:', error.message);
+                console.error('[APP] Error stack:', error.stack);
             }
         })();
     }
