@@ -1,37 +1,60 @@
 html, body {
     background-color: #ebeaea;
 }
-/* Custom CSS for wrapping checkboxes */
+
+/* CSS Containment for better performance with many elements */
 #checkbox-container {
     display: flex;
     flex-wrap: wrap;
+    contain: layout style paint; /* Isolate painting and layout from other elements */
 }
-/* CSS for smooth scrolling animation */
+
+/* CSS Containment for individual checkbox items */
+.checkbox-item {
+    flex: 0 0 auto;
+    margin: 12px !important;
+    contain: strict; /* Strict containment for better performance */
+}
+
+/* Rest of the styles... */
+/* Custom CSS for wrapping checkboxes */
+/* CSS Containment for smooth scrolling animation */
 @keyframes fadeIn {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
 }
-.checkbox-item {
-    flex: 0 0 auto;
-    margin: 12px !important;
-    /* animation: fadeIn 0.5s ease-out; */
-}
-/* Smooth scrolling for the entire page */
+
+/* Optimized scrolling for 1M items - instant is faster than smooth */
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
 }
 .form-check-input {
     font: optional;
+    cursor: pointer;
 }
 input[type=checkbox]
 {
     /* Double-sized Checkboxes */
     -ms-transform: scale(2); /* IE */
-    -moz-transform: scale(2); /* FF */
-    -webkit-transform: scale(2); /* Safari and Chrome */
+    -moz-transform: scale(2); /* FF */\n    -webkit-transform: scale(2); /* Safari and Chrome */
     -o-transform: scale(2); /* Opera */
     padding: 5px;
-    /* margin: 1px; */
+    /* Don't use will-change on all items - causes memory overhead */
+    transition: none;
+}
+input[type=checkbox]:hover {
+    opacity: 0.8;
+}
+
+/* Progress indicator */
+#scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    z-index: 2000;
+    transition: width 0.1s ease;
 }
 #banner {
     font-family: "Roboto", sans-serif;
@@ -96,6 +119,73 @@ input[type=checkbox]
     position: sticky;
     top: 0;
     z-index: 1000;
+}
+
+/* Scroll buttons container */
+.scroll-buttons-container {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 999;
+}
+
+.scroll-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    min-width: 100px;
+    font-family: "Roboto", sans-serif;
+}
+
+.scroll-top-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.scroll-top-btn:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+}
+
+.scroll-top-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-bottom-btn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.scroll-bottom-btn:hover {
+    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+    transform: translateY(-2px);
+}
+
+.scroll-bottom-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.scroll-btn:disabled:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transform: none;
 }
 
 .content {

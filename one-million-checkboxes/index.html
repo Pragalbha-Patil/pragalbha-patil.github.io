@@ -18,6 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="scroll-progress"></div>
     <div class="container container-fluid mt-2">
         <div class="navbar p-3 pb-0">
             <p class="text-center text-wrap fs-2" id="banner">One Million Checkboxes (PSP's version)</p>
@@ -27,7 +28,10 @@
         </div>
         <p class="text-center text-wrap fs-5 pt-2" id="loading">Loading...</p>
         <div id="checkbox-container" class="content"></div>
-        <button id="scrollBtn" hidden>Scroll to Bottom</button>
+        <div id="scroll-buttons" class="scroll-buttons-container">
+            <button id="scrollTopBtn" class="scroll-btn scroll-top-btn" title="Back to top" hidden>↑ Top</button>
+            <button id="scrollBottomBtn" class="scroll-btn scroll-bottom-btn" title="Scroll to bottom" hidden>Bottom ↓</button>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/appwrite@15.0.0"></script>
     <script src="./script.js"> </script>
