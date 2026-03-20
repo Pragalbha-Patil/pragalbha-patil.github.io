@@ -10,6 +10,8 @@ html, body {
 #checkbox-container {
     position: relative;
     width: 100%;
+    padding-right: 2px;
+    box-sizing: border-box;
 }
 
 .checkbox-item {
@@ -35,6 +37,8 @@ html {
 .form-check-input {
     font: optional;
     cursor: pointer;
+    float: none !important;
+    margin-top: 0 !important;
 }
 input[type=checkbox]
 {

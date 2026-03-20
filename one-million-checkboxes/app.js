@@ -252,8 +252,11 @@ class RenderEngine {
     }
 
     recalculateLayout() {
-        const width = this.container.clientWidth || window.innerWidth;
-        this.columns = Math.max(1, Math.floor(width / this.itemPitch));
+        // Keep a tiny right-edge safety margin to avoid clipping the last column
+        // from fractional layout/scrollbar rounding differences.
+        const rawWidth = this.container.clientWidth || window.innerWidth;
+        const safeWidth = Math.max(0, rawWidth - 2);
+        this.columns = Math.max(1, Math.floor(safeWidth / this.itemPitch));
         this.totalRows = Math.ceil(CONFIG.numCheckboxes / this.columns);
         this.container.style.height = `${this.totalRows * this.itemPitch}px`;
         this.lastWindowStartRow = -1;
