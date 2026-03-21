@@ -331,6 +331,12 @@ class UIController {
         this.jumpInput = document.getElementById('jumpInput');
         this.jumpBtn = document.getElementById('jumpBtn');
         this.progressBar = document.getElementById('scroll-progress');
+        this.whyBtn = document.getElementById('whyBtn');
+        this.whyModal = document.getElementById('whyModal');
+        this.whyBackdrop = document.getElementById('whyBackdrop');
+        this.whyClose = document.getElementById('whyClose');
+        this.whyPanel = this.whyModal?.querySelector('.why-modal-panel') || null;
+        this.whyEscHandler = null;
     }
 
     updateCount(checkedCount) {
@@ -411,6 +417,36 @@ class UIController {
                 callback();
             }
         });
+    }
+
+    openWhyModal() {
+        if (!this.whyModal) return;
+        this.whyModal.removeAttribute('hidden');
+        this.whyBtn?.setAttribute('aria-expanded', 'true');
+        this.whyPanel?.focus();
+    }
+
+    closeWhyModal() {
+        if (!this.whyModal) return;
+        this.whyModal.setAttribute('hidden', 'true');
+        this.whyBtn?.setAttribute('aria-expanded', 'false');
+        this.whyBtn?.focus();
+    }
+
+    setupWhyModalEvents() {
+        if (!this.whyModal || !this.whyBtn) return;
+
+        this.whyBtn.addEventListener('click', () => this.openWhyModal());
+        this.whyClose?.addEventListener('click', () => this.closeWhyModal());
+
+        this.whyBackdrop?.addEventListener('click', () => this.closeWhyModal());
+
+        this.whyEscHandler = event => {
+            if (event.key === 'Escape' && !this.whyModal.hasAttribute('hidden')) {
+                this.closeWhyModal();
+            }
+        };
+        document.addEventListener('keydown', this.whyEscHandler);
     }
 }
 
@@ -607,6 +643,9 @@ class CheckboxApp {
         
         // Jump control
         this.ui.onJumpSubmit(() => this.jumpToCheckbox());
+
+        // Why modal
+        this.ui.setupWhyModalEvents();
         
         // Scroll
         window.addEventListener('scroll', () => this.onScroll(), { passive: true });

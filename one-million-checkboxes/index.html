@@ -31,7 +31,11 @@
     <div class="container container-fluid mt-2">
         <div class="header-wrap">
             <div class="header-top-row">
-                <div class="header-spacer" aria-hidden="true"></div>
+                <div class="header-left">
+                    <button id="whyBtn" class="why-btn" type="button" aria-haspopup="dialog" aria-controls="whyModal" aria-expanded="false">
+                        Why?
+                    </button>
+                </div>
                 <div class="title-block">
                     <h1 id="banner">One Million Checkboxes</h1>
                     <p id="subtitle">(checking a box checks it for everyone!)</p>
@@ -41,6 +45,59 @@
             <p id="user-checkbox-count">You have checked <span id="user-count-display">0</span> (<span id="user-plus-count" class="user-plus">+0</span> <span id="user-minus-count" class="user-minus">-0</span>) boxes</p>
             <div class="header-divider"></div>
         </div>
+
+        <div id="whyModal" class="why-modal" hidden>
+            <div id="whyBackdrop" class="why-modal-backdrop" data-close="true"></div>
+            <div class="why-modal-panel" role="dialog" aria-modal="true" aria-labelledby="whyTitle" tabindex="-1">
+                <button id="whyClose" class="why-close" type="button" aria-label="Close">×</button>
+                <h2 id="whyTitle">Why This Exists</h2>
+                <p>
+                    One Million Checkboxes is intentionally simple at the product layer and intentionally difficult at the systems layer. The public interaction is one bit per item, but the operational challenge is global consistency under bursty, concurrent traffic with strict UI responsiveness requirements.
+                </p>
+
+                <h3>Frontend Architecture</h3>
+                <p>
+                    Rendering one million native inputs directly would overwhelm layout, memory, and input processing. The UI instead uses a virtualized window: only checkboxes that intersect the viewport (plus a small row buffer) exist in the DOM at any time. Everything else remains logical state only.
+                </p>
+                <ul>
+                    <li>Virtualized grid math converts checkbox IDs to row and column coordinates using fixed pitch (`itemSize + gap`).</li>
+                    <li>The render engine clamps viewport bounds and row windows to prevent empty first paint and edge clipping.</li>
+                    <li>State arrives incrementally and is merged into an in-memory map keyed by checkbox ID.</li>
+                    <li>Visible refreshes are scheduled on animation frames to avoid long main-thread blocks.</li>
+                    <li>User writes are debounced and batched to reduce network chatter and backend amplification.</li>
+                    <li>Startup avoids stale scroll restoration and forces first-paint checks to guarantee visible content.</li>
+                </ul>
+
+                <h3>Backend Architecture</h3>
+                <p>
+                    The backend runs on a Cloudflare Worker with a Durable Object that acts as the authoritative room for checkbox state. Each checked item is persisted as a compact key in Durable Object storage, and writes are serialized by the object instance to avoid cross-region race behavior for this room.
+                </p>
+                <ul>
+                    <li>`GET /api/checked` returns the current checked ID set for initial sync.</li>
+                    <li>`POST /api/update` and `POST /api/batch` apply mutations atomically in the room context.</li>
+                    <li>`GET /api/events` provides server-sent events (SSE) for low-overhead realtime fan-out.</li>
+                    <li>SSE delivers ordered update notifications per room without forcing WebSocket complexity for this traffic pattern.</li>
+                    <li>CORS is intentionally constrained to simple JSON/SSE endpoints so static hosting can call the API safely.</li>
+                </ul>
+
+                <h3>Consistency and Throughput Tradeoffs</h3>
+                <p>
+                    This system targets practical eventual consistency for a highly interactive shared surface. Immediate local updates provide low latency UX, while stream updates reconcile remote mutations. The design favors responsiveness and operational simplicity over strict transaction semantics across all clients.
+                </p>
+                <ul>
+                    <li>Local optimistic state makes interactions feel instant.</li>
+                    <li>Realtime stream applies remote deltas to keep peers aligned.</li>
+                    <li>Batch writes smooth request spikes and reduce rate-limit risk.</li>
+                    <li>Virtualized rendering keeps memory and layout cost bounded even at million-item scale.</li>
+                </ul>
+
+                <h3>Why It Matters</h3>
+                <p>
+                    The app demonstrates that apparent simplicity can hide non-trivial engineering: data modeling for bit-state at scale, network fan-out design, client render constraints, and resilient startup behavior under real-world browser timing. It is a minimal interface backed by distributed-systems thinking.
+                </p>
+            </div>
+        </div>
+
         <p class="text-center text-wrap fs-5 pt-2" id="loading">Loading...</p>
         <div id="checkbox-container" class="content"></div>
         <div id="jump-controls" class="jump-controls-container">
