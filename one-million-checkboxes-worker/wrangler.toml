@@ -1,0 +1,11 @@
+name = "one-million-checkboxes-api"
+main = "src/index.js"
+compatibility_date = "2025-07-18"
+
+[[durable_objects.bindings]]
+name = "CHECKBOX_ROOM"
+class_name = "CheckboxRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["CheckboxRoom"]

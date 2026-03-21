@@ -6,10 +6,7 @@ const CONFIG = {
     itemSize: 28,
     itemGap: 8,
     viewportBufferRows: 8,
-    databaseId: '667d0f99001b691d76cc',
-    collectionId: '667d0fa8000f64e4decc',
-    appwriteEndpoint: 'https://fra.cloud.appwrite.io/v1',
-    appwriteProjectId: '667d0f2d001c4fce8b90',
+    apiBaseUrl: (window.CHECKBOX_API_BASE || 'http://127.0.0.1:8787').replace(/\/$/, ''),
     userCheckedStorageKey: 'one-million-checkboxes:user-checked',
     userPlusStorageKey: 'one-million-checkboxes:user-plus',
     userMinusStorageKey: 'one-million-checkboxes:user-minus',
@@ -97,143 +94,125 @@ class StateManager {
     }
 }
 
-// ============ APPWRITE SERVICE ============
-class AppwriteService {
+// ============ BACKEND SERVICE (CLOUDFLARE WORKER API) ============
+class BackendService {
     constructor() {
-        this.client = null;
-        this.databases = null;
-        this.Query = null;
+        this.baseUrl = CONFIG.apiBaseUrl;
+        this.eventSource = null;
         this.isReady = false;
     }
 
     async initialize() {
-        // Wait for Appwrite SDK to load
-        if (typeof Appwrite === 'undefined') {
-            throw new Error('Appwrite SDK not loaded');
+        // Health check is best-effort; we keep UX usable even if it fails briefly.
+        try {
+            await this.apiFetch('/api/health', { method: 'GET' });
+        } catch {
+            // Continue; retries happen during normal requests.
         }
-
-        const { Client, Databases, Query } = Appwrite;
-        
-        this.client = new Client()
-            .setEndpoint(CONFIG.appwriteEndpoint)
-            .setProject(CONFIG.appwriteProjectId);
-        
-        this.databases = new Databases(this.client);
-        this.Query = Query;
         this.isReady = true;
     }
 
-    async fetchAllCheckboxesIncremental(onBatch) {
-        if (!this.isReady) throw new Error('Appwrite not initialized');
+    async apiFetch(path, options = {}) {
+        const response = await fetch(`${this.baseUrl}${path}`, {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...(options.headers || {}),
+            },
+        });
 
-        // Probe for total count with minimal data transfer
-        const probe = await this.databases.listDocuments(
-            CONFIG.databaseId,
-            CONFIG.collectionId,
-            [this.Query.limit(1)]
-        );
-        const total = probe.total;
-        if (total === 0) {
+        if (!response.ok) {
+            throw new Error(`Backend request failed: ${response.status}`);
+        }
+
+        return response;
+    }
+
+    async fetchAllCheckboxesIncremental(onBatch) {
+        if (!this.isReady) throw new Error('Backend not initialized');
+
+        const response = await this.apiFetch('/api/checked', { method: 'GET' });
+        const payload = await response.json();
+        const checkedIds = Array.isArray(payload?.checkedIds)
+            ? payload.checkedIds.map(id => parseInt(id, 10)).filter(Number.isFinite)
+            : [];
+
+        if (checkedIds.length === 0) {
             return [];
         }
 
-        // Fire all page requests in parallel
-        const pageCount = Math.ceil(total / 1000);
-        const requests = Array.from({ length: pageCount }, (_, i) =>
-            this.databases.listDocuments(
-                CONFIG.databaseId,
-                CONFIG.collectionId,
-                [this.Query.limit(1000), this.Query.offset(i * 1000)]
-            ).then(response => {
-                const docs = response?.documents || [];
-                if (docs.length > 0 && onBatch) {
-                    onBatch(docs);
-                }
-                return docs;
-            }).catch(() => [])
-        );
+        const docs = checkedIds.map(id => ({ id, state: true }));
 
-        const batches = await Promise.all(requests);
-        return batches.flat();
+        for (let i = 0; i < docs.length; i += CONFIG.batchSize) {
+            const batch = docs.slice(i, i + CONFIG.batchSize);
+            if (batch.length > 0 && onBatch) {
+                onBatch(batch);
+            }
+            // Yield control so main-thread rendering stays responsive.
+            await new Promise(resolve => requestAnimationFrame(resolve));
+        }
+
+        return docs;
     }
 
     async saveCheckbox(id, checked) {
-        if (!this.isReady) throw new Error('Appwrite not initialized');
+        if (!this.isReady) throw new Error('Backend not initialized');
 
-        const docId = `id-${id}`;
-        
         try {
-            if (checked) {
-                // Try create, fall back to update if exists
-                try {
-                    await this.databases.createDocument(
-                        CONFIG.databaseId,
-                        CONFIG.collectionId,
-                        docId,
-                        { id: parseInt(id), state: true }
-                    );
-                } catch (error) {
-                    // Document likely exists, update it
-                    if (error.code === 409) {
-                        await this.databases.updateDocument(
-                            CONFIG.databaseId,
-                            CONFIG.collectionId,
-                            docId,
-                            { state: true }
-                        );
-                    } else {
-                        throw error;
-                    }
-                }
-            } else {
-                // Delete if unchecked
-                try {
-                    await this.databases.deleteDocument(
-                        CONFIG.databaseId,
-                        CONFIG.collectionId,
-                        docId
-                    );
-                } catch (error) {
-                    // Document doesn't exist, that's fine
-                    if (error.code !== 404) throw error;
-                }
-            }
-        } catch (error) {
+            await this.apiFetch('/api/update', {
+                method: 'POST',
+                body: JSON.stringify({ id: parseInt(id, 10), checked: checked === true }),
+            });
+        } catch {
             // Keep UX responsive even if a network write fails.
         }
     }
 
     async saveMultiple(updates) {
-        const promises = updates.map(([id, checked]) => 
-            this.saveCheckbox(id, checked)
-        );
-        
-        await Promise.allSettled(promises);
+        if (!this.isReady) throw new Error('Backend not initialized');
+
+        if (updates.length === 0) {
+            return;
+        }
+
+        try {
+            await this.apiFetch('/api/batch', {
+                method: 'POST',
+                body: JSON.stringify({ updates }),
+            });
+        } catch {
+            // Fallback to one-by-one writes if batch endpoint fails.
+            const writes = updates.map(([id, checked]) => this.saveCheckbox(id, checked));
+            await Promise.allSettled(writes);
+        }
     }
 
     subscribeToChanges(callback) {
-        if (!this.client) throw new Error('Appwrite not initialized');
-        
-        try {
-            this.client.subscribe(
-                [`databases.${CONFIG.databaseId}.collections.${CONFIG.collectionId}.documents`],
-                response => {
-                    const event = response.events?.[0] || '';
-                    const payload = response.payload || {};
-                    const payloadId = payload.id ?? payload.$id?.replace(/^id-/, '');
+        if (!this.isReady) throw new Error('Backend not initialized');
 
-                    if (!payloadId && !event.includes('delete')) {
+        if (typeof EventSource === 'undefined') {
+            return;
+        }
+
+        try {
+            if (this.eventSource) {
+                this.eventSource.close();
+            }
+
+            this.eventSource = new EventSource(`${this.baseUrl}/api/events`);
+
+            this.eventSource.addEventListener('checkbox-update', event => {
+                try {
+                    const data = JSON.parse(event.data || '{}');
+                    if (!Number.isFinite(data.id)) {
                         return;
                     }
-                    
-                    if (event.includes('create') || event.includes('update')) {
-                        callback(payloadId, payload.state === true);
-                    } else if (event.includes('delete')) {
-                        callback(payloadId, false);
-                    }
+                    callback(data.id, data.checked === true);
+                } catch {
+                    // Ignore malformed event payload.
                 }
-            );
-        } catch (error) {
+            });
+        } catch {
             // Realtime stream can fail silently without blocking core usage.
         }
     }
@@ -439,7 +418,7 @@ class UIController {
 class CheckboxApp {
     constructor() {
         this.state = new StateManager();
-        this.appwrite = new AppwriteService();
+        this.backend = new BackendService();
         this.render = new RenderEngine();
         this.ui = new UIController();
         this.pendingFlushTimer = null;
@@ -474,8 +453,8 @@ class CheckboxApp {
         try {
             this.ui.updateUserCount(this.state.getUserCheckedCount(), this.state.getUserDeltaCounts());
 
-            // Initialize Appwrite
-            await this.appwrite.initialize();
+            // Initialize backend
+            await this.backend.initialize();
 
             // Virtualized layout + first viewport render
             this.render.recalculateLayout();
@@ -521,7 +500,7 @@ class CheckboxApp {
 
     async loadDatabaseState() {
         try {
-            await this.appwrite.fetchAllCheckboxesIncremental(batchDocs => {
+            await this.backend.fetchAllCheckboxesIncremental(batchDocs => {
                 const updates = batchDocs.map(doc => [doc.id, doc.state === true]);
                 this.state.setMultiple(updates);
                 this.scheduleVisibleRefresh();
@@ -536,7 +515,7 @@ class CheckboxApp {
     }
 
     subscribeToLiveUpdates() {
-        this.appwrite.subscribeToChanges((id, isChecked) => {
+        this.backend.subscribeToChanges((id, isChecked) => {
             id = parseInt(id, 10);
             if (Number.isNaN(id)) {
                 return;
@@ -583,7 +562,7 @@ class CheckboxApp {
         if (!this.state.hasPendingUpdates()) return;
         
         const updates = this.state.getPendingUpdates();
-        await this.appwrite.saveMultiple(updates);
+        await this.backend.saveMultiple(updates);
     }
 
     onScroll() {

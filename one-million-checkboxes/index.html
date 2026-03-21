@@ -13,6 +13,8 @@
     <!-- Dynamic cache busting with current timestamp -->
     <script>
         window.CACHE_BUST = '?t=' + Date.now();
+        // Set this to your deployed Worker URL (for example: https://omc-api.<subdomain>.workers.dev)
+        window.CHECKBOX_API_BASE = window.CHECKBOX_API_BASE || 'https://one-million-checkboxes-api.pragalbha77.workers.dev';
     </script>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -47,11 +49,11 @@
             <button id="jumpBtn" class="jump-btn" title="Jump to checkbox">Go</button>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@15.0.0"></script>
     <script>
-        // Load app script after Appwrite is parsed.
+        // Load app script with cache bust.
         const appScript = document.createElement('script');
         appScript.src = './app.js' + window.CACHE_BUST;
+        appScript.defer = true;
         document.body.appendChild(appScript);
     </script>
     <!-- Google tag (gtag.js) -->
