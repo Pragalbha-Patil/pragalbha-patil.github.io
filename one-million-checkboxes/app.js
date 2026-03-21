@@ -343,7 +343,7 @@ class UIController {
         this.whyClose = document.getElementById('whyClose');
         this.whyPanel = this.whyModal?.querySelector('.why-modal-panel') || null;
         this.whyEscHandler = null;
-        this.jumpCollapsed = true;
+        this.jumpCollapsed = false;
     }
 
     toggleJumpControls(forceCollapsed = null) {
@@ -355,7 +355,7 @@ class UIController {
         this.jumpControlsBody.setAttribute('aria-hidden', nextCollapsed ? 'true' : 'false');
         this.jumpToggle.setAttribute('aria-expanded', nextCollapsed ? 'false' : 'true');
         this.jumpToggle.setAttribute('aria-label', nextCollapsed ? 'Expand jump controls' : 'Collapse jump controls');
-        this.jumpToggle.textContent = nextCollapsed ? '▴' : '▾';
+        this.jumpToggle.textContent = nextCollapsed ? '←' : '→';
     }
 
     updateCount(checkedCount) {
@@ -438,7 +438,7 @@ class UIController {
         });
 
         this.jumpToggle?.addEventListener('click', () => this.toggleJumpControls());
-        this.toggleJumpControls(true);
+        this.toggleJumpControls(false);
     }
 
     openWhyModal() {
