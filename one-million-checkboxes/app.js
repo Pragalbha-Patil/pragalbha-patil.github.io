@@ -330,6 +330,9 @@ class UIController {
         this.userPlusDisplay = document.getElementById('user-plus-count');
         this.userMinusDisplay = document.getElementById('user-minus-count');
         this.loadingIndicator = document.getElementById('loading');
+        this.jumpControls = document.getElementById('jump-controls');
+        this.jumpToggle = document.getElementById('jumpToggle');
+        this.jumpControlsBody = document.getElementById('jumpControlsBody');
         this.jumpLabel = document.querySelector('.jump-label');
         this.jumpInput = document.getElementById('jumpInput');
         this.jumpBtn = document.getElementById('jumpBtn');
@@ -340,6 +343,19 @@ class UIController {
         this.whyClose = document.getElementById('whyClose');
         this.whyPanel = this.whyModal?.querySelector('.why-modal-panel') || null;
         this.whyEscHandler = null;
+        this.jumpCollapsed = false;
+    }
+
+    toggleJumpControls(forceCollapsed = null) {
+        if (!this.jumpControls || !this.jumpToggle || !this.jumpControlsBody) return;
+        const nextCollapsed = forceCollapsed === null ? !this.jumpCollapsed : !!forceCollapsed;
+        this.jumpCollapsed = nextCollapsed;
+
+        this.jumpControls.classList.toggle('is-collapsed', nextCollapsed);
+        this.jumpControlsBody.setAttribute('aria-hidden', nextCollapsed ? 'true' : 'false');
+        this.jumpToggle.setAttribute('aria-expanded', nextCollapsed ? 'false' : 'true');
+        this.jumpToggle.setAttribute('aria-label', nextCollapsed ? 'Expand jump controls' : 'Collapse jump controls');
+        this.jumpToggle.textContent = nextCollapsed ? '▴' : '▾';
     }
 
     updateCount(checkedCount) {
@@ -420,6 +436,8 @@ class UIController {
                 callback();
             }
         });
+
+        this.jumpToggle?.addEventListener('click', () => this.toggleJumpControls());
     }
 
     openWhyModal() {

@@ -246,16 +246,50 @@ input[type=checkbox]:hover {
 /* Jump controls */
 .jump-controls-container {
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 8px;
     z-index: 999;
     background: rgba(255, 255, 255, 0.92);
     border: 1px solid #949494;
-    border-radius: 10px;
-    padding: 10px 12px;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 8px 10px;
+    box-shadow: 0 -8px 22px rgba(0, 0, 0, 0.14);
+}
+
+.jump-controls-body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    max-width: 420px;
+    max-height: 60px;
+    opacity: 1;
+    transition: max-width 0.24s ease, opacity 0.2s ease;
+}
+
+.jump-toggle {
+    width: 30px;
+    border: 1px solid #8f8f8f;
+    border-radius: 7px;
+    background: #f8f8f8;
+    color: #222;
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.jump-controls-container.is-collapsed .jump-controls-body {
+    max-width: 0;
+    opacity: 0;
+    gap: 0;
+    pointer-events: none;
 }
 
 .jump-label {
@@ -361,10 +395,17 @@ input[type=checkbox]:hover {
     .header-top-row #checkbox-count { order: 3; }
 
     .jump-controls-container {
-        right: 12px;
-        bottom: 12px;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
         gap: 6px;
-        padding: 8px 10px;
+        padding: 8px;
+        width: min(100vw - 12px, 560px);
+        justify-content: center;
+    }
+
+    .jump-controls-body {
+        max-width: 100%;
     }
 
     .jump-input {
