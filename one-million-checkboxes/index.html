@@ -70,14 +70,15 @@
 
                 <h3>Backend Architecture</h3>
                 <p>
-                    The backend runs on a Cloudflare Worker with a Durable Object that acts as the authoritative room for checkbox state. Each checked item is persisted as a compact key in Durable Object storage, and writes are serialized by the object instance to avoid cross-region race behavior for this room.
+                    The backend runs on a single Cloudflare Worker with a Durable Object that acts as the authoritative room for checkbox state. All state lives in one globally-consistent object instance — Cloudflare routes every request to it regardless of the originating edge location. Each checked item is stored as a compact <code>c:{id}</code> key in Durable Object SQLite storage, and writes are serialized by the single object instance to prevent cross-region race conditions.
                 </p>
                 <ul>
-                    <li>`GET /api/checked` returns the current checked ID set for initial sync.</li>
-                    <li>`POST /api/update` and `POST /api/batch` apply mutations atomically in the room context.</li>
-                    <li>`GET /api/events` provides server-sent events (SSE) for low-overhead realtime fan-out.</li>
-                    <li>SSE delivers ordered update notifications per room without forcing WebSocket complexity for this traffic pattern.</li>
-                    <li>CORS is intentionally constrained to simple JSON/SSE endpoints so static hosting can call the API safely.</li>
+                    <li><code>GET /api/checked</code> — returns the full checked ID set for initial sync, paginated over SQLite keys.</li>
+                    <li><code>POST /api/update</code> and <code>POST /api/batch</code> — apply mutations atomically inside the room. The batch endpoint accepts up to hundreds of state changes in one round-trip, which the frontend uses to flush debounced writes.</li>
+                    <li><code>GET /api/events</code> — opens a Server-Sent Events (SSE) stream. The Durable Object holds an in-memory set of open response writers; every mutation triggers a broadcast to all connected clients simultaneously.</li>
+                    <li>SSE was chosen over WebSockets deliberately: it is unidirectional (server → client), lower overhead, and reconnects automatically via the browser's native <code>EventSource</code> API — well-matched to a read-heavy realtime feed.</li>
+                    <li>CORS is open on all endpoints so the static GitHub Pages frontend can call the worker API without a proxy.</li>
+                    <li>Cloudflare's built-in observability layer captures full invocation logs and persists them to the dashboard — every request, response status, and thrown exception is traceable without adding any custom logging code to the worker.</li>
                 </ul>
 
                 <h3>Consistency and Throughput Tradeoffs</h3>
