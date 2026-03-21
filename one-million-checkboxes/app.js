@@ -225,6 +225,7 @@ class RenderEngine {
         if (!this.container) throw new Error('Container #checkbox-container not found');
         this.columns = 1;
         this.itemPitch = CONFIG.itemSize + CONFIG.itemGap;
+        this.columnOffsetX = 0;
         this.totalRows = Math.ceil(CONFIG.numCheckboxes / this.columns);
         this.lastWindowStartRow = -1;
         this.lastWindowEndRow = -1;
@@ -236,6 +237,8 @@ class RenderEngine {
         const rawWidth = this.container.clientWidth || window.innerWidth;
         const safeWidth = Math.max(0, rawWidth - 2);
         this.columns = Math.max(1, Math.floor(safeWidth / this.itemPitch));
+        const usedWidth = this.columns * this.itemPitch;
+        this.columnOffsetX = Math.max(0, Math.floor((rawWidth - usedWidth) / 2));
         this.totalRows = Math.ceil(CONFIG.numCheckboxes / this.columns);
         this.container.style.height = `${this.totalRows * this.itemPitch}px`;
         this.lastWindowStartRow = -1;
@@ -285,7 +288,7 @@ class RenderEngine {
             const col = index % this.columns;
             const checked = checkboxStates[id] ? ' checked' : '';
             parts.push(
-                `<div class="checkbox-item" data-id="${id}" style="left:${col * this.itemPitch}px;top:${row * this.itemPitch}px;width:${this.itemPitch}px;height:${this.itemPitch}px;">` +
+                `<div class="checkbox-item" data-id="${id}" style="left:${this.columnOffsetX + col * this.itemPitch}px;top:${row * this.itemPitch}px;width:${this.itemPitch}px;height:${this.itemPitch}px;">` +
                 `<input type="checkbox" class="form-check-input" id="checkbox-${id}"${checked}></div>`
             );
         }
