@@ -246,9 +246,8 @@ input[type=checkbox]:hover {
 /* Jump controls */
 .jump-controls-container {
     position: fixed;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
+    right: 12px;
+    bottom: 10px;
     display: flex;
     align-items: stretch;
     gap: 8px;
@@ -274,15 +273,16 @@ input[type=checkbox]:hover {
 
 .jump-toggle {
     width: 30px;
-    border: 1px solid #8f8f8f;
+    border: 1px solid rgba(70, 70, 70, 0.42);
     border-radius: 7px;
-    background: #f8f8f8;
+    background: rgba(255, 255, 255, 0.68);
     color: #222;
     font-family: "Roboto", sans-serif;
     font-weight: 700;
     font-size: 14px;
     line-height: 1;
     cursor: pointer;
+    backdrop-filter: blur(2px);
 }
 
 .jump-controls-container.is-collapsed .jump-controls-body {
@@ -290,6 +290,19 @@ input[type=checkbox]:hover {
     opacity: 0;
     gap: 0;
     pointer-events: none;
+}
+
+.jump-controls-container.is-collapsed {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    gap: 0;
+}
+
+.jump-controls-container.is-collapsed .jump-toggle {
+    background: rgba(255, 255, 255, 0.42);
+    border-color: rgba(70, 70, 70, 0.35);
 }
 
 .jump-label {
@@ -395,13 +408,12 @@ input[type=checkbox]:hover {
     .header-top-row #checkbox-count { order: 3; }
 
     .jump-controls-container {
-        left: 50%;
-        bottom: 0;
-        transform: translateX(-50%);
+        right: 8px;
+        bottom: 8px;
         gap: 6px;
         padding: 8px;
-        width: min(100vw - 12px, 560px);
-        justify-content: center;
+        width: min(100vw - 16px, 560px);
+        justify-content: flex-end;
     }
 
     .jump-controls-body {

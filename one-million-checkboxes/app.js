@@ -343,7 +343,7 @@ class UIController {
         this.whyClose = document.getElementById('whyClose');
         this.whyPanel = this.whyModal?.querySelector('.why-modal-panel') || null;
         this.whyEscHandler = null;
-        this.jumpCollapsed = false;
+        this.jumpCollapsed = true;
     }
 
     toggleJumpControls(forceCollapsed = null) {
@@ -438,6 +438,7 @@ class UIController {
         });
 
         this.jumpToggle?.addEventListener('click', () => this.toggleJumpControls());
+        this.toggleJumpControls(true);
     }
 
     openWhyModal() {
