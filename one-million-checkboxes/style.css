@@ -377,7 +377,7 @@ input[type=checkbox]:hover {
 }
 
 .jump-target {
-    outline: 3px solid #f5b800;
+    outline: 3px solid #f50000;
     outline-offset: 2px;
     transition: outline-color 0.8s ease;
 }
