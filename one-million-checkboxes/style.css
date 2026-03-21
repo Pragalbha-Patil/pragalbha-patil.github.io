@@ -246,7 +246,7 @@ input[type=checkbox]:hover {
 /* Jump controls */
 .jump-controls-container {
     position: fixed;
-    right: 12px;
+    right: 0;
     bottom: 0;
     display: flex;
     align-items: stretch;
@@ -417,7 +417,7 @@ input[type=checkbox]:hover {
     .header-top-row #checkbox-count { order: 3; }
 
     .jump-controls-container {
-        right: 8px;
+        right: 0;
         bottom: 0;
         gap: 6px;
         padding: 8px;
