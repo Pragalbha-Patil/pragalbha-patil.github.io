@@ -317,7 +317,7 @@ class RenderEngine {
         const target = document.getElementById(`checkbox-${id}`);
         if (!target) return;
         target.classList.add('jump-target');
-        setTimeout(() => target.classList.remove('jump-target'), 700);
+        setTimeout(() => target.classList.remove('jump-target'), 1300);
     }
 }
 
