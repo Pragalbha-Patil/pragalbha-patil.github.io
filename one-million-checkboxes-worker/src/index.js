@@ -23,6 +23,23 @@ async function parseJson(request) {
   }
 }
 
+function normalizeCheckboxUpdate(update) {
+  const id = Number.isFinite(update?.id) ? Math.trunc(update.id) : NaN;
+  if (!Number.isFinite(id) || id < 1) {
+    return null;
+  }
+  return { id, checked: update?.checked === true };
+}
+
+function formatCheckboxUpdateEvent(update) {
+  const normalized = normalizeCheckboxUpdate(update);
+  if (!normalized) {
+    return null;
+  }
+  const data = `{"id":${normalized.id},"checked":${normalized.checked}}`;
+  return `event: checkbox-update\ndata: ${data}\n\n`;
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
@@ -219,12 +236,11 @@ export class CheckboxRoom {
   }
 
   broadcast(update) {
-    const id = Number.isFinite(update?.id) ? Math.trunc(update.id) : NaN;
-    if (!Number.isFinite(id) || id < 1) {
+    const payload = formatCheckboxUpdateEvent(update);
+    if (!payload) {
       return;
     }
-    const checked = update?.checked === true;
-    const payload = `event: checkbox-update\ndata: {"id":${id},"checked":${checked}}\n\n`;
+
     for (const client of this.clients) {
       client.write(payload).catch(async () => {
         this.clients.delete(client);
