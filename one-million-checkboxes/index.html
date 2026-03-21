@@ -78,7 +78,6 @@
                     <li><code>GET /api/events</code> — opens a Server-Sent Events (SSE) stream. The Durable Object holds an in-memory set of open response writers; every mutation triggers a broadcast to all connected clients simultaneously.</li>
                     <li>SSE was chosen over WebSockets deliberately: it is unidirectional (server → client), lower overhead, and reconnects automatically via the browser's native <code>EventSource</code> API — well-matched to a read-heavy realtime feed.</li>
                     <li>CORS is open on all endpoints so the static GitHub Pages frontend can call the worker API without a proxy.</li>
-                    <li>Cloudflare's built-in observability layer captures full invocation logs and persists them to the dashboard — every request, response status, and thrown exception is traceable without adding any custom logging code to the worker.</li>
                 </ul>
 
                 <h3>Consistency and Throughput Tradeoffs</h3>
