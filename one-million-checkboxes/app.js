@@ -355,7 +355,7 @@ class UIController {
         this.jumpControlsBody.setAttribute('aria-hidden', nextCollapsed ? 'true' : 'false');
         this.jumpToggle.setAttribute('aria-expanded', nextCollapsed ? 'false' : 'true');
         this.jumpToggle.setAttribute('aria-label', nextCollapsed ? 'Expand jump controls' : 'Collapse jump controls');
-        this.jumpToggle.textContent = nextCollapsed ? '←' : '→';
+        this.jumpToggle.textContent = nextCollapsed ? '‹' : '›';
     }
 
     updateCount(checkedCount) {
