@@ -344,6 +344,20 @@ input[type=checkbox]:hover {
         justify-self: center;
     }
 
+    .title-block { order: 1; }
+    .header-left  { order: 2; }
+    .header-top-row #checkbox-count { order: 3; }
+
+    .why-btn {
+        border: none;
+        background: none;
+        border-radius: 0;
+        padding: 0;
+        font-size: 13px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
     .jump-controls-container {
         right: 12px;
         bottom: 12px;
