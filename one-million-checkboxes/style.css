@@ -246,8 +246,8 @@ input[type=checkbox]:hover {
 /* Jump controls */
 .jump-controls-container {
     position: fixed;
-    right: 12px;
-    bottom: 10px;
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     display: flex;
     align-items: stretch;
     gap: 8px;
@@ -408,8 +408,8 @@ input[type=checkbox]:hover {
     .header-top-row #checkbox-count { order: 3; }
 
     .jump-controls-container {
-        right: 8px;
-        bottom: 8px;
+        right: calc(8px + env(safe-area-inset-right, 0px));
+        bottom: calc(8px + env(safe-area-inset-bottom, 0px));
         gap: 6px;
         padding: 8px;
         width: min(100vw - 16px, 560px);
