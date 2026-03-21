@@ -333,11 +333,14 @@ input[type=checkbox]:hover {
 
 @media (max-width: 900px) {
     .container {
-        width: min(1300px, 99vw);
+        width: 100vw;
+        padding-left: 4px;
+        padding-right: 4px;
     }
 
     #checkbox-container {
         padding-right: 0;
+        padding-left: 0;
     }
 
     .header-top-row {
