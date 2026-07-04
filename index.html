@@ -15,6 +15,7 @@
                 font-family: Verdana, Tahoma, "Trebuchet MS", sans-serif;
                 color: #1f2a44;
                 background:
+                    radial-gradient(circle at 1px 1px, rgba(78, 119, 171, 0.2) 1px, transparent 1px) 0 0 / 8px 8px,
                     linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0)) 0 0 / 100% 34px no-repeat,
                     linear-gradient(180deg, #dbeeff 0%, #c8e2fb 36%, #b8d8f7 100%);
             }
@@ -43,6 +44,14 @@
                 box-shadow: inset 0 1px 0 #ffffff, 0 2px 8px rgba(30, 69, 122, 0.18);
             }
 
+            .topbar-right {
+                display: flex;
+                align-items: center;
+                gap: 0.55rem;
+                flex-wrap: wrap;
+                justify-content: end;
+            }
+
             .site-title {
                 margin: 0;
                 color: #113a73;
@@ -56,6 +65,28 @@
                 font-weight: 700;
                 text-decoration: underline;
                 text-underline-offset: 2px;
+            }
+
+            .mini-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #5f93c9;
+                border-radius: 999px;
+                padding: 0.24rem 0.68rem;
+                font-size: 0.74rem;
+                color: #0f4cae;
+                text-decoration: none;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                background: linear-gradient(180deg, #ffffff 0%, #dbeeff 48%, #bdd8f3 100%);
+                text-shadow: 0 1px 0 #ffffff;
+                box-shadow: inset 0 1px 0 #ffffff;
+            }
+
+            .mini-btn:hover {
+                filter: brightness(1.03);
+                border-color: #4d85c0;
             }
 
             .section {
@@ -165,6 +196,26 @@
                 color: #123f81;
             }
 
+            .title-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.5rem;
+            }
+
+            .new-badge {
+                flex-shrink: 0;
+                font-size: 0.65rem;
+                font-weight: 700;
+                color: #7f3c00;
+                border: 1px solid #edba63;
+                border-radius: 999px;
+                padding: 0.18rem 0.45rem;
+                background: linear-gradient(180deg, #fff5ce, #ffd98e);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+
             .game-card p {
                 margin: 0;
                 color: #385b83;
@@ -187,6 +238,8 @@
             .card-action {
                 color: #0f4cb3;
                 font-weight: 700;
+                text-decoration: underline;
+                text-underline-offset: 2px;
             }
 
             footer {
@@ -226,14 +279,22 @@
                     flex-direction: column;
                     align-items: start;
                 }
+
+                .topbar-right {
+                    justify-content: start;
+                }
             }
         </style>
     </head>
     <body>
         <main class="page">
             <header class="topbar">
-                <h1 class="site-title">Pragal.fun Games Directory</h1>
-                <a href="https://pragalbhapatil.com" target="_blank" rel="noopener">pragalbhapatil.com</a>
+                <h1 class="site-title">Pragal.fun/</h1>
+                <div class="topbar-right">
+                    <a href="https://pragalbhapatil.com" target="_blank" rel="noopener">pragalbhapatil.com - for nerdy stuff</a>
+                    <!-- <a class="mini-btn" href="#games">games</a>
+                    <a class="mini-btn" href="/projects.md">projects</a> -->
+                </div>
             </header>
 
             <section class="section" id="games" aria-labelledby="games-title">
@@ -241,14 +302,14 @@
                     <div>
                         <h2 id="games-title">Games and experiments</h2>
                     </div>
-                    <p>Simple list of playable projects.</p>
+                    <!-- <p>Simple list of playable projects.</p> -->
                 </div>
 
                 <div class="games" id="games-grid"></div>
             </section>
 
             <footer>
-                © <span id="year"></span> Pragalbha Patil.
+                © 2018 - <span id="year"></span> Pragalbha Patil.
             </footer>
         </main>
 
@@ -260,6 +321,7 @@
                     href: "https://orbit.pragal.fun",
                     type: "Featured game",
                     featured: true,
+                    isNew: true,
                     external: true,
                 },
                 {
@@ -276,6 +338,7 @@
                     href: "/one-million-checkboxes/",
                     type: "Featured experiment",
                     featured: true,
+                    isNew: true,
                     external: false,
                 },
                 {
@@ -286,29 +349,8 @@
                     external: false,
                 },
                 {
-                    name: "Snake Game",
-                    description: "Classic snake loop rebuilt for the browser.",
-                    href: "/snakegame/",
-                    type: "Classic",
-                    external: false,
-                },
-                {
-                    name: "Chess",
-                    description: "A browser chess board for tactical sessions.",
-                    href: "/chess/",
-                    type: "Strategy",
-                    external: false,
-                },
-                {
-                    name: "Monkey Lander",
-                    description: "Test your landing control and timing.",
-                    href: "/monkey-lander/",
-                    type: "Arcade",
-                    external: false,
-                },
-                {
                     name: "Calculator",
-                    description: "A tiny utility project from the experiments shelf.",
+                    description: "Umm, it's not for the light hearted.",
                     href: "/calculator/",
                     type: "Mini build",
                     external: false,
@@ -349,8 +391,19 @@
                     meta.appendChild(externalPill);
                 }
 
+                const titleRow = document.createElement("div");
+                titleRow.className = "title-row";
+
                 const title = document.createElement("h3");
                 title.textContent = game.name;
+                titleRow.appendChild(title);
+
+                if (game.isNew) {
+                    const newBadge = document.createElement("span");
+                    newBadge.className = "new-badge";
+                    newBadge.textContent = "NEW";
+                    titleRow.appendChild(newBadge);
+                }
 
                 const description = document.createElement("p");
                 description.textContent = game.description;
@@ -366,7 +419,7 @@
                 action.textContent = "Open project →";
 
                 footer.append(linkText, action);
-                card.append(meta, title, description, footer);
+                card.append(meta, titleRow, description, footer);
                 return card;
             }
 
