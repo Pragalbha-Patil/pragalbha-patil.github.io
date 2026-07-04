@@ -1,826 +1,529 @@
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
         <meta charset="UTF-8" />
-        <title>Pragalbha's page</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>pragal.fun | Games by Pragalbha Patil</title>
         <style>
             :root {
-                --bg: #0e0f13;
-                --bg-soft: #151720;
-                --card: #1b1e2b;
-                --text: #e8e9f0;
-                --muted: #a0a3bd;
-                /* iTerm green theme accent colors */
-                --accent: #22c55e;
-                --accent-soft: rgba(34, 197, 94, 0.15);
+                --bg: #050711;
+                --text: #f5f7ff;
+                --muted: #a5b0cf;
+                --accent: #7dd3fc;
+                --accent-2: #f59e0b;
+                --card: rgba(13, 18, 33, 0.82);
+                --card-border: rgba(148, 163, 184, 0.16);
+                --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
             }
 
             body {
-                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 margin: 0;
-                background:
-                    radial-gradient(900px 600px at 10% -10%, rgba(34, 197, 94, 0.25), transparent 60%),
-                    radial-gradient(700px 500px at 90% 10%, rgba(16, 185, 129, 0.2), transparent 60%),
-                    linear-gradient(180deg, #050808 0%, #0a0f0b 45%, #050808 100%);
-                background-attachment: fixed;
-                color: var(--text);
-                position: relative;
                 min-height: 100vh;
+                font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+                color: var(--text);
+                background:
+                    radial-gradient(900px 520px at 12% 0%, rgba(56, 189, 248, 0.18), transparent 60%),
+                    radial-gradient(800px 520px at 88% 12%, rgba(245, 158, 11, 0.18), transparent 56%),
+                    linear-gradient(180deg, #050711 0%, #090d18 46%, #050711 100%);
             }
 
-            @keyframes glowShift {
-                0% {
-                    filter: hue-rotate(0deg) saturate(110%);
-                }
-                50% {
-                    filter: hue-rotate(12deg) saturate(130%);
-                }
-                100% {
-                    filter: hue-rotate(0deg) saturate(110%);
-                }
-            }
-
-            body::before {
-                content: "";
-                position: fixed;
-                inset: 0;
-                background-image:
-                    linear-gradient(rgba(34, 197, 94, 0.12) 1px, transparent 1px),
-                    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0px, rgba(0, 0, 0, 0.35) 1px, transparent 2px, transparent 4px);
-                background-size: 64px 64px, 100% 6px;
-                mask-image: radial-gradient(circle at 50% 10%, rgba(0,0,0,0.9), transparent 70%);
-                opacity: 0.5;
-                pointer-events: none;
-                z-index: 0;
-                animation: glowShift 12s ease-in-out infinite;
-            }
-
+            body::before,
             body::after {
                 content: "";
                 position: fixed;
                 inset: 0;
-                background:
-                    radial-gradient(120% 80% at 50% 0%, rgba(34, 197, 94, 0.18), transparent 45%),
-                    radial-gradient(70% 60% at 50% 100%, rgba(0, 0, 0, 0.55), transparent 55%),
-                    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 2px, transparent 4px);
                 pointer-events: none;
-                z-index: 0;
             }
 
-            body > * {
+            body::before {
+                background-image:
+                    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+                background-size: 56px 56px;
+                mask-image: radial-gradient(circle at 50% 0%, rgba(0, 0, 0, 0.9), transparent 70%);
+                opacity: 0.28;
+            }
+
+            body::after {
+                background:
+                    radial-gradient(circle at 20% 20%, rgba(125, 211, 252, 0.12), transparent 24%),
+                    radial-gradient(circle at 80% 18%, rgba(245, 158, 11, 0.12), transparent 22%),
+                    radial-gradient(circle at 50% 85%, rgba(99, 102, 241, 0.08), transparent 28%);
+                opacity: 0.8;
+            }
+
+            a {
+                color: inherit;
+            }
+
+            .page {
+                width: min(1180px, calc(100% - 2rem));
+                margin: 0 auto;
+                padding: 2rem 0 3.5rem;
                 position: relative;
                 z-index: 1;
             }
 
-            .terminal {
-                max-width: 980px;
-                margin: 2rem auto 3rem;
-                padding: 1.5rem 1.5rem 2rem;
-                background: rgba(7, 13, 10, 0.65);
-                border: 1px solid rgba(34, 197, 94, 0.25);
-                border-radius: 20px;
-                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(16, 185, 129, 0.15) inset, 0 0 40px rgba(34, 197, 94, 0.1);
-                backdrop-filter: blur(16px) saturate(140%);
-            }
-
-            .terminal-bar {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding-bottom: 0.75rem;
-                margin-bottom: 1.25rem;
-                border-bottom: 1px solid rgba(34, 197, 94, 0.2);
-            }
-
-            .terminal-dot {
-                width: 10px;
-                height: 10px;
-                border-radius: 999px;
-                background: #3d2651;
-                box-shadow: 0 0 8px rgba(88, 44, 131, 0.35);
-            }
-
-            .terminal-dot:nth-child(1) {
-                background: #ff5f56;
-            }
-
-            .terminal-dot:nth-child(2) {
-                background: #ffbd2e;
-            }
-
-            .terminal-dot:nth-child(3) {
-                background: #27c93f;
-            }
-
-            .terminal-title {
-                margin-left: auto;
-                font-size: 0.8rem;
-                color: rgba(167, 243, 208, 0.75);
-            }
-
-            .prompt-line {
-                margin: 0 0 1.25rem;
-                color: #86efac;
-                font-size: 0.95rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .prompt-input-wrap {
+            .hero {
                 position: relative;
-                display: inline-flex;
+                display: grid;
+                gap: 1.5rem;
+                padding: 2rem;
+                border: 1px solid var(--card-border);
+                border-radius: 28px;
+                background:
+                    linear-gradient(180deg, rgba(14, 19, 35, 0.92), rgba(8, 12, 23, 0.88)),
+                    radial-gradient(circle at top right, rgba(125, 211, 252, 0.14), transparent 35%);
+                box-shadow: var(--shadow);
+                backdrop-filter: blur(18px);
+                overflow: hidden;
+            }
+
+            .hero::after {
+                content: "";
+                position: absolute;
+                right: -120px;
+                top: -120px;
+                width: 280px;
+                height: 280px;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(125, 211, 252, 0.2), transparent 68%);
+                pointer-events: none;
+            }
+
+            .topbar {
+                display: flex;
                 align-items: center;
-                min-width: 220px;
+                justify-content: space-between;
+                gap: 1rem;
+                color: var(--muted);
+                font-size: 0.92rem;
+                position: relative;
+                z-index: 1;
             }
 
-            .prompt-input {
-                background: transparent;
-                border: none;
-                color: #d1fae5;
-                font: inherit;
-                outline: none;
-                width: 220px;
-                caret-color: transparent;
-            }
-
-            .prompt-measure {
-                position: absolute;
-                visibility: hidden;
-                white-space: pre;
-                font: inherit;
-            }
-
-            .prompt-cursor {
-                width: 6px;
-                height: 1em;
-                background: #86efac;
-                box-shadow: 0 0 10px rgba(134, 239, 172, 0.7);
-                animation: blink 1s steps(2, start) infinite;
-                position: absolute;
-                left: calc(var(--cursor-x, 0px) + 2px);
-            }
-
-            @keyframes blink {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0; }
-            }
-
-            .prompt-input {
-                caret-color: #86efac;
-            }
-
-            header {
-                padding: 0 0 1rem;
-                text-align: left;
-            }
-
-            header h1 {
-                margin: 0;
-                font-size: 1.8rem;
-                font-weight: 600;
+            .brand {
+                color: var(--text);
+                font-weight: 700;
                 letter-spacing: 0.02em;
             }
 
-            header p {
-                margin-top: 0.5rem;
-                color: rgba(167, 243, 208, 0.7);
+            .hero-grid {
+                display: grid;
+                grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+                gap: 1.5rem;
+                position: relative;
+                z-index: 1;
             }
 
-
-            .games {
-                max-width: 900px;
-                margin: 0 auto 3rem;
-                padding: 0 1rem;
-                column-count: 2;
-                column-gap: 1rem;
-            }
-
-            .title {
-                font-weight: 600;
-                color: var(--accent);
-            }
-
-            @media (max-width: 700px) {
-                .games {
-                    column-count: 1;
-                }
-            }
-
-            .game {
-                break-inside: avoid;
-                margin-bottom: 0.75rem;
-            }
-
-            .game a {
-                display: block;
-                padding: 0.85rem 1rem;
-                background: rgba(9, 16, 12, 0.75);
-                border-radius: 14px;
-                text-decoration: none;
-                color: var(--text);
-                border: 1px solid rgba(34, 197, 94, 0.2);
-                transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
-            }
-
-            .game a {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-            }
-
-            .game a:hover {
-                transform: translateY(-1px);
-                border-color: rgba(34, 197, 94, 0.55);
-                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 14px rgba(34, 197, 94, 0.2);
-            }
-
-            .game .name {
-                font-size: 1.05rem;
-                font-weight: 500;
-            }
-
-            .game .meta {
-                width: 100%;
-                font-size: 0.75rem;
-                color: var(--muted);
-                margin-left: 0.1rem;
-            }
-
-            .badge {
+            .eyebrow {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.25rem;
-                padding: 0.12rem 0.45rem;
+                gap: 0.5rem;
+                padding: 0.4rem 0.75rem;
                 border-radius: 999px;
-                font-size: 0.58rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.06em;
-            }
-
-            .badge-game {
-                background: rgba(34, 197, 94, 0.2);
-                color: #a7f3d0;
-                border: 1px solid rgba(34, 197, 94, 0.45);
-                box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
-            }
-
-            .badge-experiment {
-                background: rgba(16, 185, 129, 0.2);
-                color: #6ee7b7;
-                border: 1px solid rgba(16, 185, 129, 0.45);
-                box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
-            }
-
-            footer {
-                text-align: center;
-                font-size: 0.85rem;
-                color: var(--muted);
-                padding-bottom: 2rem;
-            }
-
-            .about {
-                max-width: 900px;
-                margin: 0 auto 2rem;
-                padding: 0 1rem;
-                text-align: center;
-            }
-
-            .about-inner {
-                background: rgba(6, 12, 9, 0.7);
-                border: 1px solid rgba(34, 197, 94, 0.2);
-                border-radius: 16px;
-                padding: 1rem 1.25rem;
-                color: rgba(167, 243, 208, 0.7);
-            }
-
-            .about-inner strong {
-                color: var(--text);
+                background: rgba(125, 211, 252, 0.12);
+                color: #c7eaff;
+                border: 1px solid rgba(125, 211, 252, 0.18);
+                font-size: 0.8rem;
                 font-weight: 600;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
             }
 
-            .links {
-                margin-top: 0.6rem;
+            .hero h1 {
+                margin: 0.95rem 0 0;
+                font-size: clamp(2.8rem, 7vw, 5.6rem);
+                line-height: 0.95;
+                letter-spacing: -0.05em;
+            }
+
+            .hero p {
+                margin: 1rem 0 0;
+                max-width: 60ch;
+                color: var(--muted);
+                font-size: 1.05rem;
+                line-height: 1.7;
+            }
+
+            .hero-actions {
                 display: flex;
+                flex-wrap: wrap;
+                gap: 0.8rem;
+                margin-top: 1.4rem;
+            }
+
+            .button {
+                display: inline-flex;
+                align-items: center;
                 justify-content: center;
+                gap: 0.5rem;
+                padding: 0.85rem 1.1rem;
+                border-radius: 999px;
+                text-decoration: none;
+                font-weight: 700;
+                transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            }
+
+            .button-primary {
+                color: #06111d;
+                background: linear-gradient(135deg, #a5f3fc, #7dd3fc 55%, #f8fafc);
+                box-shadow: 0 16px 34px rgba(125, 211, 252, 0.22);
+            }
+
+            .button-secondary {
+                color: var(--text);
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(148, 163, 184, 0.18);
+            }
+
+            .button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 18px 34px rgba(0, 0, 0, 0.22);
+            }
+
+            .hero-panel {
+                position: relative;
+                border-radius: 24px;
+                border: 1px solid rgba(148, 163, 184, 0.14);
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+                padding: 1.2rem;
+                display: grid;
                 gap: 1rem;
             }
 
-            .links a {
+            .hero-panel h2 {
+                margin: 0;
+                font-size: 1rem;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 0.14em;
+            }
+
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.8rem;
+            }
+
+            .stat {
+                padding: 0.95rem;
+                border-radius: 18px;
+                background: rgba(7, 11, 21, 0.54);
+                border: 1px solid rgba(148, 163, 184, 0.12);
+            }
+
+            .stat strong {
+                display: block;
+                font-size: 1.45rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .stat span {
+                color: var(--muted);
+                font-size: 0.9rem;
+            }
+
+            .section {
+                margin-top: 1.5rem;
+            }
+
+            .section-header {
+                display: flex;
+                align-items: end;
+                justify-content: space-between;
+                gap: 1rem;
+                margin: 0 0 1rem;
+            }
+
+            .section-header h2 {
+                margin: 0;
+                font-size: 1.2rem;
+                letter-spacing: -0.02em;
+            }
+
+            .section-header p {
+                margin: 0;
+                color: var(--muted);
+                max-width: 42ch;
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+
+            .games {
+                display: grid;
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .game-card {
+                grid-column: span 4;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                min-height: 220px;
+                padding: 1.2rem;
+                border-radius: 24px;
+                background: var(--card);
+                border: 1px solid var(--card-border);
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
                 text-decoration: none;
+                color: inherit;
+                transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+                overflow: hidden;
+            }
+
+            .game-card::before {
+                content: "";
+                height: 4px;
+                width: 100%;
+                border-radius: 999px;
+                background: linear-gradient(90deg, rgba(125, 211, 252, 0.95), rgba(245, 158, 11, 0.95));
+            }
+
+            .game-card:hover {
+                transform: translateY(-4px);
+                border-color: rgba(125, 211, 252, 0.45);
+                box-shadow: 0 26px 50px rgba(0, 0, 0, 0.3);
+            }
+
+            .game-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.45rem;
+            }
+
+            .pill {
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                padding: 0.35rem 0.7rem;
+                border-radius: 999px;
+                border: 1px solid rgba(148, 163, 184, 0.16);
+                background: rgba(255, 255, 255, 0.04);
+                font-size: 0.74rem;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                font-weight: 700;
+            }
+
+            .pill-featured {
+                color: #c7eaff;
+                border-color: rgba(125, 211, 252, 0.2);
+                background: rgba(125, 211, 252, 0.12);
+            }
+
+            .pill-external {
+                color: #fde68a;
+                border-color: rgba(245, 158, 11, 0.2);
+                background: rgba(245, 158, 11, 0.12);
+            }
+
+            .game-card h3 {
+                margin: 0;
+                font-size: 1.2rem;
+                letter-spacing: -0.02em;
+            }
+
+            .game-card p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.65;
+                font-size: 0.96rem;
+            }
+
+            .card-footer {
+                margin-top: auto;
+                display: flex;
+                justify-content: space-between;
+                gap: 0.75rem;
+                align-items: center;
+                color: var(--muted);
                 font-size: 0.9rem;
-                color: #86efac;
             }
 
-            .links a:hover {
-                text-decoration: underline;
+            .card-action {
+                color: var(--text);
+                font-weight: 700;
             }
 
-            /* Scrollbar styling */
-            ::-webkit-scrollbar {
-                width: 8px;
+            footer {
+                margin-top: 1.75rem;
+                text-align: center;
+                font-size: 0.88rem;
+                color: var(--muted);
+                padding-bottom: 0.25rem;
             }
 
-            ::-webkit-scrollbar-track {
-                background: rgba(7, 13, 10, 0.3);
+            @media (max-width: 960px) {
+                .hero-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .game-card {
+                    grid-column: span 6;
+                }
             }
 
-            ::-webkit-scrollbar-thumb {
-                background: rgba(34, 197, 94, 0.5);
-                border-radius: 4px;
-            }
+            @media (max-width: 720px) {
+                .page {
+                    width: min(100%, calc(100% - 1rem));
+                    padding-top: 0.5rem;
+                }
 
-            ::-webkit-scrollbar-thumb:hover {
-                background: rgba(34, 197, 94, 0.7);
-            }
+                .hero,
+                .hero-panel {
+                    border-radius: 22px;
+                }
 
-            /* Firefox scrollbar */
-            * {
-                scrollbar-color: rgba(34, 197, 94, 0.5) rgba(7, 13, 10, 0.3);
-                scrollbar-width: thin;
-            }
+                .hero {
+                    padding: 1.25rem;
+                }
 
-            .train-animation {
-                animation: trainMove 4s linear forwards;
-                font-weight: bold;
-            }
+                .stats {
+                    grid-template-columns: 1fr;
+                }
 
-            @keyframes trainMove {
-                0% { margin-left: -100%; opacity: 0; }
-                10% { opacity: 1; }
-                90% { opacity: 1; }
-                100% { margin-left: 110%; opacity: 0; }
-            }
+                .games {
+                    grid-template-columns: 1fr;
+                }
 
-            .terminal-output {
-                margin-bottom: 1.25rem;
-                color: #86efac;
-                font-size: 0.9rem;
-                max-height: 300px;
-                overflow-y: auto;
-                padding: 0.5rem 0;
-            }
+                .game-card {
+                    grid-column: auto;
+                }
 
-            .output-line {
-                margin: 0.3rem 0;
-                white-space: pre-wrap;
-                word-break: break-word;
-            }
-
-            .output-command {
-                color: #a8a8a8;
-                margin-top: 0.5rem;
-                margin-bottom: 0.3rem;
+                .section-header {
+                    align-items: start;
+                    flex-direction: column;
+                }
             }
         </style>
     </head>
-
     <body>
-        <main class="terminal">
-            <div class="terminal-bar">
-                <span class="terminal-dot"></span>
-                <span class="terminal-dot"></span>
-                <span class="terminal-dot"></span>
-                <span class="terminal-title">
-                    <a href="https://pragalbhapatil.com" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">pragalbhapatil.com - for nerdy stuff</a>
-                </span>
-            </div>
-
-            <div class="terminal-output" id="terminal-output"></div>
-
-            <div class="prompt-line">
-                <span>pragalbha@web:~$</span>
-                <span class="prompt-input-wrap" id="prompt-wrap">
-                    <span id="prompt-measure" class="prompt-measure"></span>
-                    <input id="filter" class="prompt-input" type="text" aria-label="Terminal input" autofocus autocomplete="off" />
-                    <span class="prompt-cursor"></span>
-                </span>
-            </div>
-
-        <header>
-            <h1 class="title">pragal.fun</h1>
-            <p>Small browser games, tools & experiments</p>
-        </header>
-
-        <section class="about">
-            <div class="about-inner">
-                <p>
-                    Built by <strong>Pragalbha Patil</strong> — engineer who enjoys building
-                    small web games, experiments, and playful internet projects.
-                </p>
-                <div class="links">
-                    <a href="https://github.com/Pragalbha-Patil" target="_blank" rel="noopener">GitHub</a>
-                    <a href="https://www.linkedin.com/in/pragalbha-patil-610541172/" target="_blank" rel="noopener">LinkedIn</a>
-                    <a href="https://pragalbhapatil.com/" target="_blank" rel="noopener">Blog</a>
+        <main class="page">
+            <section class="hero" aria-labelledby="hero-title">
+                <div class="topbar">
+                    <a class="brand" href="/">Pragal.fun</a>
+                    <a href="https://pragalbhapatil.com" target="_blank" rel="noopener">pragalbhapatil.com - for nerdy stuff</a>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <div class="games" id="games"></div>
+            <section class="section" id="games" aria-labelledby="games-title">
+                <div class="section-header">
+                    <div>
+                        <h2 id="games-title">Games and experiments</h2>
+                    </div>
+                </div>
 
-        <footer>
-            &copy; Pragalbha Patil. All rights reserved.
-         <script>
-            document.querySelector('footer').innerHTML = document.querySelector('footer').innerHTML.replace('Pragalbha', new Date().getFullYear() + ' Pragalbha');
-        </script>
-        </footer>
+                <div class="games" id="games-grid"></div>
+            </section>
+
+            <footer>
+                © <span id="year"></span> Pragalbha Patil.
+            </footer>
         </main>
 
         <script>
             const games = [
-                // { name: "Word guess", path: "word.pragal.fun", domain: true, popular: true, game: true },
-                // { name: "AI Charades", path: "charades.pragal.fun", domain: true, popular: true, game: true },
-                // { name: "Battleship multiplayer", path: "playbattleship.online", domain: true, popular: true, game: true },
-                // { name: "Cricket Score Keeper", path: "cricket.pragal.fun", domain: true, popular: false, game: false },
-                { name: "Orbit", path: "orbit.pragal.fun", domain: true, game: true, popular: true },
-                { name: "2D Monster squasher", path: "ikistuacha.itch.io/psp-first-godot-game", popular: true, domain: true, game: true },
-                // { name: "Shooter Game", path: "fps/", popular: false, game: true },
-                // { name: "Simple Unity game", path: "pspgame/", popular: false, game: true },
-                // { name: "Text to binary converter", path: "t2b/" },
-                // { name: "Quote Machine", path: "quotes/", game: false },
-                { name: "Ruby Hash to JSON", path: "ruby-hash-to-json/", domain: false, game: false },
-                { name: "One million checkboxes", path: "one-million-checkboxes/", domain: false, game: true },
+                {
+                    name: "Orbit",
+                    description: "A polished browser game built for quick play sessions.",
+                    href: "https://orbit.pragal.fun",
+                    type: "Featured game",
+                    featured: true,
+                    external: true,
+                },
+                {
+                    name: "2D Monster Squasher",
+                    description: "A fast-action Godot game hosted on itch.io.",
+                    href: "https://ikistuacha.itch.io/psp-first-godot-game",
+                    type: "Featured game",
+                    featured: true,
+                    external: true,
+                },
+                {
+                    name: "One Million Checkboxes",
+                    description: "A playful large-scale interaction experiment with a game-like loop.",
+                    href: "/one-million-checkboxes/",
+                    type: "Featured experiment",
+                    featured: true,
+                    external: false,
+                },
+                {
+                    name: "PSP Game",
+                    description: "Another playable Unity project in the collection.",
+                    href: "/pspgame/",
+                    type: "Game",
+                    external: false,
+                },
             ];
 
-            const container = document.getElementById("games");
-            const filterInput = document.getElementById("filter");
-            const promptMeasure = document.getElementById("prompt-measure");
-            const promptWrap = document.getElementById("prompt-wrap");
-            const outputDiv = document.getElementById("terminal-output");
+            const gamesGrid = document.getElementById("games-grid");
+            const year = document.getElementById("year");
 
-            const slArt = `  _____________________
- / \\
-/___\\___________________
-| () () () () () () () () |
-|_________________________|
-  oo oo oo oo oo oo oo oo`;
-
-            const cowArt = `        ^__^
-        (oo)\\_______
-        (__)\\       )\\/\\
-            ||----w |
-            ||     ||`;
-
-            const fortunes = [
-                "A journey of a thousand lines of code begins with a single bug.",
-                "Why do programmers prefer dark mode? Because light attracts bugs!",
-                "There are only 10 kinds of people: those who understand binary and those who don't.",
-                "Why do Java developers wear glasses? Because they don't C#",
-                "How many programmers does it take to change a lightbulb? None, that's a hardware problem.",
-                "Why did the programmer quit his job? Because he didn't get arrays.",
-                "Why do programmers always get Halloween and Christmas mixed up? Because Oct 31 equals Dec 25.",
-                "Debugging: removing the needles from the haystack. Testing: finding the needles.",
-                "It works on my machine.",
-                "Code today, debug forever."
-            ];
-
-            const messages = [
-                "Welcome to pragal.fun!",
-                "Have fun building things!",
-                "Happy coding!",
-                "Enjoy the projects!"
-            ];
-
-            function bannerText(text) {
-                const chars = {
-                    'H': ['  #    #  ', ' # #   # ', '#       #', '#       #', '#       #', '  #    # '],
-                    'i': ['  #  ', '  #  ', '  #  ', '  #  ', '  #  ', '  #  '],
-                    '!': [' # ', ' # ', ' # ', '   ', ' # ', '   ']
-                };
-                const lines = ['', '', '', '', '', ''];
-                for (let char of text.toUpperCase()) {
-                    if (char === ' ') {
-                        lines = lines.map(l => l + '    ');
-                    } else if (chars[char]) {
-                        chars[char].forEach((line, i) => {
-                            lines[i] += line + ' ';
-                        });
-                    }
+            function createCard(game) {
+                const card = document.createElement("a");
+                card.className = "game-card";
+                card.href = game.href;
+                if (game.external) {
+                    card.target = "_blank";
+                    card.rel = "noopener";
                 }
-                return lines;
-            }
 
-            function animateSl() {
-                const trainLine1 = "  _____________________";
-                const trainLine2 = " /_____________________\\";
-                const trainLine3 = "| () () () () () () () () |";
-                const trainLine4 = "|_________________________|";
-                const trainLine5 = "  oo oo oo oo oo oo oo oo";
+                const meta = document.createElement("div");
+                meta.className = "game-meta";
 
-                // Show multiple frames of the train running
-                const frames = 8;
-                const speeds = [' ', '  ', '   ', '    ', '   ', '  ', ' ', ''];
-                
-                speeds.forEach((space, idx) => {
-                    setTimeout(() => {
-                        addOutput(space + trainLine1);
-                        addOutput(space + trainLine2);
-                        addOutput(space + trainLine3);
-                        addOutput(space + trainLine4);
-                        addOutput(space + trainLine5);
-                        addOutput(""); // spacing
-                    }, idx * 150);
-                });
-                
-                setTimeout(() => {
-                    addOutput("🚂 CHOO CHOO! All aboard the pragal.fun project express!");
-                }, 1500);
-            }
+                const typePill = document.createElement("span");
+                typePill.className = "pill";
+                typePill.textContent = game.type;
+                meta.appendChild(typePill);
 
-            function animateMatrix() {
-                const chars = "01アイウエオカキク";
-                for (let i = 0; i < 8; i++) {
-                    let line = "";
-                    for (let j = 0; j < 30; j++) {
-                        line += chars[Math.floor(Math.random() * chars.length)];
-                    }
-                    addOutput(line);
+                if (game.featured) {
+                    const featuredPill = document.createElement("span");
+                    featuredPill.className = "pill pill-featured";
+                    featuredPill.textContent = "Featured";
+                    meta.appendChild(featuredPill);
                 }
-                addOutput("🔢 Welcome to the Matrix...");
-            }
 
-            function animateFizzbuzz() {
-                addOutput("Playing FizzBuzz (1-20)...");
-                let result = "";
-                for (let i = 1; i <= 20; i++) {
-                    if (i % 15 === 0) result += "FizzBuzz ";
-                    else if (i % 3 === 0) result += "Fizz ";
-                    else if (i % 5 === 0) result += "Buzz ";
-                    else result += i + " ";
+                if (game.external) {
+                    const externalPill = document.createElement("span");
+                    externalPill.className = "pill pill-external";
+                    externalPill.textContent = "External";
+                    meta.appendChild(externalPill);
                 }
-                addOutput(result);
+
+                const title = document.createElement("h3");
+                title.textContent = game.name;
+
+                const description = document.createElement("p");
+                description.textContent = game.description;
+
+                const footer = document.createElement("div");
+                footer.className = "card-footer";
+
+                const linkText = document.createElement("span");
+                linkText.textContent = game.external ? game.href.replace(/^https?:\/\//, "") : game.href;
+
+                const action = document.createElement("span");
+                action.className = "card-action";
+                action.textContent = "Open project →";
+
+                footer.append(linkText, action);
+                card.append(meta, title, description, footer);
+                return card;
             }
 
-            function generateTree(depth = 0, prefix = "") {
-                if (depth === 0) {
-                    addOutput("pragal.fun/");
-                    generateTree(1, "");
-                } else if (depth === 1) {
-                    addOutput(prefix + "├── games/");
-                    addOutput(prefix + "├── tools/");
-                    addOutput(prefix + "└── experiments/");
-                } else if (depth === 2) {
-                    addOutput(prefix + "  ├── word-guess");
-                    addOutput(prefix + "  ├── battleship");
-                    addOutput(prefix + "  ├── godot-game");
-                    addOutput(prefix + "  └── unity-fps");
-                }
-            }
-
-            function coinFlip() {
-                const result = Math.random() > 0.5 ? "Heads 🪙" : "Tails 🪙";
-                addOutput(result);
-            }
-
-            function rollDice(sides = 6) {
-                const result = Math.floor(Math.random() * sides) + 1;
-                addOutput(`🎲 You rolled a ${result}!`);
-            }
-
-            function animateFire() {
-                const fire = ["🔥", "🌡️", "💥", "⚡", "🔥"];
-                fire.forEach((f, i) => {
-                    setTimeout(() => addOutput(f + " Hot projects incoming!"), i * 200);
-                });
-            }
-
-            function showAbout() {
-                addOutput("╔════════════════════════════════════════╗");
-                addOutput("║  pragal.fun v2.0 - Interactive        ║");
-                addOutput("║  Built by Pragalbha Patil             ║");
-                addOutput("║  A portfolio of games & experiments   ║");
-                addOutput("║  Tech: JavaScript, Games, Web         ║");
-                addOutput("║  GitHub: Pragalbha-Patil              ║");
-                addOutput("╚════════════════════════════════════════╝");
-            }
-
-            function drawStar() {
-                addOutput("      ★");
-                addOutput("     ★ ★");
-                addOutput("    ★   ★");
-                addOutput("   ★  *  ★");
-                addOutput("  ★   ★   ★");
-                addOutput("  ★★★★★★★★★");
-            }
-
-            function showTime() {
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const mins = String(now.getMinutes()).padStart(2, '0');
-                const secs = String(now.getSeconds()).padStart(2, '0');
-                addOutput(`🕐 ${hours}:${mins}:${secs}`);
-            }
-
-            function randomQuote() {
-                const quotes = [
-                    "\"The only way to do great work is to love what you do.\" - Steve Jobs",
-                    "\"Innovation distinguishes between a leader and a follower.\" - Steve Jobs",
-                    "\"Life is what happens when you're busy making other plans.\" - John Lennon",
-                    "\"The future belongs to those who believe in the beauty of their dreams.\" - Eleanor Roosevelt"
-                ];
-                addOutput(quotes[Math.floor(Math.random() * quotes.length)]);
-            }
-
-            function downloadResume() {
-                const resumePath = "assets/resume/resume.pdf";
-                const link = document.createElement("a");
-                link.href = resumePath;
-                link.download = "Pragalbha-Patil-Resume.pdf";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-
-            function render(list) {
-                container.innerHTML = "";
-                list.forEach(game => {
-                    const div = document.createElement("div");
-                    div.className = "game";
-                    const href = game.domain ? `https://${game.path}` : game.path;
-                    let innerHTML = `<a href="${href}" ${game.domain ? 'target="_blank" rel="noopener"' : ''} ${game.down ? 'style="opacity: 0.6; pointer-events: none;"' : ''}>`;
-                    innerHTML += game.game
-                        ? '<span class="badge badge-game">Game</span>'
-                        : '<span class="badge badge-experiment">Tool</span>';
-                    innerHTML += ` <span class="name">${game.name}</span>`;
-                    const displayUrl = game.domain ? `https://${game.path}` : game.path;
-                    innerHTML += ` <span class="meta">${displayUrl}</span>`;
-                    if (game.popular) innerHTML += ' <span style="font-size: 0.75rem; color: var(--accent); margin-left: 0.5rem;">★ Popular</span>';
-                    if (game.down) innerHTML += ' <span style="font-size: 0.75rem; color: var(--muted); margin-left: 0.5rem;">⚠ Temporarily unavailable</span>';
-                    innerHTML += '</a>';
-                    div.innerHTML = innerHTML;
-                    container.appendChild(div);
-                });
-            }
-
-            function updateCursor() {
-                promptMeasure.textContent = filterInput.value || "";
-                const width = promptMeasure.offsetWidth;
-                promptWrap.style.setProperty("--cursor-x", `${width}px`);
-            }
-
-            function addOutput(text, isCommand = false) {
-                const line = document.createElement("div");
-                line.className = isCommand ? "output-line output-command" : "output-line";
-                line.textContent = text;
-                outputDiv.appendChild(line);
-                outputDiv.scrollTop = outputDiv.scrollHeight;
-            }
-
-            function handleCommand(cmd) {
-                const parts = cmd.trim().split(/\s+/);
-                const command = parts[0].toLowerCase();
-                const args = parts.slice(1);
-
-                if (cmd.trim()) addOutput(`pragalbha@web:~$ ${cmd}`);
-
-                switch(command) {
-                    case "ls":
-                    case "ls -la":
-                        games.forEach(g => {
-                            addOutput(`  ${g.game ? "[G]" : "[T]"} ${g.name}`);
-                        });
-                        break;
-                    case "sl":
-                        animateSl();
-                        break;
-                    case "matrix":
-                        animateMatrix();
-                        break;
-                    case "fortune":
-                        const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-                        addOutput(`💡 ${fortune}`);
-                        break;
-                    case "date":
-                        addOutput(new Date().toString());
-                        break;
-                    case "fizzbuzz":
-                        animateFizzbuzz();
-                        break;
-                    case "whoami":
-                        addOutput("pragalbha");
-                        break;
-                    case "neofetch":
-                        addOutput("╔═════════════════════════════════════╗");
-                        addOutput("║  pragal.fun v1.0 (Web Terminal)     ║");
-                        addOutput("║  Platform: Browser                  ║");
-                        addOutput("║  Theme: iTerm Green                 ║");
-                        addOutput("║  Mood: Creative & Fun               ║");
-                        addOutput("╚═════════════════════════════════════╝");
-                        break;
-                    case "xcow":
-                        const msg = args.length > 0 ? args.join(" ") : messages[Math.floor(Math.random() * messages.length)];
-                        addOutput(` ${"-".repeat(msg.length + 2)}`);
-                        addOutput(`| ${msg} |`);
-                        addOutput(` ${"-".repeat(msg.length + 2)}`);
-                        addOutput(cowArt);
-                        break;
-                    case "tree":
-                        generateTree();
-                        break;
-                    case "flip":
-                        coinFlip();
-                        break;
-                    case "roll":
-                        const sides = args.length > 0 ? parseInt(args[0]) || 6 : 6;
-                        rollDice(sides);
-                        break;
-                    case "fire":
-                        animateFire();
-                        break;
-                    case "star":
-                        drawStar();
-                        break;
-                    case "time":
-                        showTime();
-                        break;
-                    case "quote":
-                        randomQuote();
-                        break;
-                    case "about":
-                        showAbout();
-                        break;
-                    case "hire":
-                        addOutput("🔗 Opening LinkedIn profile...");
-                        addOutput("📥 Downloading resume...");
-                        window.open("https://www.linkedin.com/in/pragalbha-patil-610541172/", "_blank");
-                        downloadResume();
-                        break;
-                    case "help":
-                        addOutput("Available commands:");
-                        addOutput("  ls           - List all projects");
-                        addOutput("  clear        - Clear screen");
-                        addOutput("  pwd          - Print working directory");
-                        addOutput("  echo [text]  - Echo text");
-                        addOutput("  date         - Show current date/time");
-                        addOutput("  whoami       - Show current user");
-                        addOutput("  fortune      - Random tech fortune");
-                        addOutput("  quote        - Random inspirational quote");
-                        addOutput("  sl           - Animated train!");
-                        addOutput("  matrix       - Matrix effect");
-                        addOutput("  fizzbuzz     - FizzBuzz game");
-                        addOutput("  tree         - Project structure");
-                        addOutput("  flip         - Coin flip");
-                        addOutput("  roll [sides] - Roll dice (default 6)");
-                        addOutput("  fire         - Fire animation");
-                        addOutput("  star         - Draw a star");
-                        addOutput("  time         - Show current time");
-                        addOutput("  about        - About pragal.fun");
-                        addOutput("  neofetch     - System info");
-                        addOutput("  xcow [text]  - Wise cow says...");
-                        addOutput("  hire         - Hire this guy ASAP!!!");
-                        break;
-                    case "clear":
-                        outputDiv.innerHTML = "";
-                        return true;
-                    case "pwd":
-                        addOutput("/home/pragalbha/projects");
-                        break;
-                    case "echo":
-                        if (args.length > 0) {
-                            addOutput(args.join(" "));
-                        }
-                        break;
-                    default:
-                        if (cmd.trim()) {
-                            addOutput(`command not found: ${command}. Type 'help' for available commands.`);
-                        }
-                }
-                return false;
-            }
-
-            filterInput.addEventListener("keydown", e => {
-                if (e.key === "Enter") {
-                    const cmd = filterInput.value;
-                    handleCommand(cmd);
-                    filterInput.value = "";
-                    updateCursor();
-                }
-            });
-
-            filterInput.addEventListener("input", e => {
-                updateCursor();
-            });
-
-            updateCursor();
-            render(games);
-            addOutput("Welcome to pragal.fun terminal. Type 'help' for commands.");
+            games.forEach(game => gamesGrid.appendChild(createCard(game)));
+            year.textContent = new Date().getFullYear();
         </script>
-
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-N8EMX5KEXS"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-N8EMX5KEXS');
-        </script>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3126087984519775" crossorigin="anonymous"></script>
-
     </body>
-
 </html>
