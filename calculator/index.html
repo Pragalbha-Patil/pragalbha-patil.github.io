@@ -65,7 +65,7 @@
                 <option value="/">/</option>
             </select> </span>
         <input type="number" id="secondNumber" placeholder="Enter second number">
-        <button onclick="calculate()">Calculate</button>
+        <button id="calculateBtn" onclick="calculate()">Calculate</button>
         <p id="statusText" class="italic text-danger" aria-live="polite"></p>
 
         <div class="container-fluid mt-2">
@@ -84,8 +84,9 @@
         }
 
         function calculate() {
+            var calculateBtn = document.getElementById('calculateBtn');
+
             if (isCalculating) {
-                setStatus('Please wait for the current calculation to finish.', true);
                 return;
             }
 
@@ -122,12 +123,14 @@
             var animationDuration = 2000;
             document.querySelector('.loading-spinner').style.display = 'inline-block';
             isCalculating = true;
+            calculateBtn.disabled = true;
 
             setTimeout(function () {
                 document.querySelector('.loading-spinner').style.display = 'none';
                 document.querySelector('.slow-image').style.display = 'block';
                 loadSlowImage(operation, firstNumber, secondNumber);
                 isCalculating = false;
+                calculateBtn.disabled = false;
             }, animationDuration);
         }
 
