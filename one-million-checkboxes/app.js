@@ -301,6 +301,25 @@ class BackendService {
             // Realtime stream can fail silently without blocking core usage.
         }
     }
+
+    disconnectRealtime() {
+        try {
+            if (this.eventSource) {
+                this.eventSource.close();
+                this.eventSource = null;
+            }
+
+            const params = new URLSearchParams({ sid: this.sessionId });
+            fetch(`${this.baseUrl}/api/disconnect?${params.toString()}`, {
+                method: 'POST',
+                keepalive: true,
+            }).catch(() => {
+                // Best-effort disconnect only.
+            });
+        } catch {
+            // Best-effort disconnect only.
+        }
+    }
 }
 
 // ============ RENDER ENGINE ============
@@ -781,7 +800,12 @@ class CheckboxApp {
         
         // Cleanup on unload
         window.addEventListener('beforeunload', () => {
+            this.backend.disconnectRealtime();
             this.flushUpdates();
+        });
+
+        window.addEventListener('pagehide', () => {
+            this.backend.disconnectRealtime();
         });
     }
 }

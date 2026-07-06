@@ -98,6 +98,12 @@ export default {
       return room.fetch('https://room.internal/online');
     }
 
+    if (url.pathname === '/api/disconnect' && request.method === 'POST') {
+      return room.fetch(`https://room.internal/disconnect${url.search}`, {
+        method: 'POST',
+      });
+    }
+
     return jsonResponse({ error: 'Not found' }, 404);
   },
 };
@@ -160,6 +166,21 @@ export class CheckboxRoom {
       return jsonResponse({ online: this.clients.size });
     }
 
+    if (url.pathname === '/disconnect' && request.method === 'POST') {
+      const sessionId = (url.searchParams.get('sid') || '').trim();
+      if (!sessionId) {
+        return jsonResponse({ error: 'Missing sid' }, 400);
+      }
+
+      const client = this.clientsBySession.get(sessionId);
+      if (!client) {
+        return jsonResponse({ ok: true, disconnected: false });
+      }
+
+      await this.removeClient(client, true);
+      return jsonResponse({ ok: true, disconnected: true });
+    }
+
     return jsonResponse({ error: 'Not found' }, 404);
   }
 
@@ -213,13 +234,7 @@ export class CheckboxRoom {
     if (sessionId) {
       const existingClient = this.clientsBySession.get(sessionId);
       if (existingClient) {
-        this.clients.delete(existingClient);
-        this.clientsBySession.delete(sessionId);
-        try {
-          existingClient.writer.close();
-        } catch {
-          // Ignore close errors on replaced sessions.
-        }
+        this.ctx.waitUntil(this.removeClient(existingClient, false));
       }
     }
 
@@ -229,7 +244,7 @@ export class CheckboxRoom {
 
     const write = message => writer.write(encoder.encode(message));
 
-    const client = { writer, write, sessionId };
+    const client = { writer, write, sessionId, closed: false };
     this.clients.add(client);
     if (sessionId) {
       this.clientsBySession.set(sessionId, client);
@@ -242,22 +257,18 @@ export class CheckboxRoom {
     const heartbeat = setInterval(() => {
       write(': ping\n\n').catch(() => {
         clearInterval(heartbeat);
+        this.ctx.waitUntil(cleanup());
       });
     }, 25000);
 
     const cleanup = async () => {
+      if (client.closed) {
+        return;
+      }
+      client.closed = true;
       clearInterval(heartbeat);
       request.signal?.removeEventListener('abort', onAbort);
-      this.clients.delete(client);
-      if (sessionId && this.clientsBySession.get(sessionId) === client) {
-        this.clientsBySession.delete(sessionId);
-      }
-      this.broadcastPresence();
-      try {
-        await writer.close();
-      } catch {
-        // Writer may already be closed.
-      }
+      await this.removeClient(client, true);
     };
 
     const onAbort = () => {
@@ -283,12 +294,7 @@ export class CheckboxRoom {
 
     for (const client of this.clients) {
       client.write(payload).catch(async () => {
-        this.clients.delete(client);
-        try {
-          await client.writer.close();
-        } catch {
-          // Ignore close errors.
-        }
+        await this.removeClient(client, true);
       });
     }
   }
@@ -298,13 +304,29 @@ export class CheckboxRoom {
 
     for (const client of this.clients) {
       client.write(payload).catch(async () => {
-        this.clients.delete(client);
-        try {
-          await client.writer.close();
-        } catch {
-          // Ignore close errors.
-        }
+        await this.removeClient(client, true);
       });
+    }
+  }
+
+  async removeClient(client, shouldBroadcast) {
+    if (!client) {
+      return;
+    }
+
+    const hadClient = this.clients.delete(client);
+    if (client.sessionId && this.clientsBySession.get(client.sessionId) === client) {
+      this.clientsBySession.delete(client.sessionId);
+    }
+
+    try {
+      await client.writer.close();
+    } catch {
+      // Ignore close errors.
+    }
+
+    if (shouldBroadcast && hadClient) {
+      this.broadcastPresence();
     }
   }
 }
