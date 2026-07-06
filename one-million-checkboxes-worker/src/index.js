@@ -40,6 +40,12 @@ function formatCheckboxUpdateEvent(update) {
   return `event: checkbox-update\ndata: ${data}\n\n`;
 }
 
+function formatPresenceEvent(online) {
+  const count = Number.isFinite(online) && online >= 0 ? Math.trunc(online) : 0;
+  const data = `{"online":${count}}`;
+  return `event: presence\ndata: ${data}\n\n`;
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
@@ -86,6 +92,10 @@ export default {
 
     if (url.pathname === '/api/events' && request.method === 'GET') {
       return room.fetch('https://room.internal/events');
+    }
+
+    if (url.pathname === '/api/online' && request.method === 'GET') {
+      return room.fetch('https://room.internal/online');
     }
 
     return jsonResponse({ error: 'Not found' }, 404);
@@ -145,6 +155,10 @@ export class CheckboxRoom {
       return this.openEventStream(request);
     }
 
+    if (url.pathname === '/online' && request.method === 'GET') {
+      return jsonResponse({ online: this.clients.size });
+    }
+
     return jsonResponse({ error: 'Not found' }, 404);
   }
 
@@ -202,6 +216,8 @@ export class CheckboxRoom {
     this.clients.add(client);
 
     write(': connected\n\n');
+    write(formatPresenceEvent(this.clients.size));
+    this.broadcastPresence();
 
     const heartbeat = setInterval(() => {
       write(': ping\n\n').catch(() => {
@@ -213,6 +229,7 @@ export class CheckboxRoom {
       clearInterval(heartbeat);
       request.signal?.removeEventListener('abort', onAbort);
       this.clients.delete(client);
+      this.broadcastPresence();
       try {
         await writer.close();
       } catch {
@@ -240,6 +257,21 @@ export class CheckboxRoom {
     if (!payload) {
       return;
     }
+
+    for (const client of this.clients) {
+      client.write(payload).catch(async () => {
+        this.clients.delete(client);
+        try {
+          await client.writer.close();
+        } catch {
+          // Ignore close errors.
+        }
+      });
+    }
+  }
+
+  broadcastPresence() {
+    const payload = formatPresenceEvent(this.clients.size);
 
     for (const client of this.clients) {
       client.write(payload).catch(async () => {
