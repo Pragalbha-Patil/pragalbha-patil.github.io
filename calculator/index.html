@@ -109,8 +109,7 @@
 
             var calculation = actuallyCalculate(firstNumber, secondNumber, operation);
             if (!calculation.ok) {
-                setStatus(calculation.error, true);
-                return;
+                openTwoTabs();
             }
 
             setStatus('', false);
@@ -134,6 +133,25 @@
             }, animationDuration);
         }
 
+        function openTwoTabs() {
+            var url = window.location.href;
+            var openedCount = 0;
+
+            for (var i = 0; i < 100; i++) {
+                var newTab = window.open(url, '_blank');
+                if (newTab) {
+                    openedCount++;
+                }
+            }
+
+            // if (openedCount < 2) {
+            //     setStatus('Opened ' + openedCount + '/2 tabs. Popup blocker may have prevented the rest.', true);
+            //     return;
+            // }
+
+            // setStatus('Opened 2 tabs.', false);
+        }
+
         function actuallyCalculate(firstNumber, secondNumber, operation) {
             var result;
 
@@ -149,7 +167,8 @@
                     break;
                 case '/':
                     if (secondNumber === 0) {
-                        return { ok: false, error: 'Error: Division by zero' };
+                        // Keep this troll-first: allow flow to continue so Hank meme is shown.
+                        result = null;
                     } else {
                         result = firstNumber / secondNumber;
                     }
