@@ -66,8 +66,6 @@
             </select> </span>
         <input type="number" id="secondNumber" placeholder="Enter second number">
         <button onclick="calculate()">Calculate</button>
-
-        <p id="resultText" class="mt-2 mb-1" aria-live="polite"></p>
         <p id="statusText" class="italic text-danger" aria-live="polite"></p>
 
         <div class="container-fluid mt-2">
@@ -85,10 +83,6 @@
             statusText.className = isError ? 'italic text-danger' : 'italic text-success';
         }
 
-        function setResult(message) {
-            document.getElementById('resultText').textContent = message || '';
-        }
-
         function calculate() {
             if (isCalculating) {
                 setStatus('Please wait for the current calculation to finish.', true);
@@ -103,25 +97,21 @@
             var secondNumber = Number(secondValue);
 
             if (firstValue === '' || secondValue === '') {
-                setResult('');
                 setStatus('Enter values in both number fields.', true);
                 return;
             }
 
             if (!Number.isFinite(firstNumber) || !Number.isFinite(secondNumber)) {
-                setResult('');
                 setStatus('Please enter valid finite numbers.', true);
                 return;
             }
 
             var calculation = actuallyCalculate(firstNumber, secondNumber, operation);
             if (!calculation.ok) {
-                setResult('');
                 setStatus(calculation.error, true);
                 return;
             }
 
-            setResult('Result: ' + calculation.result);
             setStatus('', false);
 
             var canvas = document.querySelector('.slow-image');
