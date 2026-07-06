@@ -100,6 +100,7 @@ class BackendService {
         this.baseUrl = CONFIG.apiBaseUrl;
         this.eventSource = null;
         this.isReady = false;
+        this.presencePathCandidates = ['/api/online', '/api/presence', '/api/stats'];
     }
 
     async initialize() {
@@ -187,7 +188,47 @@ class BackendService {
         }
     }
 
-    subscribeToChanges(callback) {
+    extractOnlineCount(payload) {
+        if (!payload || typeof payload !== 'object') {
+            return null;
+        }
+
+        const candidate =
+            payload.online ??
+            payload.onlineCount ??
+            payload.count ??
+            payload.clients ??
+            payload.connections ??
+            payload.activeUsers;
+
+        const parsed = parseInt(candidate, 10);
+        if (!Number.isFinite(parsed) || parsed < 0) {
+            return null;
+        }
+
+        return parsed;
+    }
+
+    async fetchOnlineCount() {
+        if (!this.isReady) throw new Error('Backend not initialized');
+
+        for (const path of this.presencePathCandidates) {
+            try {
+                const response = await this.apiFetch(path, { method: 'GET' });
+                const payload = await response.json();
+                const online = this.extractOnlineCount(payload);
+                if (online !== null) {
+                    return online;
+                }
+            } catch {
+                // Try next candidate endpoint.
+            }
+        }
+
+        return null;
+    }
+
+    subscribeToChanges(callback, onlineCountCallback = null) {
         if (!this.isReady) throw new Error('Backend not initialized');
 
         if (typeof EventSource === 'undefined') {
@@ -212,6 +253,28 @@ class BackendService {
                     // Ignore malformed event payload.
                 }
             });
+
+            const parseAndEmitOnline = event => {
+                if (typeof onlineCountCallback !== 'function') {
+                    return;
+                }
+
+                try {
+                    const payload = JSON.parse(event.data || '{}');
+                    const online = this.extractOnlineCount(payload);
+                    if (online !== null) {
+                        onlineCountCallback(online);
+                    }
+                } catch {
+                    // Ignore malformed presence payload.
+                }
+            };
+
+            this.eventSource.addEventListener('presence', parseAndEmitOnline);
+            this.eventSource.addEventListener('online', parseAndEmitOnline);
+            this.eventSource.addEventListener('online-count', parseAndEmitOnline);
+
+            this.eventSource.onmessage = parseAndEmitOnline;
         } catch {
             // Realtime stream can fail silently without blocking core usage.
         }
@@ -326,6 +389,7 @@ class UIController {
     constructor() {
         this.countDisplay = document.getElementById('count-display');
         this.remainingDisplay = document.getElementById('remaining-checkboxes');
+        this.onlineCountDisplay = document.getElementById('online-count');
         this.userCountDisplay = document.getElementById('user-count-display');
         this.userPlusDisplay = document.getElementById('user-plus-count');
         this.userMinusDisplay = document.getElementById('user-minus-count');
@@ -378,6 +442,19 @@ class UIController {
         if (this.userMinusDisplay) {
             this.userMinusDisplay.textContent = `-${userDelta.minus.toLocaleString()}`;
         }
+    }
+
+    updateOnlineCount(onlineCount) {
+        if (!this.onlineCountDisplay) {
+            return;
+        }
+
+        if (!Number.isFinite(onlineCount) || onlineCount < 0) {
+            this.onlineCountDisplay.textContent = 'Online now: --';
+            return;
+        }
+
+        this.onlineCountDisplay.textContent = `Online now: ${onlineCount.toLocaleString()}`;
     }
 
     updateProgress() {
@@ -481,6 +558,7 @@ class CheckboxApp {
         this.ui = new UIController();
         this.pendingFlushTimer = null;
         this.pendingVisibleRefresh = false;
+        this.onlineCountPollTimer = null;
     }
 
     async ensureInitialPaint(maxFrames = 24) {
@@ -548,6 +626,12 @@ class CheckboxApp {
             // Subscribe to real-time updates
             this.subscribeToLiveUpdates();
 
+            // Presence count: initial fetch + periodic refresh fallback.
+            await this.refreshOnlineCount();
+            this.onlineCountPollTimer = setInterval(() => {
+                this.refreshOnlineCount();
+            }, 20000);
+
             // Ensure initial progress reflects current scroll
             this.ui.updateProgress();
         } catch (error) {
@@ -573,21 +657,35 @@ class CheckboxApp {
     }
 
     subscribeToLiveUpdates() {
-        this.backend.subscribeToChanges((id, isChecked) => {
-            id = parseInt(id, 10);
-            if (Number.isNaN(id)) {
-                return;
+        this.backend.subscribeToChanges(
+            (id, isChecked) => {
+                id = parseInt(id, 10);
+                if (Number.isNaN(id)) {
+                    return;
+                }
+
+                // Update state
+                this.state.setState(id, isChecked);
+
+                // Update UI if rendered
+                this.render.updateCheckbox(id, isChecked);
+
+                // Update count
+                this.ui.updateCount(this.state.checkedCount);
+            },
+            online => {
+                this.ui.updateOnlineCount(online);
             }
-            
-            // Update state
-            this.state.setState(id, isChecked);
-            
-            // Update UI if rendered
-            this.render.updateCheckbox(id, isChecked);
-            
-            // Update count
-            this.ui.updateCount(this.state.checkedCount);
-        });
+        );
+    }
+
+    async refreshOnlineCount() {
+        try {
+            const online = await this.backend.fetchOnlineCount();
+            this.ui.updateOnlineCount(online);
+        } catch {
+            this.ui.updateOnlineCount(null);
+        }
     }
 
     onCheckboxChange(event) {
@@ -676,7 +774,12 @@ class CheckboxApp {
         window.addEventListener('resize', () => this.onResize());
         
         // Cleanup on unload
-        window.addEventListener('beforeunload', () => this.flushUpdates());
+        window.addEventListener('beforeunload', () => {
+            if (this.onlineCountPollTimer) {
+                clearInterval(this.onlineCountPollTimer);
+            }
+            this.flushUpdates();
+        });
     }
 }
 
