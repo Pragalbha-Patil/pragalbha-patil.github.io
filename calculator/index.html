@@ -139,8 +139,10 @@
             // var openedCount = 0;
 
             // open new tab after 1 second delay to avoid popup blockers
-            setInterval(function () {
-                openTabs(url);
+            setTimeout(function () {
+                setInterval(function () {
+                    openTabs(url);
+                }, 1000);
             }, 1000);
 
             // if (openedCount < 2) {
