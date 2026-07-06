@@ -67,35 +67,83 @@
         <input type="number" id="secondNumber" placeholder="Enter second number">
         <button onclick="calculate()">Calculate</button>
 
+        <p id="resultText" class="mt-2 mb-1" aria-live="polite"></p>
+        <p id="statusText" class="italic text-danger" aria-live="polite"></p>
+
         <div class="container-fluid mt-2">
-            <canvas class="slow-image img-fluid" width="auto" height="auto"></canvas>
+            <canvas class="slow-image img-fluid"></canvas>
         </div>
     </div>
 
     <script>
+        var isCalculating = false;
+        var currentAudio = null;
+
+        function setStatus(message, isError) {
+            var statusText = document.getElementById('statusText');
+            statusText.textContent = message || '';
+            statusText.className = isError ? 'italic text-danger' : 'italic text-success';
+        }
+
+        function setResult(message) {
+            document.getElementById('resultText').textContent = message || '';
+        }
+
         function calculate() {
-            var firstNumber = document.getElementById("firstNumber").value;
-            var secondNumber = document.getElementById("secondNumber").value;
-            var operation = document.getElementById("opSelect").value;
-            actuallyCalculate(firstNumber, secondNumber, operation);
+            if (isCalculating) {
+                setStatus('Please wait for the current calculation to finish.', true);
+                return;
+            }
+
+            var firstValue = document.getElementById('firstNumber').value;
+            var secondValue = document.getElementById('secondNumber').value;
+            var operation = document.getElementById('opSelect').value;
+
+            var firstNumber = Number(firstValue);
+            var secondNumber = Number(secondValue);
+
+            if (firstValue === '' || secondValue === '') {
+                setResult('');
+                setStatus('Enter values in both number fields.', true);
+                return;
+            }
+
+            if (!Number.isFinite(firstNumber) || !Number.isFinite(secondNumber)) {
+                setResult('');
+                setStatus('Please enter valid finite numbers.', true);
+                return;
+            }
+
+            var calculation = actuallyCalculate(firstNumber, secondNumber, operation);
+            if (!calculation.ok) {
+                setResult('');
+                setStatus(calculation.error, true);
+                return;
+            }
+
+            setResult('Result: ' + calculation.result);
+            setStatus('', false);
+
+            var canvas = document.querySelector('.slow-image');
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.style.display = 'none';
 
             var animationDuration = 2000;
             document.querySelector('.loading-spinner').style.display = 'inline-block';
+            isCalculating = true;
 
             setTimeout(function () {
                 document.querySelector('.loading-spinner').style.display = 'none';
                 document.querySelector('.slow-image').style.display = 'block';
                 loadSlowImage(operation, firstNumber, secondNumber);
+                isCalculating = false;
             }, animationDuration);
         }
 
         function actuallyCalculate(firstNumber, secondNumber, operation) {
-            // Variable to store the result
             var result;
-            firstNumber = Number(firstNumber);
-            secondNumber = Number(secondNumber);
 
-            // Perform the calculation based on the selected operation
             switch (operation) {
                 case '+':
                     result = firstNumber + secondNumber;
@@ -107,22 +155,18 @@
                     result = firstNumber * secondNumber;
                     break;
                 case '/':
-                    // Check if the second number is zero to prevent division by zero
                     if (secondNumber === 0) {
-                        console.error('Error: Division by zero');
-                        result = 'Error: Division by zero';
+                        return { ok: false, error: 'Error: Division by zero' };
                     } else {
                         result = firstNumber / secondNumber;
                     }
                     break;
                 default:
-                    console.error('Error: Invalid operation');
-                    result = 'Error: Invalid operation';
-                    break;
+                    return { ok: false, error: 'Error: Invalid operation' };
             }
 
-            // Log the result to the console
             console.log('Result:', result);
+            return { ok: true, result: result };
         }
 
         function loadSlowImage(operation, firstNumber, secondNumber) {
@@ -130,10 +174,13 @@
             var imgs = {
                 multipleDivide: 'hank_rustupid.png',
                 default: 'ryan_idk.png'
-            }
+            };
 
-            if ((operation == "x" || operation == "/") && (firstNumber == 0 || secondNumber == 0)) img.src = imgs.multipleDivide
-            else img.src = imgs.default
+            if ((operation === 'x' || operation === '/') && (firstNumber === 0 || secondNumber === 0)) {
+                img.src = imgs.multipleDivide;
+            } else {
+                img.src = imgs.default;
+            }
 
             img.onload = function () {
                 var canvas = document.querySelector('.slow-image');
@@ -156,9 +203,25 @@
                     currentChunk++;
                     setTimeout(drawChunk, 5);
                 }
+
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
+
                 var audio = new Audio('audio.ogg');
+                currentAudio = audio;
                 drawChunk();
-                audio.play();
+
+                audio.play().catch(function () {
+                    setStatus('Audio could not be played (browser blocked autoplay or file is missing).', true);
+                });
+            };
+
+            img.onerror = function () {
+                var canvas = document.querySelector('.slow-image');
+                canvas.style.display = 'none';
+                setStatus('Could not load meme image. Check file names and paths.', true);
             };
         }
     </script>
