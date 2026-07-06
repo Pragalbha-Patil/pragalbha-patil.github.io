@@ -91,7 +91,7 @@ export default {
     }
 
     if (url.pathname === '/api/events' && request.method === 'GET') {
-      return room.fetch('https://room.internal/events');
+      return room.fetch(`https://room.internal/events${url.search}`);
     }
 
     if (url.pathname === '/api/online' && request.method === 'GET') {
