@@ -101,6 +101,27 @@ class BackendService {
         this.eventSource = null;
         this.isReady = false;
         this.presencePathCandidates = ['/api/online', '/api/presence', '/api/stats'];
+        this.sessionStorageKey = 'one-million-checkboxes:sse-session-id';
+        this.sessionId = this.getOrCreateSessionId();
+    }
+
+    getOrCreateSessionId() {
+        try {
+            const existing = sessionStorage.getItem(this.sessionStorageKey);
+            if (existing && existing.length > 0) {
+                return existing;
+            }
+
+            const generated =
+                (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+                    ? crypto.randomUUID()
+                    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+            sessionStorage.setItem(this.sessionStorageKey, generated);
+            return generated;
+        } catch {
+            return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        }
     }
 
     async initialize() {
@@ -240,7 +261,8 @@ class BackendService {
                 this.eventSource.close();
             }
 
-            this.eventSource = new EventSource(`${this.baseUrl}/api/events`);
+            const params = new URLSearchParams({ sid: this.sessionId });
+            this.eventSource = new EventSource(`${this.baseUrl}/api/events?${params.toString()}`);
 
             this.eventSource.addEventListener('checkbox-update', event => {
                 try {

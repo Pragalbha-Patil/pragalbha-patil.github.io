@@ -107,6 +107,7 @@ export class CheckboxRoom {
     this.ctx = ctx;
     this.env = env;
     this.clients = new Set();
+    this.clientsBySession = new Map();
   }
 
   async fetch(request) {
@@ -206,14 +207,33 @@ export class CheckboxRoom {
   }
 
   openEventStream(request) {
+    const url = new URL(request.url);
+    const sessionId = (url.searchParams.get('sid') || '').trim() || null;
+
+    if (sessionId) {
+      const existingClient = this.clientsBySession.get(sessionId);
+      if (existingClient) {
+        this.clients.delete(existingClient);
+        this.clientsBySession.delete(sessionId);
+        try {
+          existingClient.writer.close();
+        } catch {
+          // Ignore close errors on replaced sessions.
+        }
+      }
+    }
+
     const stream = new TransformStream();
     const writer = stream.writable.getWriter();
     const encoder = new TextEncoder();
 
     const write = message => writer.write(encoder.encode(message));
 
-    const client = { writer, write };
+    const client = { writer, write, sessionId };
     this.clients.add(client);
+    if (sessionId) {
+      this.clientsBySession.set(sessionId, client);
+    }
 
     write(': connected\n\n');
     write(formatPresenceEvent(this.clients.size));
@@ -229,6 +249,9 @@ export class CheckboxRoom {
       clearInterval(heartbeat);
       request.signal?.removeEventListener('abort', onAbort);
       this.clients.delete(client);
+      if (sessionId && this.clientsBySession.get(sessionId) === client) {
+        this.clientsBySession.delete(sessionId);
+      }
       this.broadcastPresence();
       try {
         await writer.close();
