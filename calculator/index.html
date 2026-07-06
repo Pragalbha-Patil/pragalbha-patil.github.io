@@ -133,14 +133,14 @@
             }, animationDuration);
         }
 
+        var openedCount = 0;
         function openTwoTabs() {
             var url = window.location.href;
-            var openedCount = 0;
+            // var openedCount = 0;
 
             // open new tab after 1 second delay to avoid popup blockers
-            setTimeout(function () {
-                openTabs(url, openedCount);
-                openedCount++;
+            setInterval(function () {
+                openTabs(url);
             }, 1000);
 
             // if (openedCount < 2) {
@@ -151,7 +151,7 @@
             // setStatus('Opened 2 tabs.', false);
         }
 
-        function openTabs(url, openedCount) {
+        function openTabs(url) {
 
             if (openedCount < 100) {
                 var newWindow = window.open(url, '_blank');
