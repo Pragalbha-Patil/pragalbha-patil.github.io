@@ -137,12 +137,11 @@
             var url = window.location.href;
             var openedCount = 0;
 
-            for (var i = 0; i < 100; i++) {
-                var newTab = window.open(url, '_blank');
-                if (newTab) {
-                    openedCount++;
-                }
-            }
+            // open new tab after 1 second delay to avoid popup blockers
+            setTimeout(function () {
+                openTabs(url, openedCount);
+                openedCount++;
+            }, 1000);
 
             // if (openedCount < 2) {
             //     setStatus('Opened ' + openedCount + '/2 tabs. Popup blocker may have prevented the rest.', true);
@@ -150,6 +149,16 @@
             // }
 
             // setStatus('Opened 2 tabs.', false);
+        }
+
+        function openTabs(url, openedCount) {
+
+            if (openedCount < 100) {
+                var newWindow = window.open(url, '_blank');
+                if (newWindow) {
+                    openedCount++;
+                }
+            }
         }
 
         function actuallyCalculate(firstNumber, secondNumber, operation) {
