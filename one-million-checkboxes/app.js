@@ -558,7 +558,6 @@ class CheckboxApp {
         this.ui = new UIController();
         this.pendingFlushTimer = null;
         this.pendingVisibleRefresh = false;
-        this.onlineCountPollTimer = null;
     }
 
     async ensureInitialPaint(maxFrames = 24) {
@@ -626,12 +625,6 @@ class CheckboxApp {
             // Subscribe to real-time updates
             this.subscribeToLiveUpdates();
 
-            // Presence count: initial fetch + periodic refresh fallback.
-            await this.refreshOnlineCount();
-            this.onlineCountPollTimer = setInterval(() => {
-                this.refreshOnlineCount();
-            }, 20000);
-
             // Ensure initial progress reflects current scroll
             this.ui.updateProgress();
         } catch (error) {
@@ -677,15 +670,6 @@ class CheckboxApp {
                 this.ui.updateOnlineCount(online);
             }
         );
-    }
-
-    async refreshOnlineCount() {
-        try {
-            const online = await this.backend.fetchOnlineCount();
-            this.ui.updateOnlineCount(online);
-        } catch {
-            this.ui.updateOnlineCount(null);
-        }
     }
 
     onCheckboxChange(event) {
@@ -775,9 +759,6 @@ class CheckboxApp {
         
         // Cleanup on unload
         window.addEventListener('beforeunload', () => {
-            if (this.onlineCountPollTimer) {
-                clearInterval(this.onlineCountPollTimer);
-            }
             this.flushUpdates();
         });
     }
