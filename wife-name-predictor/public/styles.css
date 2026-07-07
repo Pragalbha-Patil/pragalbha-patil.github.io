@@ -255,6 +255,84 @@ button:active {
   background: linear-gradient(135deg, rgba(255, 207, 145, 0.24), rgba(255, 163, 190, 0.2));
   animation: dramaticReveal 1400ms cubic-bezier(0.12, 0.8, 0.2, 1);
   transform-origin: center top;
+  position: relative;
+  overflow: hidden;
+}
+
+.result::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  top: -42%;
+  height: 34%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 236, 186, 0.6),
+    rgba(255, 255, 255, 0)
+  );
+  filter: blur(6px);
+  opacity: 0;
+  transform: translateY(0);
+  pointer-events: none;
+}
+
+.result.is-masked .result-image {
+  filter: blur(8px);
+  user-select: none;
+}
+
+.result-image-wrap {
+  position: relative;
+  width: clamp(170px, 38vw, 260px);
+  margin: 0.95rem auto 0;
+}
+
+.reveal-overlay {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: #fff4dc;
+  font: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  background: linear-gradient(180deg, rgba(64, 14, 36, 0.44), rgba(37, 11, 26, 0.52));
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  z-index: 3;
+}
+
+.reveal-overlay span {
+  padding: 0.65rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 244, 220, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+  text-shadow: 0 0 18px rgba(255, 214, 153, 0.45);
+}
+
+.reveal-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 25%, rgba(255, 242, 208, 0.56), transparent 35%),
+    radial-gradient(circle at 70% 60%, rgba(255, 188, 208, 0.36), transparent 40%),
+    radial-gradient(circle at 45% 82%, rgba(255, 230, 180, 0.32), transparent 34%);
+}
+
+.reveal-overlay.is-erasing {
+  animation: overlayErase 900ms cubic-bezier(0.2, 0.78, 0.2, 1) forwards;
+}
+
+.reveal-overlay.is-erasing::after {
+  animation: overlayDust 900ms ease-out forwards;
 }
 
 .result-label {
@@ -280,9 +358,36 @@ h2 {
   font-size: clamp(1.9rem, 4vw, 2.6rem);
 }
 
+#resultName,
+.result-image {
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+}
+
+.result-image {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+}
+
 .result.is-final {
   box-shadow: 0 0 0 0 rgba(255, 216, 156, 0.58), 0 0 42px rgba(255, 143, 177, 0.32);
   animation: crownFlash 900ms ease-out;
+}
+
+.result.is-final::after {
+  animation: sweepGlowDown 1050ms cubic-bezier(0.18, 0.76, 0.2, 1) 90ms;
+}
+
+.result.is-final #resultName {
+  animation: revealTopToBottom 720ms cubic-bezier(0.2, 0.75, 0.22, 1) forwards;
+}
+
+.result.is-final .result-image {
+  animation: revealTopToBottom 900ms cubic-bezier(0.2, 0.75, 0.22, 1) 140ms forwards;
 }
 
 .result.is-final .dramatic-lead {
@@ -363,6 +468,65 @@ h2 {
   }
 }
 
+@keyframes revealTopToBottom {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes sweepGlowDown {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(360%);
+  }
+}
+
+@keyframes overlayErase {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+  45% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes overlayDust {
+  0% {
+    opacity: 0;
+    transform: scale(0.98) translateY(0);
+  }
+  35% {
+    opacity: 0.82;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05) translateY(-24px);
+  }
+}
+
 @keyframes pulseText {
   0% {
     opacity: 0.55;
@@ -417,5 +581,9 @@ h2 {
   .loader-top {
     flex-direction: column;
     gap: 0.2rem;
+  }
+
+  .result-image-wrap {
+    width: min(100%, 200px);
   }
 }

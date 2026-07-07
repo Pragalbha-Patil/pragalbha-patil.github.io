@@ -18,8 +18,13 @@ const progressTrack = document.querySelector(".progress-track");
 const result = document.getElementById("result");
 const dramaticLead = document.getElementById("dramaticLead");
 const resultName = document.getElementById("resultName");
+const resultImage = document.getElementById("resultImage");
+const revealOverlay = document.getElementById("revealOverlay");
 const button = document.getElementById("predictBtn");
 const subtitle = document.querySelector(".subtitle");
+
+const RESULT_IMAGE_SRC = "./public/images/wife.jpeg";
+const REVEAL_ERASE_DURATION_MS = 900;
 
 const indianNamePattern = /^(?=.{1,80}$)[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
 
@@ -153,6 +158,60 @@ function normalizeOptionalValue(value) {
   return trimmed ? trimmed : null;
 }
 
+function showResultImage() {
+  if (!resultImage) {
+    return;
+  }
+
+  resultImage.onerror = () => {
+    resultImage.classList.add("hidden");
+  };
+  resultImage.src = RESULT_IMAGE_SRC;
+  resultImage.classList.remove("hidden");
+}
+
+function resetRevealOverlay() {
+  if (!revealOverlay) {
+    return;
+  }
+
+  revealOverlay.classList.add("hidden");
+  revealOverlay.classList.remove("is-erasing");
+  revealOverlay.disabled = false;
+  result.classList.remove("is-masked");
+}
+
+function showRevealOverlay() {
+  if (!revealOverlay) {
+    return;
+  }
+
+  revealOverlay.classList.remove("hidden");
+  revealOverlay.classList.remove("is-erasing");
+  revealOverlay.disabled = false;
+  result.classList.add("is-masked");
+}
+
+function revealPredictionContent() {
+  if (!revealOverlay || revealOverlay.classList.contains("hidden")) {
+    return;
+  }
+
+  if (revealOverlay.classList.contains("is-erasing")) {
+    return;
+  }
+
+  revealOverlay.classList.add("is-erasing");
+  revealOverlay.disabled = true;
+
+  setTimeout(() => {
+    revealOverlay.classList.add("hidden");
+    revealOverlay.classList.remove("is-erasing");
+    revealOverlay.disabled = false;
+    result.classList.remove("is-masked");
+  }, REVEAL_ERASE_DURATION_MS);
+}
+
 async function fetchPrediction(payload, publicKeyBase64) {
   let lastError;
 
@@ -188,6 +247,7 @@ function runLoader(totalDurationMs) {
     loader.classList.remove("hidden");
     result.classList.add("hidden");
     result.classList.remove("is-final");
+    resetRevealOverlay();
 
     let progress = 0;
     let stepIndex = -1;
@@ -222,6 +282,10 @@ function runLoader(totalDurationMs) {
 
 advancedOptionsInput.addEventListener("change", toggleAdvancedPanel);
 toggleAdvancedPanel();
+
+if (revealOverlay) {
+  revealOverlay.addEventListener("click", revealPredictionContent);
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -304,11 +368,14 @@ form.addEventListener("submit", async (event) => {
     predictionResponse.encryptedResult
   );
   resultName.textContent = resolvedResult;
+  showResultImage();
   dramaticLead.textContent = "Unsealing your destiny...";
+  dramaticLead.classList.remove("hidden");
   result.classList.remove("hidden");
   await new Promise((resolve) => setTimeout(resolve, 850));
   dramaticLead.classList.add("hidden");
   result.classList.add("is-final");
+  showRevealOverlay();
   launchConfetti();
   loader.classList.add("hidden");
 
