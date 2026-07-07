@@ -105,9 +105,18 @@ function isValidName(value) {
   return typeof value === "string" && indianNamePattern.test(value);
 }
 
+function normalizeResultLastName(lastName) {
+  if (!lastName || lastName.includes(" ")) {
+    return lastName;
+  }
+
+  return lastName.charAt(0).toUpperCase() + lastName.slice(1);
+}
+
 function buildTitle(lastName) {
   const prefix = String.fromCharCode(77, 114, 115, 46);
-  return `${prefix} ${lastName}`;
+  const normalizedLastName = normalizeResultLastName(lastName);
+  return `${prefix} ${normalizedLastName}`;
 }
 
 async function insertRecord(env, fields) {

@@ -108,6 +108,7 @@ function showError(message) {
 
 function setLoadingState(isLoading) {
   button.disabled = isLoading;
+  button.classList.toggle("hidden", isLoading);
   button.textContent = isLoading ? "Predicting..." : "Predict Wife Name";
 }
 
