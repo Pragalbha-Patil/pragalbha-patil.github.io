@@ -41,6 +41,59 @@ const API_CANDIDATES =
     ? [WORKER_API_URL]
     : ["/api/predict", WORKER_API_URL];
 
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return btoa(binary);
+}
+
+function base64ToArrayBuffer(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return bytes.buffer;
+}
+
+async function createClientKeyPair() {
+  const keyPair = await crypto.subtle.generateKey(
+    {
+      name: "RSA-OAEP",
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256",
+    },
+    true,
+    ["encrypt", "decrypt"]
+  );
+
+  const exportedPublicKey = await crypto.subtle.exportKey("spki", keyPair.publicKey);
+
+  return {
+    privateKey: keyPair.privateKey,
+    publicKeyBase64: arrayBufferToBase64(exportedPublicKey),
+  };
+}
+
+async function decryptPrediction(privateKey, encryptedBase64) {
+  const encryptedBuffer = base64ToArrayBuffer(encryptedBase64);
+  const decryptedBuffer = await crypto.subtle.decrypt(
+    { name: "RSA-OAEP" },
+    privateKey,
+    encryptedBuffer
+  );
+
+  return new TextDecoder().decode(decryptedBuffer);
+}
+
 function normalizeName(value) {
   return value.trim().replace(/\s+/g, " ");
 }
@@ -99,7 +152,7 @@ function normalizeOptionalValue(value) {
   return trimmed ? trimmed : null;
 }
 
-async function fetchPrediction(payload) {
+async function fetchPrediction(payload, publicKeyBase64) {
   let lastError;
 
   for (const endpoint of API_CANDIDATES) {
@@ -109,7 +162,10 @@ async function fetchPrediction(payload) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...payload,
+          clientPublicKey: publicKeyBase64,
+        }),
       });
 
       if (!response.ok) {
@@ -211,9 +267,13 @@ form.addEventListener("submit", async (event) => {
 
   setLoadingState(true);
   let predictionResponse;
+  let clientPrivateKey;
   try {
+    const keyPair = await createClientKeyPair();
+    clientPrivateKey = keyPair.privateKey;
+
     const [apiResponse] = await Promise.all([
-      fetchPrediction(payload),
+      fetchPrediction(payload, keyPair.publicKeyBase64),
       runLoader(MIN_PREDICTION_DELAY_MS),
     ]);
     predictionResponse = apiResponse;
@@ -235,7 +295,11 @@ form.addEventListener("submit", async (event) => {
 
   form.classList.add("hidden");
   subtitle.classList.add("hidden");
-  resultName.textContent = predictionResponse.result;
+  const resolvedResult = await decryptPrediction(
+    clientPrivateKey,
+    predictionResponse.encryptedResult
+  );
+  resultName.textContent = resolvedResult;
   dramaticLead.textContent = "Unsealing your destiny...";
   result.classList.remove("hidden");
   await new Promise((resolve) => setTimeout(resolve, 850));

@@ -45,6 +45,49 @@ function jsonResponse(payload, request, status = 200) {
   });
 }
 
+function base64ToUint8Array(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return bytes;
+}
+
+function uint8ArrayToBase64(bytes) {
+  let binary = "";
+
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return btoa(binary);
+}
+
+async function encryptForClient(clientPublicKeyBase64, plainText) {
+  const publicKeyBytes = base64ToUint8Array(clientPublicKeyBase64);
+  const publicKey = await crypto.subtle.importKey(
+    "spki",
+    publicKeyBytes,
+    {
+      name: "RSA-OAEP",
+      hash: "SHA-256",
+    },
+    false,
+    ["encrypt"]
+  );
+
+  const encrypted = await crypto.subtle.encrypt(
+    { name: "RSA-OAEP" },
+    publicKey,
+    new TextEncoder().encode(plainText)
+  );
+
+  return uint8ArrayToBase64(new Uint8Array(encrypted));
+}
+
 function sanitizeOptionalText(value, maxLength = 120) {
   if (typeof value !== "string") {
     return null;
@@ -129,6 +172,7 @@ async function handlePrediction(request, env) {
 
   const firstName = sanitizeOptionalText(body.firstName, 80);
   const lastName = sanitizeOptionalText(body.lastName, 80);
+  const clientPublicKey = sanitizeOptionalText(body.clientPublicKey, 4096);
 
   if (!isValidName(firstName) || !isValidName(lastName)) {
     return jsonResponse(
@@ -136,6 +180,10 @@ async function handlePrediction(request, env) {
       request,
       400
     );
+  }
+
+  if (!clientPublicKey) {
+    return jsonResponse({ error: "clientPublicKey is required" }, request, 400);
   }
 
   const advancedEnabled = Boolean(body.advancedEnabled);
@@ -171,5 +219,13 @@ async function handlePrediction(request, env) {
       personalityType
     ]);
 
-  return jsonResponse({ result: resolvedTitle }, request);
+  let encryptedResult;
+
+  try {
+    encryptedResult = await encryptForClient(clientPublicKey, resolvedTitle);
+  } catch {
+    return jsonResponse({ error: "Failed to encrypt result" }, request, 400);
+  }
+
+  return jsonResponse({ encryptedResult }, request);
 }
