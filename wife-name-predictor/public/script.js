@@ -34,10 +34,11 @@ const loadingSteps = [
 ];
 
 const MIN_PREDICTION_DELAY_MS = 60000;
-const API_CANDIDATES = [
-  "/api/predict",
-  "https://wife-name-predictor.pragalbha77.workers.dev/api/predict",
-];
+const WORKER_API_URL = "https://wife-name-predictor.pragalbha77.workers.dev/api/predict";
+const API_CANDIDATES =
+  window.location.hostname === "pragal.fun"
+    ? [WORKER_API_URL]
+    : ["/api/predict", WORKER_API_URL];
 
 function normalizeName(value) {
   return value.trim().replace(/\s+/g, " ");
