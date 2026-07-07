@@ -69,7 +69,7 @@ function launchConfetti() {
   layer.className = "confetti-layer";
   document.body.appendChild(layer);
 
-  const colors = ["#ffd36e", "#ff9f6b", "#78d6f6", "#f6f2e8", "#f4b400"];
+  const colors = ["#ffe2aa", "#ff9fbe", "#ffd89c", "#fff6f3", "#f4c56a"];
   const pieceCount = 110;
 
   for (let i = 0; i < pieceCount; i += 1) {
