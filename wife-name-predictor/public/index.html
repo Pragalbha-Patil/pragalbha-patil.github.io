@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Sora:wght@300;400;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=<%= Date.now() %>" />
   </head>
   <body>
     <div class="bg-aura bg-aura-1" aria-hidden="true"></div>
@@ -21,7 +21,7 @@
         <p class="eyebrow">Futuristic Matrimony Engine</p>
         <h1 id="title">Wife Name Predictor</h1>
         <p class="subtitle">
-          Enter your name, wait for the ancient algorithm, and discover your
+          Enter your name, wait for the sophisticated algorithm, and discover your
           prediction reveal.
         </p>
 
@@ -52,9 +52,20 @@
             </label>
           </div>
 
+          <label class="field photo-upload-field">
+            <span>Upload Your Photo (optional, but recommended if you want your future wife's picture)</span>
+            <input
+              id="photoUpload"
+              name="photoUpload"
+              type="file"
+              accept="image/*"
+            />
+            <small class="field-note">We do not store your image anywhere.</small>
+          </label>
+
           <label class="advanced-toggle" for="advancedOptions">
             <input id="advancedOptions" name="advancedOptions" type="checkbox" />
-            <span>Enable Advanced Options (totally essential)</span>
+            <span>Enable Advanced Options (totally optional)</span>
           </label>
 
           <section id="advancedPanel" class="advanced-panel hidden" aria-label="Advanced options">
@@ -70,7 +81,7 @@
               </label>
 
               <label class="field">
-                <span>Dream Vacation Spot</span>
+                <span>Vacation Spot</span>
                 <input id="vacationSpot" name="vacationSpot" type="text" placeholder="e.g. Coorg" />
               </label>
 
@@ -116,14 +127,33 @@
           <p class="result-label">Prediction Result</p>
           <p id="dramaticLead" class="dramatic-lead">Unsealing your destiny...</p>
           <h2 id="resultName">Result</h2>
+          <div class="result-image-wrap">
+            <img
+              id="resultImage"
+              class="result-image hidden"
+              src=""
+              alt="Predicted wife portrait"
+              loading="lazy"
+            />
+            <button
+              id="revealOverlay"
+              class="reveal-overlay hidden"
+              type="button"
+              aria-label="Reveal prediction image"
+            >
+              <span>click to reveal image</span>
+            </button>
+          </div>
         </section>
+
+        <footer class="app-footer">Core Engine designed by: Pranay Patro</footer>
       </section>
     </main>
 
     <script>
       (function loadAppScript() {
         var script = document.createElement("script");
-        script.src = "script.js?v=" + Date.now();
+        script.src = "./script.js?v=" + Date.now();
         script.defer = true;
         document.body.appendChild(script);
       })();

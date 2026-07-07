@@ -142,6 +142,15 @@ h1 {
   color: #ffe8ee;
 }
 
+.photo-upload-field {
+  margin-top: 0.95rem;
+}
+
+.field-note {
+  color: rgba(255, 233, 238, 0.82);
+  font-size: 0.78rem;
+}
+
 input {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.25);
