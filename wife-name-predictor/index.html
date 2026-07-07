@@ -120,6 +120,13 @@
       </section>
     </main>
 
-    <script src="./public/script.js?v=20260707-3"></script>
+    <script>
+      (function loadAppScript() {
+        var script = document.createElement("script");
+        script.src = "./public/script.js?v=" + Date.now();
+        script.defer = true;
+        document.body.appendChild(script);
+      })();
+    </script>
   </body>
 </html>
