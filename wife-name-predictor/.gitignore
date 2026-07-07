@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Cloudflare local state and logs
+.wrangler/
+
+# Local secrets and environment files
+.dev.vars
+.env
+.env.*
+!.env.example
+
+# OS/editor noise
+.DS_Store
+*.log

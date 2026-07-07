@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wife Name Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-aura bg-aura-1" aria-hidden="true"></div>
+    <div class="bg-aura bg-aura-2" aria-hidden="true"></div>
+
+    <main class="app-shell">
+      <section class="card" aria-labelledby="title">
+        <p class="eyebrow">Futuristic Matrimony Engine</p>
+        <h1 id="title">Wife Name Predictor</h1>
+        <p class="subtitle">
+          Enter your name, wait for the ancient algorithm, and discover your
+          predicted wife name.
+        </p>
+
+        <form id="predictor-form" novalidate>
+          <div class="field-grid">
+            <label class="field">
+              <span>First Name</span>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                autocomplete="given-name"
+                placeholder="e.g. Aarav"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span>Last Name</span>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                autocomplete="family-name"
+                placeholder="e.g. Subramanian"
+                required
+              />
+            </label>
+          </div>
+
+          <label class="advanced-toggle" for="advancedOptions">
+            <input id="advancedOptions" name="advancedOptions" type="checkbox" />
+            <span>Enable Advanced Options (totally essential)</span>
+          </label>
+
+          <section id="advancedPanel" class="advanced-panel hidden" aria-label="Advanced options">
+            <div class="advanced-grid">
+              <label class="field">
+                <span>Favorite Food</span>
+                <input id="favoriteFood" name="favoriteFood" type="text" placeholder="e.g. pani puri" />
+              </label>
+
+              <label class="field">
+                <span>Tea or Coffee</span>
+                <input id="teaCoffee" name="teaCoffee" type="text" placeholder="e.g. cutting chai" />
+              </label>
+
+              <label class="field">
+                <span>Dream Vacation Spot</span>
+                <input id="vacationSpot" name="vacationSpot" type="text" placeholder="e.g. Coorg" />
+              </label>
+
+              <label class="field">
+                <span>Lucky Number</span>
+                <input id="luckyNumber" name="luckyNumber" type="text" placeholder="e.g. 9" />
+              </label>
+
+              <label class="field">
+                <span>Preferred Movie Genre</span>
+                <input id="movieGenre" name="movieGenre" type="text" placeholder="e.g. masala drama" />
+              </label>
+
+              <label class="field">
+                <span>Personality Type</span>
+                <select id="personalityType" name="personalityType">
+                  <option value="">Select personality</option>
+                  <option value="Introvert">Introvert</option>
+                  <option value="Extrovert">Extrovert</option>
+                  <option value="Ambivert">Ambivert</option>
+                  <option value="Depends on the vibe">Depends on the vibe</option>
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <p id="error" class="error" aria-live="polite"></p>
+
+          <button id="predictBtn" type="submit">Predict Wife Name</button>
+        </form>
+
+        <section id="loader" class="loader hidden" aria-live="polite">
+          <div class="loader-top">
+            <p id="loaderText">Calibrating destiny matrix...</p>
+            <p id="progressValue">0%</p>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </section>
+
+        <section id="result" class="result hidden" aria-live="polite">
+          <p class="result-label">Predicted Wife Name</p>
+          <p id="dramaticLead" class="dramatic-lead">Unsealing your destiny...</p>
+          <h2 id="wifeName">Mrs. Last Name</h2>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

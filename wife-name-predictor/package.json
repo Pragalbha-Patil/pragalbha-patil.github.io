@@ -1,0 +1,15 @@
+{
+  "name": "wife-name-predictor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply wife-name-predictor-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply wife-name-predictor-db --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.27.0"
+  }
+}

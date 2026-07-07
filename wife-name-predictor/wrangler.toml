@@ -1,0 +1,12 @@
+name = "wife-name-predictor"
+main = "worker.js"
+compatibility_date = "2026-07-07"
+
+[assets]
+directory = "public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wife-name-predictor-db"
+database_id = "3bf17e9d-8474-4198-8b6f-eae0ed14df3f"
