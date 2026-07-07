@@ -13,10 +13,6 @@ export default {
       return handlePrediction(request, env);
     }
 
-    if (url.pathname === "/api/portrait-transform" && request.method === "POST") {
-      return handlePortraitTransform(request, env);
-    }
-
     if (env.ASSETS) {
       return env.ASSETS.fetch(request);
     }
@@ -26,7 +22,6 @@ export default {
 };
 
 const indianNamePattern = /^(?=.{1,80}$)[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
-const PORTRAIT_MODEL = "black-forest-labs/flux-kontext-pro";
 
 function getCorsHeaders(request) {
   const origin = request.headers.get("Origin") || "*";
@@ -38,170 +33,6 @@ function getCorsHeaders(request) {
     "Access-Control-Max-Age": "86400",
     Vary: "Origin",
   };
-}
-
-function parseDataUrl(dataUrl) {
-  if (typeof dataUrl !== "string") {
-    return null;
-  }
-
-  const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
-  if (!match) {
-    return null;
-  }
-
-  return {
-    mimeType: match[1],
-    base64: match[2],
-  };
-}
-
-function arrayBufferToDataUrl(arrayBuffer, mimeType = "image/jpeg") {
-  const bytes = new Uint8Array(arrayBuffer);
-  let binary = "";
-
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
-  }
-
-  return `data:${mimeType};base64,${btoa(binary)}`;
-}
-
-async function createReplicatePrediction(env, imageDataUrl) {
-  const token = env.REPLICATE_API_TOKEN;
-
-  if (!token) {
-    throw new Error("missing_replicate_token");
-  }
-
-  const response = await fetch(
-    `https://api.replicate.com/v1/models/${PORTRAIT_MODEL}/predictions`,
-    {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      Prefer: "wait",
-    },
-    body: JSON.stringify({
-      input: {
-        image: imageDataUrl,
-        prompt:
-          "Transform this portrait into a realistic feminine studio portrait while preserving the same person, natural face structure, soft makeup, feminine hairstyle, photorealistic lighting, high detail. Keep the composition centered and natural.",
-        output_format: "jpg",
-      },
-    }),
-  }
-  );
-
-  if (!response.ok) {
-    throw new Error(`replicate_create_failed_${response.status}`);
-  }
-
-  return response.json();
-}
-
-async function pollReplicateUntilDone(env, predictionId) {
-  const token = env.REPLICATE_API_TOKEN;
-  const maxAttempts = 18;
-
-  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-    const response = await fetch(
-      `https://api.replicate.com/v1/predictions/${predictionId}`,
-      {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`replicate_poll_failed_${response.status}`);
-    }
-
-    const prediction = await response.json();
-    if (prediction.status === "succeeded") {
-      return prediction;
-    }
-
-    if (prediction.status === "failed" || prediction.status === "canceled") {
-      throw new Error("replicate_generation_failed");
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-
-  throw new Error("replicate_timeout");
-}
-
-function resolveReplicateOutputUrl(prediction) {
-  if (!prediction || !prediction.output) {
-    return null;
-  }
-
-  if (typeof prediction.output === "string") {
-    return prediction.output;
-  }
-
-  if (Array.isArray(prediction.output) && typeof prediction.output[0] === "string") {
-    return prediction.output[0];
-  }
-
-  return null;
-}
-
-async function downloadAsDataUrl(imageUrl) {
-  const response = await fetch(imageUrl);
-
-  if (!response.ok) {
-    throw new Error("generated_image_download_failed");
-  }
-
-  const contentType = response.headers.get("Content-Type") || "image/jpeg";
-  const buffer = await response.arrayBuffer();
-  return arrayBufferToDataUrl(buffer, contentType);
-}
-
-async function handlePortraitTransform(request, env) {
-  let body;
-
-  try {
-    body = await request.json();
-  } catch {
-    return jsonResponse({ error: "Invalid JSON payload" }, request, 400);
-  }
-
-  const parsedImage = parseDataUrl(body.imageDataUrl);
-  if (!parsedImage) {
-    return jsonResponse(
-      { error: "imageDataUrl must be a base64 data URL image" },
-      request,
-      400
-    );
-  }
-
-  try {
-    let prediction = await createReplicatePrediction(env, body.imageDataUrl);
-
-    if (prediction.status !== "succeeded") {
-      prediction = await pollReplicateUntilDone(env, prediction.id);
-    }
-
-    const generatedImageUrl = resolveReplicateOutputUrl(prediction);
-    if (!generatedImageUrl) {
-      return jsonResponse(
-        { error: "Model did not return an image output" },
-        request,
-        502
-      );
-    }
-
-    const transformedImageDataUrl = await downloadAsDataUrl(generatedImageUrl);
-    return jsonResponse({ transformedImageDataUrl }, request);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "portrait_transform_failed";
-    return jsonResponse({ error: message }, request, 502);
-  }
 }
 
 function jsonResponse(payload, request, status = 200) {

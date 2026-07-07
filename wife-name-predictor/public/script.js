@@ -1,7 +1,6 @@
 const form = document.getElementById("predictor-form");
 const firstNameInput = document.getElementById("firstName");
 const lastNameInput = document.getElementById("lastName");
-const photoUploadInput = document.getElementById("photoUpload");
 const advancedOptionsInput = document.getElementById("advancedOptions");
 const advancedPanel = document.getElementById("advancedPanel");
 const favoriteFoodInput = document.getElementById("favoriteFood");
@@ -25,7 +24,7 @@ const button = document.getElementById("predictBtn");
 const subtitle = document.querySelector(".subtitle");
 
 const REVEAL_ERASE_DURATION_MS = 900;
-const STATIC_FALLBACK_IMAGE_SRC = "./public/images/wife.jpeg";
+const STATIC_FALLBACK_IMAGE_SRC = "./images/wife.jpeg";
 
 const indianNamePattern = /^(?=.{1,80}$)[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
 
@@ -42,16 +41,10 @@ const loadingSteps = [
 
 const MIN_PREDICTION_DELAY_MS = 60000;
 const WORKER_API_URL = "https://wife-name-predictor.pragalbha77.workers.dev/api/predict";
-const WORKER_PORTRAIT_API_URL =
-  "https://wife-name-predictor.pragalbha77.workers.dev/api/portrait-transform";
 const API_CANDIDATES =
   window.location.hostname === "pragal.fun"
     ? [WORKER_API_URL]
     : ["/api/predict", WORKER_API_URL];
-const PORTRAIT_API_CANDIDATES =
-  window.location.hostname === "pragal.fun"
-    ? [WORKER_PORTRAIT_API_URL]
-    : ["/api/portrait-transform", WORKER_PORTRAIT_API_URL];
 
 function arrayBufferToBase64(buffer) {
   const bytes = new Uint8Array(buffer);
@@ -163,81 +156,6 @@ function launchConfetti() {
 function normalizeOptionalValue(value) {
   const trimmed = value.trim();
   return trimmed ? trimmed : null;
-}
-
-function fileToDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        resolve(reader.result);
-      } else {
-        reject(new Error("Could not read file as data URL."));
-      }
-    };
-
-    reader.onerror = () => {
-      reject(new Error("Could not read uploaded image."));
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-
-async function fetchBackendPortraitTransform(imageDataUrl) {
-  let lastError;
-
-  for (const endpoint of PORTRAIT_API_CANDIDATES) {
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ imageDataUrl }),
-      });
-
-      if (!response.ok) {
-        const bodyText = await response.text();
-        throw new Error(`Portrait API ${response.status}: ${bodyText || "request failed"}`);
-      }
-
-      const payload = await response.json();
-      if (typeof payload.transformedImageDataUrl === "string" && payload.transformedImageDataUrl.startsWith("data:image/")) {
-        return payload.transformedImageDataUrl;
-      }
-
-      throw new Error("Portrait API returned invalid data URL");
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw lastError || new Error("Portrait transform request failed");
-}
-
-async function createStyledPortrait(file) {
-  const originalDataUrl = await fileToDataUrl(file);
-
-  try {
-    const transformedImageDataUrl = await fetchBackendPortraitTransform(
-      originalDataUrl
-    );
-
-    return {
-      imageSrc: transformedImageDataUrl,
-      usedFallback: false,
-      transformSource: "backend",
-    };
-  } catch {
-    showError("Backend model unavailable, showing default portrait instead.");
-    return {
-      imageSrc: STATIC_FALLBACK_IMAGE_SRC,
-      usedFallback: true,
-      transformSource: "static-fallback",
-    };
-  }
 }
 
 function showResultImage(imageDataUrl) {
@@ -376,7 +294,6 @@ form.addEventListener("submit", async (event) => {
 
   const firstName = normalizeName(firstNameInput.value);
   const lastName = normalizeName(lastNameInput.value);
-  const uploadedPhoto = photoUploadInput?.files?.[0] || null;
 
   if (!firstName || !lastName) {
     showError("Please enter both first name and last name.");
@@ -387,16 +304,6 @@ form.addEventListener("submit", async (event) => {
     showError(
       "Use letters (including Indian scripts), spaces, hyphens, apostrophes, or dots only."
     );
-    return;
-  }
-
-  if (!uploadedPhoto) {
-    showError("Please upload a photo for the final reveal.");
-    return;
-  }
-
-  if (!uploadedPhoto.type.startsWith("image/")) {
-    showError("Please upload a valid image file.");
     return;
   }
 
@@ -429,24 +336,20 @@ form.addEventListener("submit", async (event) => {
   setLoadingState(true);
   let predictionResponse;
   let clientPrivateKey;
-  let transformedImageDataUrl;
-  let usedFallbackImage = false;
+  const transformedImageDataUrl = STATIC_FALLBACK_IMAGE_SRC;
   try {
     const keyPair = await createClientKeyPair();
     clientPrivateKey = keyPair.privateKey;
 
-    const [apiResponse, , processedPortrait] = await Promise.all([
+    const [apiResponse] = await Promise.all([
       fetchPrediction(payload, keyPair.publicKeyBase64),
       runLoader(MIN_PREDICTION_DELAY_MS),
-      createStyledPortrait(uploadedPhoto),
     ]);
     predictionResponse = apiResponse;
-    transformedImageDataUrl = processedPortrait.imageSrc;
-    usedFallbackImage = processedPortrait.usedFallback;
   } catch {
     loader.classList.add("hidden");
     setLoadingState(false);
-    showError("Could not process your photo or save your cosmic profile. Please try again.");
+    showError("Could not process your request or save your cosmic profile. Please try again.");
     return;
   }
 
@@ -466,10 +369,6 @@ form.addEventListener("submit", async (event) => {
     predictionResponse.encryptedResult
   );
 
-  if (usedFallbackImage) {
-    showError("No clear human face detected in upload. Showing default reveal image.");
-  }
-
   resultName.textContent = resolvedResult;
   showResultImage(transformedImageDataUrl);
   dramaticLead.textContent = "Unsealing your destiny...";
@@ -481,6 +380,5 @@ form.addEventListener("submit", async (event) => {
   showRevealOverlay();
   launchConfetti();
   loader.classList.add("hidden");
-
   setLoadingState(false);
 });
