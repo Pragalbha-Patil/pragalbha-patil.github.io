@@ -64,6 +64,31 @@ function predictWifeName(lastName) {
   return `Mrs. ${lastName}`;
 }
 
+function launchConfetti() {
+  const layer = document.createElement("div");
+  layer.className = "confetti-layer";
+  document.body.appendChild(layer);
+
+  const colors = ["#ffd36e", "#ff9f6b", "#78d6f6", "#f6f2e8", "#f4b400"];
+  const pieceCount = 110;
+
+  for (let i = 0; i < pieceCount; i += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.backgroundColor = colors[i % colors.length];
+    piece.style.animationDelay = `${Math.random() * 220}ms`;
+    piece.style.animationDuration = `${2200 + Math.random() * 1400}ms`;
+    piece.style.setProperty("--drift", `${Math.floor(Math.random() * 280) - 140}`);
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    layer.appendChild(piece);
+  }
+
+  setTimeout(() => {
+    layer.remove();
+  }, 4200);
+}
+
 function normalizeOptionalValue(value) {
   const trimmed = value.trim();
   return trimmed ? trimmed : null;
@@ -180,8 +205,10 @@ form.addEventListener("submit", async (event) => {
   dramaticLead.textContent = "Unsealing your destiny...";
   result.classList.remove("hidden");
   await new Promise((resolve) => setTimeout(resolve, 850));
-  dramaticLead.textContent = "Prediction confirmed by cosmic committee.";
+  dramaticLead.classList.add("hidden");
+  form.classList.add("hidden");
   result.classList.add("is-final");
+  launchConfetti();
   loader.classList.add("hidden");
 
   setLoadingState(false);
