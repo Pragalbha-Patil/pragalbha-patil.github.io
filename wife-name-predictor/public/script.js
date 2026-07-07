@@ -19,6 +19,7 @@ const result = document.getElementById("result");
 const dramaticLead = document.getElementById("dramaticLead");
 const resultName = document.getElementById("resultName");
 const button = document.getElementById("predictBtn");
+const subtitle = document.querySelector(".subtitle");
 
 const indianNamePattern = /^(?=.{1,80}$)[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
 
@@ -68,6 +69,10 @@ function updateProgress(progress) {
 }
 
 function launchConfetti() {
+  if (document.querySelector(".confetti-layer")) {
+    return;
+  }
+
   const layer = document.createElement("div");
   layer.className = "confetti-layer";
   document.body.appendChild(layer);
@@ -87,9 +92,6 @@ function launchConfetti() {
     layer.appendChild(piece);
   }
 
-  setTimeout(() => {
-    layer.remove();
-  }, 4200);
 }
 
 function normalizeOptionalValue(value) {
@@ -231,12 +233,13 @@ form.addEventListener("submit", async (event) => {
   loaderText.textContent = "Summoning final verdict...";
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
+  form.classList.add("hidden");
+  subtitle.classList.add("hidden");
   resultName.textContent = predictionResponse.result;
   dramaticLead.textContent = "Unsealing your destiny...";
   result.classList.remove("hidden");
   await new Promise((resolve) => setTimeout(resolve, 850));
   dramaticLead.classList.add("hidden");
-  form.classList.add("hidden");
   result.classList.add("is-final");
   launchConfetti();
   loader.classList.add("hidden");
