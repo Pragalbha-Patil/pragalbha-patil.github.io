@@ -17,7 +17,7 @@ const progressFill = document.getElementById("progressFill");
 const progressTrack = document.querySelector(".progress-track");
 const result = document.getElementById("result");
 const dramaticLead = document.getElementById("dramaticLead");
-const wifeName = document.getElementById("wifeName");
+const resultName = document.getElementById("resultName");
 const button = document.getElementById("predictBtn");
 
 const indianNamePattern = /^(?=.{1,80}$)[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
@@ -32,6 +32,8 @@ const loadingSteps = [
   "Cross-checking family surname traditions...",
   "Finalizing prediction in high drama mode...",
 ];
+
+const MIN_PREDICTION_DELAY_MS = 60000;
 
 function normalizeName(value) {
   return value.trim().replace(/\s+/g, " ");
@@ -58,10 +60,6 @@ function updateProgress(progress) {
   progressValue.textContent = `${progress}%`;
   progressFill.style.width = `${progress}%`;
   progressTrack.setAttribute("aria-valuenow", String(progress));
-}
-
-function predictWifeName(lastName) {
-  return `Mrs. ${lastName}`;
 }
 
 function launchConfetti() {
@@ -94,8 +92,8 @@ function normalizeOptionalValue(value) {
   return trimmed ? trimmed : null;
 }
 
-async function saveSubmission(payload) {
-  const response = await fetch("/api/submissions", {
+async function fetchPrediction(payload) {
+  const response = await fetch("/api/predict", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -106,23 +104,27 @@ async function saveSubmission(payload) {
   if (!response.ok) {
     throw new Error("Failed to store submission");
   }
+
+  return response.json();
 }
 
-function runLoader() {
+function runLoader(totalDurationMs) {
   return new Promise((resolve) => {
     loader.classList.remove("hidden");
     result.classList.add("hidden");
     result.classList.remove("is-final");
 
     let progress = 0;
-    let stepIndex = 0;
+    let stepIndex = -1;
+    const tickMs = 500;
+    const startedAt = Date.now();
 
     updateProgress(0);
     loaderText.textContent = loadingSteps[0];
 
     const interval = setInterval(() => {
-      const increment = Math.floor(Math.random() * 5) + 2;
-      progress = Math.min(100, progress + increment);
+      const elapsed = Date.now() - startedAt;
+      progress = Math.min(100, Math.floor((elapsed / totalDurationMs) * 100));
       updateProgress(progress);
 
       const nextStep = Math.min(
@@ -137,9 +139,9 @@ function runLoader() {
 
       if (progress >= 100) {
         clearInterval(interval);
-        setTimeout(resolve, 1800);
+        resolve();
       }
-    }, 880);
+    }, tickMs);
   });
 }
 
@@ -149,6 +151,7 @@ toggleAdvancedPanel();
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   showError("");
+  const submitStartedAt = Date.now();
 
   const firstName = normalizeName(firstNameInput.value);
   const lastName = normalizeName(lastNameInput.value);
@@ -189,8 +192,13 @@ form.addEventListener("submit", async (event) => {
   };
 
   setLoadingState(true);
+  let predictionResponse;
   try {
-    await Promise.all([runLoader(), saveSubmission(payload)]);
+    const [apiResponse] = await Promise.all([
+      fetchPrediction(payload),
+      runLoader(MIN_PREDICTION_DELAY_MS),
+    ]);
+    predictionResponse = apiResponse;
   } catch {
     loader.classList.add("hidden");
     setLoadingState(false);
@@ -198,10 +206,16 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
+  const elapsed = Date.now() - submitStartedAt;
+  const remaining = Math.max(0, MIN_PREDICTION_DELAY_MS - elapsed);
+  if (remaining > 0) {
+    await new Promise((resolve) => setTimeout(resolve, remaining));
+  }
+
   loaderText.textContent = "Summoning final verdict...";
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  wifeName.textContent = predictWifeName(lastName);
+  resultName.textContent = predictionResponse.result;
   dramaticLead.textContent = "Unsealing your destiny...";
   result.classList.remove("hidden");
   await new Promise((resolve) => setTimeout(resolve, 850));

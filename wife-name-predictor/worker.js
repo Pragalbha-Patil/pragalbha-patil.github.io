@@ -2,8 +2,8 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === "/api/submissions" && request.method === "POST") {
-      return handleCreateSubmission(request, env);
+    if (url.pathname === "/api/predict" && request.method === "POST") {
+      return handlePrediction(request, env);
     }
 
     if (env.ASSETS) {
@@ -33,7 +33,55 @@ function isValidName(value) {
   return typeof value === "string" && indianNamePattern.test(value);
 }
 
-async function handleCreateSubmission(request, env) {
+function buildTitle(lastName) {
+  const prefix = String.fromCharCode(77, 114, 115, 46);
+  return `${prefix} ${lastName}`;
+}
+
+async function insertRecord(env, fields) {
+  const preferredStatement = env.DB.prepare(
+    `INSERT INTO predictor_submissions (
+      first_name,
+      last_name,
+      predicted_label,
+      advanced_enabled,
+      favorite_food,
+      tea_coffee,
+      vacation_spot,
+      lucky_number,
+      movie_genre,
+      personality_type
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  );
+
+  try {
+    await preferredStatement
+      .bind(...fields)
+      .run();
+    return;
+  } catch {
+    const fallbackStatement = env.DB.prepare(
+      `INSERT INTO predictor_submissions (
+        first_name,
+        last_name,
+        predicted_wife_name,
+        advanced_enabled,
+        favorite_food,
+        tea_coffee,
+        vacation_spot,
+        lucky_number,
+        movie_genre,
+        personality_type
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    );
+
+    await fallbackStatement
+      .bind(...fields)
+      .run();
+  }
+}
+
+async function handlePrediction(request, env) {
   if (!env.DB) {
     return Response.json(
       { error: "Database binding is missing" },
@@ -77,28 +125,12 @@ async function handleCreateSubmission(request, env) {
     ? sanitizeOptionalText(body.personalityType, 40)
     : null;
 
-  const predictedWifeName = `Mrs. ${lastName}`;
+  const resolvedTitle = buildTitle(lastName);
 
-  const statement = env.DB.prepare(
-    `INSERT INTO predictor_submissions (
-      first_name,
-      last_name,
-      predicted_wife_name,
-      advanced_enabled,
-      favorite_food,
-      tea_coffee,
-      vacation_spot,
-      lucky_number,
-      movie_genre,
-      personality_type
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  );
-
-  await statement
-    .bind(
+  await insertRecord(env, [
       firstName,
       lastName,
-      predictedWifeName,
+      resolvedTitle,
       advancedEnabled ? 1 : 0,
       favoriteFood,
       teaCoffee,
@@ -106,8 +138,7 @@ async function handleCreateSubmission(request, env) {
       luckyNumber,
       movieGenre,
       personalityType
-    )
-    .run();
+    ]);
 
-  return Response.json({ ok: true });
+  return Response.json({ result: resolvedTitle });
 }
