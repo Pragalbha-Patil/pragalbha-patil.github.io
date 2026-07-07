@@ -2,6 +2,13 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: getCorsHeaders(request),
+      });
+    }
+
     if (url.pathname === "/api/predict" && request.method === "POST") {
       return handlePrediction(request, env);
     }
@@ -15,6 +22,28 @@ export default {
 };
 
 const indianNamePattern = /^(?=.{1,80}$)[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
+
+function getCorsHeaders(request) {
+  const origin = request.headers.get("Origin") || "*";
+
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
+}
+
+function jsonResponse(payload, request, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      ...getCorsHeaders(request),
+    },
+  });
+}
 
 function sanitizeOptionalText(value, maxLength = 120) {
   if (typeof value !== "string") {
@@ -83,9 +112,10 @@ async function insertRecord(env, fields) {
 
 async function handlePrediction(request, env) {
   if (!env.DB) {
-    return Response.json(
+    return jsonResponse(
       { error: "Database binding is missing" },
-      { status: 500 }
+      request,
+      500
     );
   }
 
@@ -94,16 +124,17 @@ async function handlePrediction(request, env) {
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Invalid JSON payload" }, { status: 400 });
+    return jsonResponse({ error: "Invalid JSON payload" }, request, 400);
   }
 
   const firstName = sanitizeOptionalText(body.firstName, 80);
   const lastName = sanitizeOptionalText(body.lastName, 80);
 
   if (!isValidName(firstName) || !isValidName(lastName)) {
-    return Response.json(
+    return jsonResponse(
       { error: "firstName and lastName must be valid names" },
-      { status: 400 }
+      request,
+      400
     );
   }
 
@@ -140,5 +171,5 @@ async function handlePrediction(request, env) {
       personalityType
     ]);
 
-  return Response.json({ result: resolvedTitle });
+  return jsonResponse({ result: resolvedTitle }, request);
 }

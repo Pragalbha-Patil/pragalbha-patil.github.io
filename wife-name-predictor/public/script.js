@@ -34,6 +34,10 @@ const loadingSteps = [
 ];
 
 const MIN_PREDICTION_DELAY_MS = 60000;
+const API_CANDIDATES = [
+  "/api/predict",
+  "https://wife-name-predictor.pragalbha77.workers.dev/api/predict",
+];
 
 function normalizeName(value) {
   return value.trim().replace(/\s+/g, " ");
@@ -93,19 +97,30 @@ function normalizeOptionalValue(value) {
 }
 
 async function fetchPrediction(payload) {
-  const response = await fetch("/api/predict", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  let lastError;
 
-  if (!response.ok) {
-    throw new Error("Failed to store submission");
+  for (const endpoint of API_CANDIDATES) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const bodyText = await response.text();
+        throw new Error(`API ${response.status}: ${bodyText || "request failed"}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      lastError = error;
+    }
   }
 
-  return response.json();
+  throw lastError || new Error("Prediction request failed");
 }
 
 function runLoader(totalDurationMs) {
