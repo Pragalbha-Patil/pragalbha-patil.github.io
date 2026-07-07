@@ -290,6 +290,15 @@ h2 {
   color: #ffe9cf;
 }
 
+.app-footer {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 246, 243, 0.78);
+  font-size: 0.86rem;
+  text-align: center;
+}
+
 .hidden {
   display: none;
 }

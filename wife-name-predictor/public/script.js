@@ -266,6 +266,9 @@ form.addEventListener("submit", async (event) => {
       : null,
   };
 
+  advancedOptionsInput.checked = false;
+  advancedPanel.classList.add("hidden");
+
   setLoadingState(true);
   let predictionResponse;
   let clientPrivateKey;
